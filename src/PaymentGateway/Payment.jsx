@@ -122,10 +122,10 @@ const Payment = () => {
             };
 
             // Use the appropriate endpoint based on your environment
-            const endpoint = import.meta.env.DEV
-                ? 'http://localhost:3000/verify-payment'
-                : `${import.meta.env.VITE_API_URL}/verify-payment`;
-
+            const endpoint = process.env.NODE_ENV === 'development'
+            ? 'http://localhost:3000/verify-payment'
+            : 'https://asta-backend-o8um.onrender.com/verify-payment';
+          
 
             const verifyResponse = await axios.post(endpoint, verifyData);
 
