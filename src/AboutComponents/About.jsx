@@ -47,7 +47,7 @@ const About = () => {
         setSubmissionStatus({ success: false, message: '' });
 
         try {
-            const response = await fetch('http://localhost:3000/submit-contact', {
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/submit-contact`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
