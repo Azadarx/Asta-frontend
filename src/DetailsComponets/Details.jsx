@@ -145,7 +145,10 @@ const Details = () => {
             };
 
             // Use the full URL to your backend server
-            const response = await axios.post('http://localhost:3000/create-order', orderData);
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/create-order`,
+                orderData
+            );
 
             if (response.data) {
                 // Store order details in localStorage for payment page
