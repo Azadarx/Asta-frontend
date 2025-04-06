@@ -4,13 +4,16 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [tailwindcss(),react()],
+  plugins: [tailwindcss(), react()],
   server: {
     proxy: {
-      // Forward requests to /api and other endpoints to your backend server
+      // Improved proxy configuration to cover all API endpoints
       '/create-order': 'http://localhost:3000',
       '/verify-payment': 'http://localhost:3000',
-      // Add any other API endpoints you need
+      '/submit-contact': 'http://localhost:3000',
+      '/submit-about-inquiry': 'http://localhost:3000',
+      '/api': 'http://localhost:3000', // Added to catch all /api/* routes
+      '/payment': 'http://localhost:3000'
     }
   },
 })

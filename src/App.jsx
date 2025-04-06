@@ -10,8 +10,22 @@ import About from "./AboutComponents/About";
 import Testimonials from "./AboutComponents/Testimonials";
 import Contact from "./ContactComponents/Contact";
 import PhonicsCourse from "./CoursesComponents/PhonicsCourse";
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 
 function App() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker
+        .register('/service-worker.js', { scope: '/' })
+        .then(registration => {
+          console.log('ServiceWorker registered:', registration);
+        })
+        .catch(error => {
+          console.log('ServiceWorker registration failed:', error);
+        });
+    });
+    serviceWorkerRegistration.register();
+  }
   return (
     <Router>
       <HomeNavbar /> {/* Navbar stays common across all routes */}
@@ -29,6 +43,7 @@ function App() {
       <HomeFooter /> {/* Footer stays common across all routes */}
     </Router>
   );
+
 }
 
 export default App;

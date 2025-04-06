@@ -124,12 +124,20 @@ const Details = () => {
         }
     };
 
+    // Updated handleSubmit function for Details.jsx
+    // Replace the existing handleSubmit function with this one
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         setError(null);
 
         try {
+            // Validate form data
+            if (!formData.fullName || !formData.email || !formData.phone) {
+                throw new Error('Please fill in all required fields');
+            }
+
             // Prepare data for the server
             const orderData = {
                 name: formData.fullName,
@@ -144,19 +152,36 @@ const Details = () => {
                 duration: formData.duration
             };
 
-            // Use the full URL to your backend server
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/create-order`, orderData);
+            // Use the API URL from environment variables
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+            const response = await axios.post(`${apiUrl}/create-order`, orderData);
 
             if (response.data) {
-                // Store order details in localStorage for payment page
-                localStorage.setItem('paymentDetails', JSON.stringify(response.data));
+                // Add customer details to payment data for Razorpay prefill
+                const paymentDetails = {
+                    ...response.data,
+                    prefill: {
+                        name: formData.fullName,
+                        email: formData.email,
+                        contact: formData.phone
+                    },
+                    notes: {
+                        address: `${formData.city?.label || ''}, ${formData.state?.label || ''}, ${formData.country?.label || ''}`,
+                        course: formData.course
+                    }
+                };
+
+                // Store enhanced order details in localStorage for payment page
+                localStorage.setItem('paymentDetails', JSON.stringify(paymentDetails));
 
                 // Navigate to payment page
-                navigate('/payment', { state: response.data });
+                navigate('/payment', { state: paymentDetails });
+            } else {
+                throw new Error('Failed to create order. Please try again.');
             }
         } catch (err) {
             console.error('Error creating order:', err);
-            setError(err.response?.data?.error || 'Failed to create order. Please try again.');
+            setError(err.response?.data?.error || err.message || 'Failed to create order. Please try again.');
         } finally {
             setIsLoading(false);
         }
