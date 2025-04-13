@@ -10,6 +10,9 @@ import About from "./AboutComponents/About";
 import Testimonials from "./AboutComponents/Testimonials";
 import Contact from "./ContactComponents/Contact";
 import PhonicsCourse from "./CoursesComponents/PhonicsCourse";
+import TermsAndConditions from "./AboutComponents/Conditions";
+import PrivacyPolicy from "./AboutComponents/Policy";
+import Rabout from "./AboutComponents/Rabout";
 
 function App() {
   return (
@@ -22,6 +25,9 @@ function App() {
         <Route path="/success" element={<PaymentSuccess />} />
         <Route path="/courses" element={<Courses />} />
         <Route path="/about" element={<About />} />
+        <Route path="/rabout" element={<Rabout />} />
+        <Route path="/termsandconditions" element={<TermsAndConditions />} />
+        <Route path="/policy" element={<PrivacyPolicy />} />
         <Route path="/testimonials" element={<Testimonials />} />
         <Route path="/contact-us" element={<Contact />} />
         <Route path="//courses/phonics" element={<PhonicsCourse />} />

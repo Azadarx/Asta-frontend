@@ -69,6 +69,12 @@ const HomeFooter = () => {
                                 <Link to="/about" className="text-blue-300 hover:text-white">About Us</Link>
                             </li>
                             <li>
+                                <Link to="/policy" className="text-blue-300 hover:text-white">Privacy Policy</Link>
+                            </li>
+                            <li>
+                                <Link to="/termsandconditions" className="text-blue-300 hover:text-white">Terms & Conditions</Link>
+                            </li>
+                            <li>
                                 <Link to="/testimonials" className="text-blue-300 hover:text-white">Testimonials</Link>
                             </li>
                             <li>
