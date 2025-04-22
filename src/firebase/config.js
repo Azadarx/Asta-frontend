@@ -3,8 +3,8 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
-
-const firebaseConfig = {
+  
+export const firebaseConfig = {
   apiKey: "AIzaSyCk3nSg0O3uxkwyHFJCfcN9SIu17z3W1Ys",
   authDomain: "phonicslms.firebaseapp.com",
   projectId: "phonicslms",

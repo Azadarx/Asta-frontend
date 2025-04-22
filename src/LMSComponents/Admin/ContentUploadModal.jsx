@@ -138,6 +138,13 @@ const ContentUploadModal = ({ onClose, user }) => {
       setIsUploading(false);
     }
   };
+  const handleClose = () => {
+    setTitle('');
+    setDescription('');
+    setFile(null);
+    setModalOpen(false);
+  };
+  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -146,7 +153,7 @@ const ContentUploadModal = ({ onClose, user }) => {
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-blue-600">Upload Content</h2>
             <button 
-              onClick={onClose}
+              onClick={handleClose}
               className="text-gray-500 hover:text-gray-700"
               disabled={isUploading}
             >
@@ -234,7 +241,7 @@ const ContentUploadModal = ({ onClose, user }) => {
             <div className="flex justify-end space-x-3">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
                 disabled={isUploading}
               >

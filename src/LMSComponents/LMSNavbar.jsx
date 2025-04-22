@@ -36,29 +36,29 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             <Link to="/lms/materials" className="text-white font-medium hover:text-yellow-300 transition-colors">
               Materials
             </Link>
-            
+
             {isAdmin && (
-              <Link 
-                to="/lms/admin" 
+              <Link
+                to="/lms/admin"
                 className="text-white font-medium hover:text-yellow-300 transition-colors flex items-center"
               >
                 Admin
               </Link>
             )}
-            
+
             {isAdmin && (
-              <Link 
-                to="/lms/create-user" 
+              <Link
+                to="/lms/create-user"
                 className="text-white font-medium hover:text-yellow-300 transition-colors"
               >
                 Add User
               </Link>
             )}
-            
+
             <div className="relative ml-3">
               <div>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-600 focus:ring-white"
                   onClick={() => setIsOpen(!isOpen)}
                 >
@@ -68,7 +68,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                   </div>
                 </button>
               </div>
-              
+
               {isOpen && (
                 <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
                   <div className="px-4 py-2 text-xs text-gray-500">
@@ -136,7 +136,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             >
               Materials
             </Link>
-            
+
             <Link
               to="/lms/profile"
               className="block py-2 text-blue-900 font-medium"
@@ -144,7 +144,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             >
               Your Profile
             </Link>
-            
+
             {isAdmin && (
               <Link
                 to="/lms/admin"
@@ -154,17 +154,25 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                 Admin
               </Link>
             )}
-            
+
             {isAdmin && (
-              <Link
-                to="/lms/create-user"
-                className="block py-2 text-blue-900 font-medium"
-                onClick={() => setIsOpen(false)}
-              >
-                Add User
-              </Link>
+              <>
+                <button
+                  onClick={() => navigate("/lms/create-user")}
+                  className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                >
+                  Add User
+                </button>
+                <button
+                  onClick={() => setModalOpen(true)}
+                  className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition"
+                >
+                  + Add Content
+                </button>
+              </>
             )}
-            
+
+
             <button
               onClick={handleLogout}
               className="block w-full text-left py-2 text-blue-900 font-medium"
