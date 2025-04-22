@@ -84,7 +84,7 @@ const LMSHome = () => {
   if (isAdmin) {
     return (
       <>
-        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+        {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
         <AdminDashboard user={user} userData={userData} content={content} />
       </>
     );
