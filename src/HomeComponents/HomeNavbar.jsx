@@ -67,6 +67,11 @@ const HomeNavbar = () => {
 
             <Link to="/contact-us" className="text-white font-medium hover:text-yellow-300 transition-colors">Contact</Link>
 
+            {/* LMS Login Link */}
+            <Link to="/lms/login" className="text-white font-medium hover:text-yellow-300 transition-colors">
+              LMS Login
+            </Link>
+
             <Link
               to="/details"
               className="ml-4 bg-yellow-300 hover:bg-yellow-400 text-blue-600 px-6 py-2 rounded-full font-medium transition-colors"
@@ -152,6 +157,15 @@ const HomeNavbar = () => {
               onClick={() => setIsOpen(false)}
             >
               Contact
+            </Link>
+
+            {/* Mobile LMS Login Link */}
+            <Link
+              to="/lms/login"
+              className="block py-2 text-blue-900 font-medium"
+              onClick={() => setIsOpen(false)}
+            >
+              LMS Login
             </Link>
 
             <Link
