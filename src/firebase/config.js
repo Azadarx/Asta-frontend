@@ -1,5 +1,4 @@
 // src/firebase/config.js
-import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
@@ -14,8 +13,7 @@ const firebaseConfig = {
     measurementId: "G-05DFTGRJL5"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const database = getDatabase(app);
 const storage = getStorage(app);
