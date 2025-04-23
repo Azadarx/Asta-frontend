@@ -94,7 +94,7 @@ const LMSHome = () => {
   // Regular student view
   return (
     <div className="min-h-screen bg-gray-50">
-      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
       
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
