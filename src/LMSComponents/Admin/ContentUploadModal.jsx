@@ -1,6 +1,6 @@
 // src/LMSComponents/Admin/ContentUploadModal.jsx
 import React, { useState } from 'react';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { ref, set } from 'firebase/database';
 import { rtdb } from '../../firebase/config'; // or your correct path
 
