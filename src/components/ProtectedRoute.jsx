@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { auth, db } from '../firebase/config';
+import { auth, database as db } from '../firebase/config';
 import LMSNavbar from '../LMSComponents/LMSNavbar';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
