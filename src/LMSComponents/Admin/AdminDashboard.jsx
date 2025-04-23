@@ -1,7 +1,7 @@
 // src/LMSComponents/Admin/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { auth } from '../../firebase/config';
-import LMSNavbar from '../LMSNavbar';
+// import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
 
 const AdminDashboard = ({ user, userData }) => {
@@ -101,7 +101,7 @@ const AdminDashboard = ({ user, userData }) => {
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50">
-                <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+                {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
@@ -111,7 +111,7 @@ const AdminDashboard = ({ user, userData }) => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+            {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
 
             <div className="container mx-auto py-8 px-4">
                 <div className="flex justify-between items-center mb-8">
