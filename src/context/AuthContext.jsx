@@ -173,8 +173,6 @@ const value = {
   logout,
   uploadFile,
 };
-e, // New function for Cloudinary uploads
-};
 
 return (
   <AuthContext.Provider value={value}>
