@@ -44,66 +44,156 @@ const LayoutWrapper = ({ children }) => {
 function App() {
   return (
     <Router>
-      <LayoutWrapper>
-        <Routes>
-          {/* 🌐 Main Website Routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/details" element={<Details />} />
-          <Route path="/payment" element={<Payment />} />
-          <Route path="/success" element={<PaymentSuccess />} />
-          <Route path="/courses" element={<Courses />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/rabout" element={<Rabout />} />
-          <Route path="/termsandconditions" element={<TermsAndConditions />} />
-          <Route path="/policy" element={<PrivacyPolicy />} />
-          <Route path="/testimonials" element={<Testimonials />} />
-          <Route path="/contact-us" element={<Contact />} />
-          <Route path="/courses/phonics" element={<PhonicsCourse />} />
+      <Routes>
+        {/* 🌐 Main Website Routes with layout */}
+        <Route
+          path="/"
+          element={
+            <LayoutWrapper>
+              <HomePage />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/details"
+          element={
+            <LayoutWrapper>
+              <Details />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <LayoutWrapper>
+              <Payment />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/success"
+          element={
+            <LayoutWrapper>
+              <PaymentSuccess />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <LayoutWrapper>
+              <Courses />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <LayoutWrapper>
+              <About />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/rabout"
+          element={
+            <LayoutWrapper>
+              <Rabout />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/termsandconditions"
+          element={
+            <LayoutWrapper>
+              <TermsAndConditions />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/policy"
+          element={
+            <LayoutWrapper>
+              <PrivacyPolicy />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/testimonials"
+          element={
+            <LayoutWrapper>
+              <Testimonials />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/contact-us"
+          element={
+            <LayoutWrapper>
+              <Contact />
+            </LayoutWrapper>
+          }
+        />
+        <Route
+          path="/courses/phonics"
+          element={
+            <LayoutWrapper>
+              <PhonicsCourse />
+            </LayoutWrapper>
+          }
+        />
 
-          {/* 🎓 LMS Routes */}
-          <Route path="/lms/login" element={<Login />} />
-          <Route
-            path="/lms/home"
-            element={
-              <ProtectedRoute>
-                <LMSHome />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lms/materials"
-            element={
-              <ProtectedRoute>
-                <Materials />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lms/create-user"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminSignup />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/lms/admin"
-            element={
-              <ProtectedRoute adminOnly={true}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            }
-          />
-          
-          {/* Redirects */}
-          <Route path="/lms" element={<Navigate to="/lms/login" />} />
-          
-          {/* Not Found */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </LayoutWrapper>
+        {/* 🎓 LMS Routes WITHOUT layout wrapper */}
+        <Route path="/lms/login" element={<Login />} />
+        <Route
+          path="/lms/home"
+          element={
+            <ProtectedRoute>
+              <LMSHome />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/materials"
+          element={
+            <ProtectedRoute>
+              <Materials />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/create-user"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminSignup />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/admin"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Redirects */}
+        <Route path="/lms" element={<Navigate to="/lms/login" />} />
+
+        {/* Not Found */}
+        <Route
+          path="*"
+          element={
+            <LayoutWrapper>
+              <NotFound />
+            </LayoutWrapper>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
+
 
 export default App;
