@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminSignup = () => {
   const [email, setEmail] = useState('');
@@ -63,7 +64,7 @@ const AdminSignup = () => {
       const user = userCredential.user;
 
       // Store user data in PostgreSQL via API endpoint
-      const response = await fetch(`${API_URL}/api/users`, {
+      const response = await axios.post(`${API_URL}/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
