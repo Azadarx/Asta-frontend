@@ -1,14 +1,21 @@
 // src/LMSComponents/Admin/ContentUploadModal.jsx
 import React, { useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
+import { ref, set } from 'firebase/database';
+import { rtdb } from '../../firebase/config'; // or your correct path
+
 
 const ContentUploadModal = ({ onClose, user }) => {
+
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  // const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
   const [modalOpen, setModalOpen] = useState(true);
+  const { uploadFile, uploadProgress, setUploadProgress } = useAuth();
+
 
   // Allowed file types
   const allowedTypes = {
@@ -24,7 +31,7 @@ const ContentUploadModal = ({ onClose, user }) => {
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    
+
     if (selectedFile) {
       // Check if file type is allowed
       if (allowedTypes[selectedFile.type]) {
@@ -39,45 +46,40 @@ const ContentUploadModal = ({ onClose, user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+  
     if (!title.trim()) {
       setError('Title is required');
       return;
     }
-    
+  
     if (!file) {
       setError('Please select a file to upload');
       return;
     }
-    
+  
     setIsUploading(true);
     setError('');
-    
+  
     try {
-      // Create form data for file upload
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('title', title);
-      formData.append('description', description);
-      formData.append('createdBy', user.uid);
-      formData.append('createdByEmail', user.email);
-      
-      // Upload to backend endpoint which handles Cloudinary upload
-      const response = await fetch('/api/lms/upload', {
-        method: 'POST',
-        body: formData,
-        // No Content-Type header as it's set automatically with FormData
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Upload failed');
+      // Call uploadFile from AuthContext (Cloudinary logic)
+      const result = await uploadFile(file);
+  
+      if (!result || !result.secureUrl) {
+        throw new Error('Upload failed');
       }
-      
-      const result = await response.json();
-      console.log('Upload successful:', result);
-      
-      // Close modal on success
+  
+      // Save metadata in Firebase RTDB (optional, or use your backend)
+      const contentRef = ref(rtdb, `content/${Date.now()}`);
+      await set(contentRef, {
+        title,
+        description,
+        fileUrl: result.secureUrl,
+        fileType: file.type,
+        createdAt: new Date().toISOString(),
+        uploadedBy: user.uid,
+        uploadedByEmail: user.email
+      });
+  
       onClose();
     } catch (error) {
       console.error('Error in content upload:', error);
@@ -85,6 +87,7 @@ const ContentUploadModal = ({ onClose, user }) => {
       setIsUploading(false);
     }
   };
+  
 
   // Mock progress updates since we can't track Cloudinary upload progress directly
   // This simulates progress for UX purposes
@@ -98,10 +101,10 @@ const ContentUploadModal = ({ onClose, user }) => {
       }
       setUploadProgress(progress);
     }, 500);
-    
+
     return interval;
   };
-  
+
   const handleClose = () => {
     setTitle('');
     setDescription('');
@@ -116,7 +119,7 @@ const ContentUploadModal = ({ onClose, user }) => {
         <div className="p-6">
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-2xl font-bold text-blue-600">Upload Content</h2>
-            <button 
+            <button
               onClick={handleClose}
               className="text-gray-500 hover:text-gray-700"
               disabled={isUploading}
@@ -126,13 +129,13 @@ const ContentUploadModal = ({ onClose, user }) => {
               </svg>
             </button>
           </div>
-          
+
           {error && (
             <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
               <p>{error}</p>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
@@ -146,7 +149,7 @@ const ContentUploadModal = ({ onClose, user }) => {
                 required
               />
             </div>
-            
+
             <div className="mb-4">
               <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">Description</label>
               <textarea
@@ -158,7 +161,7 @@ const ContentUploadModal = ({ onClose, user }) => {
                 rows="4"
               />
             </div>
-            
+
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Upload File</label>
               <div className="flex items-center justify-center w-full">
@@ -182,14 +185,14 @@ const ContentUploadModal = ({ onClose, user }) => {
                   />
                 </label>
               </div>
-              
+
               {file && (
                 <div className="mt-2 text-sm text-gray-600">
                   Selected file: {file.name} ({(file.size / 1024 / 1024).toFixed(2)} MB)
                 </div>
               )}
             </div>
-            
+
             {isUploading && (
               <div className="mb-4">
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -201,7 +204,8 @@ const ContentUploadModal = ({ onClose, user }) => {
                 <p className="text-sm text-gray-600 mt-1">Uploading: {uploadProgress}%</p>
               </div>
             )}
-            
+
+
             <div className="flex justify-end space-x-3">
               <button
                 type="button"

@@ -29,6 +29,8 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
+  const [uploadProgress, setUploadProgress] = useState(0);
+
 
   // Fetch user data from RTDB or initialize
   const fetchUserData = async (user) => {
@@ -164,11 +166,14 @@ const value = {
   loading,
   error,
   uploadProgress,
+  setUploadProgress, // ✅ ADD THIS
   setError,
   login,
   signup,
   logout,
-  uploadFile, // New function for Cloudinary uploads
+  uploadFile,
+};
+e, // New function for Cloudinary uploads
 };
 
 return (
