@@ -20,12 +20,12 @@ const LMSHome = () => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        
+
         // Check if user is admin (case-insensitive email comparison)
         const adminStatus = currentUser.email.toLowerCase() === 'inspiringshereen@gmail.com'.toLowerCase();
         setIsAdmin(adminStatus);
         console.log("Admin status:", adminStatus); // Debug log
-        
+
         // Fetch user data
         const userRef = ref(database, `users/${currentUser.uid}`);
         onValue(userRef, (snapshot) => {
@@ -38,7 +38,7 @@ const LMSHome = () => {
           console.error("Error fetching user data:", error);
           setLoading(false);
         });
-        
+
         // Fetch content with Cloudinary URLs from the database
         const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
@@ -67,14 +67,14 @@ const LMSHome = () => {
         navigate('/lms/login');
       }
     });
-    
+
     return () => unsubscribe();
   }, [navigate]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+        {!isAdmin && <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />}
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -91,11 +91,11 @@ const LMSHome = () => {
     );
   }
 
-  // Regular student view
+  // For students, show LMSNavbar + content
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
-      
+      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-blue-600">Welcome, {userData?.name || 'Student'}</h2>
@@ -103,9 +103,9 @@ const LMSHome = () => {
             Access your phonics learning materials below. Watch videos, download resources, and track your progress.
           </p>
         </div>
-        
+
         <h3 className="text-xl font-semibold text-gray-800 mb-4">Latest Learning Materials</h3>
-        
+
         {content.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-6 text-center">
             <p className="text-gray-600">No content available yet. Check back soon!</p>
