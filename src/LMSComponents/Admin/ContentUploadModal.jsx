@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { ref, set } from 'firebase/database';
-import { rtdb } from '../../firebase/config'; // or your correct path
+import { database as rtdb } from '../../firebase/config';
 
 
 const ContentUploadModal = ({ onClose, user }) => {
