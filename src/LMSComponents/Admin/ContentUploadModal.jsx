@@ -1,8 +1,5 @@
 // src/LMSComponents/Admin/ContentUploadModal.jsx
 import React, { useState } from 'react';
-import { ref, push, serverTimestamp } from 'firebase/database';
-import { ref as storageRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { database, storage } from '../../firebase/config';
 
 const ContentUploadModal = ({ onClose, user }) => {
   const [title, setTitle] = useState('');
@@ -11,6 +8,7 @@ const ContentUploadModal = ({ onClose, user }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
+  const [modalOpen, setModalOpen] = useState(true);
 
   // Allowed file types
   const allowedTypes = {
@@ -56,95 +54,61 @@ const ContentUploadModal = ({ onClose, user }) => {
     setError('');
     
     try {
-      // Create storage reference
-      const fileExtension = file.name.split('.').pop();
-      const fileName = `${Date.now()}_${title.replace(/\s+/g, '_')}.${fileExtension}`;
-      const contentType = allowedTypes[file.type];
-      const storagePath = `content/${contentType}/${fileName}`;
-      const fileRef = storageRef(storage, storagePath);
+      // Create form data for file upload
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('createdBy', user.uid);
+      formData.append('createdByEmail', user.email);
       
-      // Upload file with progress tracking
-      const uploadTask = uploadBytesResumable(fileRef, file);
+      // Upload to backend endpoint which handles Cloudinary upload
+      const response = await fetch('/api/lms/upload', {
+        method: 'POST',
+        body: formData,
+        // No Content-Type header as it's set automatically with FormData
+      });
       
-      uploadTask.on('state_changed', 
-        (snapshot) => {
-          // Track upload progress
-          const progress = Math.round(
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-          );
-          setUploadProgress(progress);
-        },
-        (error) => {
-          console.error('Upload error:', error);
-          setError('Error uploading file. Please try again.');
-          setIsUploading(false);
-        },
-        async () => {
-          // Upload completed successfully
-          const downloadURL = await getDownloadURL(fileRef);
-          
-          // Add content entry to firebase database
-          const contentRef = ref(database, 'content');
-          const newContentRef = await push(contentRef, {
-            title,
-            description,
-            contentType,
-            fileURL: downloadURL,
-            storagePath,
-            fileSize: file.size,
-            fileName: file.name,
-            createdBy: user.uid,
-            createdAt: serverTimestamp(),
-            createdByEmail: user.email
-          });
-          
-          // Now also save to our backend
-          try {
-            const backendResponse = await fetch('/api/lms/content', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                title,
-                description,
-                contentType,
-                fileURL: downloadURL,
-                storagePath,
-                fileSize: file.size,
-                fileName: file.name,
-                createdBy: user.uid,
-                createdByEmail: user.email,
-                firebaseId: newContentRef.key // Store Firebase reference ID
-              }),
-            });
-            
-            if (!backendResponse.ok) {
-              console.error('Backend storage failed:', await backendResponse.text());
-              // Continue anyway as data is in Firebase
-            }
-          } catch (backendError) {
-            console.error('Error saving to backend:', backendError);
-            // Continue anyway as data is in Firebase
-          }
-          
-          // Close modal on success
-          onClose();
-        }
-      );
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Upload failed');
+      }
+      
+      const result = await response.json();
+      console.log('Upload successful:', result);
+      
+      // Close modal on success
+      onClose();
     } catch (error) {
       console.error('Error in content upload:', error);
-      setError('An error occurred. Please try again.');
+      setError('An error occurred: ' + (error.message || 'Please try again'));
       setIsUploading(false);
     }
   };
+
+  // Mock progress updates since we can't track Cloudinary upload progress directly
+  // This simulates progress for UX purposes
+  const simulateProgress = () => {
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 10) + 5;
+      if (progress > 95) {
+        progress = 95; // Cap at 95% until we get server confirmation
+        clearInterval(interval);
+      }
+      setUploadProgress(progress);
+    }, 500);
+    
+    return interval;
+  };
+  
   const handleClose = () => {
     setTitle('');
     setDescription('');
     setFile(null);
     setModalOpen(false);
+    onClose();
   };
-  
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">

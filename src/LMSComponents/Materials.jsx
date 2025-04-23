@@ -28,12 +28,13 @@ const Materials = () => {
           }
         });
         
-        // Fetch content
+        // Fetch content with Cloudinary URLs directly from the database
         const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
           if (snapshot.exists()) {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
+              // Content data now contains Cloudinary URLs directly
               contentList.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val()
@@ -42,7 +43,13 @@ const Materials = () => {
             // Sort by date (newest first)
             contentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
             setContent(contentList);
+          } else {
+            // Set empty content array if no content exists
+            setContent([]);
           }
+          setLoading(false);
+        }, (error) => {
+          console.error("Error fetching content:", error);
           setLoading(false);
         });
       } else {

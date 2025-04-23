@@ -66,7 +66,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Firebase Auth listener
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
@@ -82,56 +81,99 @@ export const AuthProvider = ({ children }) => {
     return () => unsubscribe();
   }, []);
 
-  // Signup logic
-  const signup = async (email, password, fullName) => {
-    setError('');
-    try {
-      const userCred = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCred.user, { displayName: fullName });
-      await fetchUserData(userCred.user);
-      return userCred.user;
-    } catch (err) {
-      setError(err.message);
-      throw err;
+ // Signup logic
+ const signup = async (email, password, fullName) => {
+  setError('');
+  try {
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    await updateProfile(userCred.user, { displayName: fullName });
+    await fetchUserData(userCred.user);
+    return userCred.user;
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  }
+};
+
+// Login logic
+const login = async (email, password) => {
+  setError('');
+  try {
+    const userCred = await signInWithEmailAndPassword(auth, email, password);
+    await fetchUserData(userCred.user);
+    return userCred.user;
+  } catch (err) {
+    setError(err.message);
+    throw err;
+  }
+};
+
+// Logout logic
+const logout = async () => {
+  await signOut(auth);
+  setCurrentUser(null);
+  setUserRTDBData(null);
+  setIsAdmin(false);
+};
+
+// Cloudinary upload function
+const uploadFile = async (file, customFolder = null) => {
+  setError('');
+  setUploadProgress(0);
+  
+  if (!currentUser) {
+    setError('You must be logged in to upload files');
+    return null;
+  }
+  
+  try {
+    // Determine the appropriate folder based on file type
+    const folder = customFolder || getCloudinaryFolder(file);
+    
+    // Set progress to simulate upload progress (Cloudinary direct upload doesn't support progress events)
+    setUploadProgress(30);
+    
+    // Upload to Cloudinary
+    const result = await uploadToCloudinary(file, folder);
+    
+    setUploadProgress(100);
+    
+    // Optional: Store the file reference in Firebase RTDB if needed
+    if (result && result.publicId) {
+      const fileRef = ref(rtdb, `userFiles/${currentUser.uid}/${result.publicId.replace(/\//g, '_')}`);
+      await set(fileRef, {
+        ...result,
+        uploadedBy: currentUser.uid,
+        uploadedByEmail: currentUser.email,
+      });
     }
-  };
+    
+    return result;
+  } catch (err) {
+    console.error('File upload error:', err);
+    setError('Failed to upload file: ' + (err.message || 'Unknown error'));
+    setUploadProgress(0);
+    return null;
+  }
+};
 
-  // Login logic
-  const login = async (email, password) => {
-    setError('');
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, email, password);
-      await fetchUserData(userCred.user);
-      return userCred.user;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    }
-  };
+const value = {
+  currentUser,
+  userRTDBData,
+  isAdmin,
+  loading,
+  error,
+  uploadProgress,
+  setError,
+  login,
+  signup,
+  logout,
+  uploadFile, // New function for Cloudinary uploads
+};
 
-  // Logout logic
-  const logout = async () => {
-    await signOut(auth);
-    setCurrentUser(null);
-    setUserRTDBData(null);
-    setIsAdmin(false);
-  };
-
-  const value = {
-    currentUser,
-    userRTDBData,
-    isAdmin,
-    loading,
-    error,
-    setError,
-    login,
-    signup,
-    logout,
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+return (
+  <AuthContext.Provider value={value}>
+    {!loading && children}
+  </AuthContext.Provider>
+);
 };

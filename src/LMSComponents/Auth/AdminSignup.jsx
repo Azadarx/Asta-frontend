@@ -1,8 +1,7 @@
 // src/LMSComponents/Auth/AdminSignup.jsx
 import React, { useState, useEffect } from 'react';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
-import { ref, set } from 'firebase/database';
-import { auth, database } from '../../firebase/config';
+import { auth } from '../../firebase/config';
 import { useNavigate } from 'react-router-dom';
 
 const AdminSignup = () => {
@@ -35,7 +34,6 @@ const AdminSignup = () => {
     return () => unsubscribe();
   }, [navigate]);
 
-  // Modified handleSignup function in AdminSignup.jsx
   const handleSignup = async (e) => {
     e.preventDefault();
 
@@ -64,15 +62,7 @@ const AdminSignup = () => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Store additional user data in Firebase RTDB
-      await set(ref(database, `users/${user.uid}`), {
-        name,
-        email,
-        role: 'student',
-        createdAt: new Date().toISOString()
-      });
-
-      // FIXED: Use the absolute URL with the API_URL base
+      // Store user data in PostgreSQL via API endpoint
       const response = await fetch(`${API_URL}/api/users`, {
         method: 'POST',
         headers: {
@@ -82,7 +72,8 @@ const AdminSignup = () => {
           uid: user.uid,
           name,
           email,
-          role: 'student'
+          role: 'student',
+          created_at: new Date().toISOString()
         }),
         credentials: 'include' // Include credentials for CORS
       });

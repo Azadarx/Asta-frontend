@@ -2,7 +2,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
-import { getStorage } from "firebase/storage";
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCk3nSg0O3uxkwyHFJCfcN9SIu17z3W1Ys",
@@ -15,8 +14,16 @@ export const firebaseConfig = {
   measurementId: "G-05DFTGRJL5"
 };
 
+// Cloudinary configuration
+export const cloudinaryConfig = {
+  cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
+  apiKey: process.env.REACT_APP_CLOUDINARY_API_KEY,
+  apiSecret: process.env.REACT_APP_CLOUDINARY_API_SECRET,
+  uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+};
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
-const storage = getStorage(app);
-export { auth, database, storage };
+
+export { auth, database };

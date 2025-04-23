@@ -1,8 +1,6 @@
 // src/LMSComponents/Admin/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { ref, onValue, remove } from 'firebase/database';
-import { database, storage } from '../../firebase/config';
-import { ref as storageRef, deleteObject } from 'firebase/storage';
+import { auth } from '../../firebase/config';
 import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
 
@@ -13,69 +11,85 @@ const AdminDashboard = ({ user, userData }) => {
     const [students, setStudents] = useState([]);
     const isAdmin = true; // The component only renders if user is admin
 
+    // Base API URL - use environment variable or default to localhost
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     useEffect(() => {
         // Only proceed if we have a user
         if (!user) return;
 
-        // Fetch content
-        const contentRef = ref(database, 'content');
-        const contentUnsub = onValue(contentRef, (snapshot) => {
-            if (snapshot.exists()) {
-                const contentList = [];
-                snapshot.forEach((childSnapshot) => {
-                    contentList.push({
-                        id: childSnapshot.key,
-                        ...childSnapshot.val()
-                    });
+        // Function to fetch content from PostgreSQL
+        const fetchContent = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/content`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${await user.getIdToken()}`,
+                    },
+                    credentials: 'include'
                 });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch content');
+                }
+
+                const contentData = await response.json();
                 // Sort by date (newest first)
-                contentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                setContent(contentList);
-            } else {
-                setContent([]);
+                contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                setContent(contentData);
+            } catch (error) {
+                console.error("Error fetching content:", error);
+            } finally {
+                setLoading(false);
             }
-            setLoading(false);
-        }, (error) => {
-            console.error("Error fetching content:", error);
-            setLoading(false);
-        });
-
-        // Fetch students
-        const usersRef = ref(database, 'users');
-        const usersUnsub = onValue(usersRef, (snapshot) => {
-            if (snapshot.exists()) {
-                const usersList = [];
-                snapshot.forEach((childSnapshot) => {
-                    if (childSnapshot.val().role === 'student') {
-                        usersList.push({
-                            id: childSnapshot.key,
-                            ...childSnapshot.val()
-                        });
-                    }
-                });
-                setStudents(usersList);
-            }
-        }, (error) => {
-            console.error("Error fetching users:", error);
-        });
-
-        return () => {
-            contentUnsub();
-            usersUnsub();
         };
-    }, [user]);
+
+        // Function to fetch students from PostgreSQL
+        const fetchStudents = async () => {
+            try {
+                const response = await fetch(`${API_URL}/api/users?role=student`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${await user.getIdToken()}`,
+                    },
+                    credentials: 'include'
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to fetch students');
+                }
+
+                const studentsData = await response.json();
+                setStudents(studentsData);
+            } catch (error) {
+                console.error("Error fetching students:", error);
+            }
+        };
+
+        // Call fetch functions
+        fetchContent();
+        fetchStudents();
+
+    }, [user, API_URL]);
 
     const handleDeleteContent = async (contentItem) => {
         if (window.confirm(`Are you sure you want to delete "${contentItem.title}"?`)) {
             try {
-                // Delete file from storage
-                const fileRef = storageRef(storage, contentItem.storagePath);
-                await deleteObject(fileRef);
+                // Delete content from PostgreSQL and associated Cloudinary asset
+                const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${await user.getIdToken()}`,
+                    },
+                    credentials: 'include'
+                });
 
-                // Delete content entry from database
-                const contentRef = ref(database, `content/${contentItem.id}`);
-                await remove(contentRef);
+                if (!response.ok) {
+                    throw new Error('Failed to delete content');
+                }
 
+                // Update local state to remove the deleted item
+                setContent(content.filter(item => item.id !== contentItem.id));
                 alert('Content deleted successfully!');
             } catch (error) {
                 console.error('Error deleting content:', error);
@@ -129,7 +143,7 @@ const AdminDashboard = ({ user, userData }) => {
                         <h2 className="text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
                         <p className="text-md text-gray-600">
                             {content.length > 0
-                                ? new Date(content[0].createdAt).toLocaleDateString()
+                                ? new Date(content[0].created_at).toLocaleDateString()
                                 : 'No content yet'}
                         </p>
                     </div>
@@ -164,14 +178,14 @@ const AdminDashboard = ({ user, userData }) => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    ${item.contentType === 'pdf' ? 'bg-red-100 text-red-800' :
-                                                    item.contentType === 'video' ? 'bg-blue-100 text-blue-800' :
+                                                    ${item.content_type === 'pdf' ? 'bg-red-100 text-red-800' :
+                                                    item.content_type === 'video' ? 'bg-blue-100 text-blue-800' :
                                                     'bg-green-100 text-green-800'}`}>
-                                                    {item.contentType}
+                                                    {item.content_type}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(item.createdAt).toLocaleDateString()}
+                                                {new Date(item.created_at).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button
@@ -219,7 +233,7 @@ const AdminDashboard = ({ user, userData }) => {
                                                 <div className="text-sm text-gray-500">{student.email}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(student.createdAt).toLocaleDateString()}
+                                                {new Date(student.created_at).toLocaleDateString()}
                                             </td>
                                         </tr>
                                     ))}

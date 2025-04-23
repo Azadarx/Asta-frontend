@@ -6,6 +6,7 @@ import { auth } from '../firebase/config';
 
 const LMSNavbar = ({ user, userData, isAdmin }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -14,6 +15,36 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
       navigate('/lms/login');
     } catch (error) {
       console.error('Error signing out:', error);
+    }
+  };
+
+  // Cloudinary upload widget handler
+  const openCloudinaryWidget = () => {
+    if (window.cloudinary) {
+      const widget = window.cloudinary.createUploadWidget(
+        {
+          cloudName: 'your-cloud-name', // Replace with your Cloudinary cloud name
+          uploadPreset: 'lms-materials', // Replace with your upload preset
+          folder: 'lms-content',
+          sources: ['local', 'url', 'camera', 'google_drive', 'dropbox'],
+          multiple: true,
+          maxFiles: 10,
+        },
+        (error, result) => {
+          if (!error && result && result.event === 'success') {
+            console.log('Upload successful:', result.info);
+            // You can add additional logic here to save the uploaded file info to your database
+            setIsUploadModalOpen(false);
+          }
+          if (error) {
+            console.error('Upload error:', error);
+          }
+        }
+      );
+      widget.open();
+    } else {
+      console.error('Cloudinary widget not available');
+      alert('Upload functionality is not available at the moment. Please try again later.');
     }
   };
 
@@ -38,21 +69,31 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </Link>
 
             {isAdmin && (
-              <Link
-                to="/lms/admin"
-                className="text-white font-medium hover:text-yellow-300 transition-colors flex items-center"
-              >
-                Admin
-              </Link>
-            )}
+              <>
+                <Link
+                  to="/lms/admin"
+                  className="text-white font-medium hover:text-yellow-300 transition-colors flex items-center"
+                >
+                  Admin
+                </Link>
 
-            {isAdmin && (
-              <Link
-                to="/lms/create-user"
-                className="text-white font-medium hover:text-yellow-300 transition-colors"
-              >
-                Add User
-              </Link>
+                <Link
+                  to="/lms/create-user"
+                  className="text-white font-medium hover:text-yellow-300 transition-colors"
+                >
+                  Add User
+                </Link>
+
+                <button
+                  onClick={openCloudinaryWidget}
+                  className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
+                  title="Add Content"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                  </svg>
+                </button>
+              </>
             )}
 
             <div className="relative ml-3">
@@ -146,32 +187,40 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </Link>
 
             {isAdmin && (
-              <Link
-                to="/lms/admin"
-                className="block py-2 text-blue-900 font-medium"
-                onClick={() => setIsOpen(false)}
-              >
-                Admin
-              </Link>
-            )}
-
-            {isAdmin && (
               <>
-                <button
-                  onClick={() => navigate("/lms/create-user")}
-                  className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                <Link
+                  to="/lms/admin"
+                  className="block py-2 text-blue-900 font-medium"
+                  onClick={() => setIsOpen(false)}
                 >
-                  Add User
-                </button>
-                <button
-                  onClick={() => setModalOpen(true)}
-                  className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition"
-                >
-                  + Add Content
-                </button>
+                  Admin
+                </Link>
+
+                <div className="flex space-x-2 mt-2 mb-2">
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      navigate("/lms/create-user");
+                    }}
+                    className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                  >
+                    Add User
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      openCloudinaryWidget();
+                    }}
+                    className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Content
+                  </button>
+                </div>
               </>
             )}
-
 
             <button
               onClick={handleLogout}
@@ -181,6 +230,14 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Cloudinary Script - Add this to your index.html or load it conditionally */}
+      {isAdmin && (
+        <script
+          src="https://widget.cloudinary.com/v2.0/global/all.js"
+          type="text/javascript"
+        />
       )}
     </nav>
   );

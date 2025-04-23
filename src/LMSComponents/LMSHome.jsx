@@ -39,12 +39,14 @@ const LMSHome = () => {
           setLoading(false);
         });
         
-        // Fetch content
+        // Fetch content with Cloudinary URLs from the database
         const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
           if (snapshot.exists()) {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
+              // Content data now contains Cloudinary URLs directly
+              // No need for additional Firebase Storage operations
               contentList.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val()
@@ -84,7 +86,6 @@ const LMSHome = () => {
   if (isAdmin) {
     return (
       <>
-        {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
         <AdminDashboard user={user} userData={userData} content={content} />
       </>
     );
