@@ -1,5 +1,4 @@
-// src/LMSComponents/LMSNavbar.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/config';
@@ -8,6 +7,8 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
+  const buttonRef = useRef(null);
 
   const handleLogout = async () => {
     try {
@@ -17,6 +18,25 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
       console.error('Error signing out:', error);
     }
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(event.target) &&
+        buttonRef.current && 
+        !buttonRef.current.contains(event.target)
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Cloudinary upload widget handler
   const openCloudinaryWidget = () => {
@@ -86,7 +106,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
 
                 <button
                   onClick={openCloudinaryWidget}
-                  className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors"
+                  className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors shadow-lg"
                   title="Add Content"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,38 +119,48 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             <div className="relative ml-3">
               <div>
                 <button
+                  ref={buttonRef}
                   type="button"
-                  className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-600 focus:ring-white"
+                  className="flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-purple-600 focus:ring-white transition-transform hover:scale-105"
                   onClick={() => setIsOpen(!isOpen)}
                 >
                   <span className="sr-only">Open user menu</span>
-                  <div className="h-8 w-8 rounded-full bg-yellow-300 flex items-center justify-center text-blue-600 font-bold">
+                  <div className="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-300 to-yellow-400 flex items-center justify-center text-blue-700 font-bold shadow-md border-2 border-white">
                     {userData?.name ? userData.name.charAt(0).toUpperCase() : user?.email.charAt(0).toUpperCase()}
                   </div>
                 </button>
               </div>
 
               {isOpen && (
-                <div className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
-                  <div className="px-4 py-2 text-xs text-gray-500">
-                    Signed in as
+                <div 
+                  ref={dropdownRef}
+                  className="origin-top-right absolute right-0 mt-3 w-56 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 overflow-hidden transform transition-all duration-200 ease-in-out"
+                >
+                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 text-white">
+                    <p className="text-xs font-medium uppercase tracking-wider">Signed in as</p>
+                    <p className="text-sm font-medium truncate">{user?.email}</p>
                   </div>
-                  <div className="px-4 py-2 text-sm text-gray-700 truncate border-b">
-                    {user?.email}
+                  <div className="py-1">
+                    <Link
+                      to="/lms/profile"
+                      className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      Your Profile
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      </svg>
+                      Sign out
+                    </button>
                   </div>
-                  <Link
-                    to="/lms/profile"
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    Your Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
                 </div>
               )}
             </div>
@@ -158,7 +188,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t">
+        <div className="md:hidden bg-white border-t shadow-lg">
           <div className="container mx-auto px-4 py-2">
             <div className="px-4 py-2 text-sm text-gray-700 border-b">
               Signed in as: {user?.email}
@@ -202,7 +232,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                       setIsOpen(false);
                       navigate("/lms/create-user");
                     }}
-                    className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition"
+                    className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition shadow-md"
                   >
                     Add User
                   </button>
@@ -211,7 +241,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                       setIsOpen(false);
                       openCloudinaryWidget();
                     }}
-                    className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center"
+                    className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center shadow-md"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -224,7 +254,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
 
             <button
               onClick={handleLogout}
-              className="block w-full text-left py-2 text-blue-900 font-medium"
+              className="block w-full text-left py-2 text-red-600 font-medium"
             >
               Sign out
             </button>

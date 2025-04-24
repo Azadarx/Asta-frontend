@@ -4,7 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
-import LMSNavbar from './LMSNavbar';
+// import LMSNavbar from './LMSNavbar';
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
@@ -42,7 +42,7 @@ const UserProfile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <LMSNavbar user={user} userData={userData} />
+        {/* <LMSNavbar user={user} userData={userData} /> */}
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -52,7 +52,7 @@ const UserProfile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <LMSNavbar user={user} userData={userData} />
+      {/* <LMSNavbar user={user} userData={userData} /> */}
       
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
