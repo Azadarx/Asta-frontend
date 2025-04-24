@@ -42,40 +42,40 @@ const ContentUploadModal = ({ onClose, user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!title.trim()) {
       setError('Title is required');
       return;
     }
-  
+
     if (!file) {
       setError('Please select a file to upload');
       return;
     }
-  
+
     setIsUploading(true);
     setError('');
-    
+
     try {
       // Start progress simulation
       const progressInterval = simulateProgress();
-      
+
       // Call uploadFile from AuthContext (Cloudinary logic)
       const result = await uploadFile(file);
-      
+
       // Stop progress simulation
       clearInterval(progressInterval);
       setUploadProgress(100);
-      
+
       if (!result || !result.secureUrl) {
         throw new Error('Upload failed');
       }
       // Generate a unique ID for the content
       const contentId = Date.now().toString();
-      
+
       // Determine content type from file MIME type
       const contentType = allowedTypes[file.type];
-      
+
       // Prepare content object
       const contentObj = {
         title,
@@ -92,14 +92,15 @@ const ContentUploadModal = ({ onClose, user }) => {
         createdByEmail: user.email,
         firebaseId: contentId
       };
-      
+
       // Save metadata in Firebase RTDB
       const contentRef = ref(rtdb, `content/${contentId}`);
       await set(contentRef, contentObj);
-      
+
       // Also save to PostgreSQL via API
-      await axios.post('/api/lms/content', contentObj);
-      
+      const API_URL = import.meta.env.VITE_API_URL;
+      await axios.post(`${API_URL}/api/lms/content`, contentObj);
+
       // Close modal after successful upload
       onClose();
     } catch (error) {
