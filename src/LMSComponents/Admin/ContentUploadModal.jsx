@@ -176,7 +176,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
       await set(contentRef, contentObj);
       
       // Also save to PostgreSQL via API
-      await axios.post(`${API_URL}/api/content`, contentObj, {
+      await axios.post(`${API_URL}/api/lms/content`, contentObj, {
         headers: {
           'Authorization': `Bearer ${await user.getIdToken()}`
         },

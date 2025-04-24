@@ -148,7 +148,7 @@ const AdminDashboard = ({ user, userData }) => {
     const fetchContent = async () => {
         try {
             // Try to fetch from API first
-            const response = await fetch(`${API_URL}/api/content`, {
+            const response = await fetch(`${API_URL}/api/lms/content`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${await user.getIdToken()}`,
@@ -232,7 +232,7 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 1: Try to delete from PostgreSQL first
             try {
-                const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
+                const response = await fetch(`${API_URL}/api/lms/content/${contentItem.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${await user.getIdToken()}`,
