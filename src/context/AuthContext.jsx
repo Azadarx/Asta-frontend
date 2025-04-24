@@ -11,7 +11,7 @@ import {
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase/config';
-import { uploadToCloudinary, getCloudinaryFolder } from '../utils/cloudinaryUtils';
+// import { uploadToCloudinary, getCloudinaryFolder } from '../utils/cloudinaryUtils';
 
 // Initialize Firebase app
 const app = initializeApp(firebaseConfig);
