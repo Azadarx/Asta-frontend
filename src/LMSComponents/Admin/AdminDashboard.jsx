@@ -302,12 +302,12 @@ const AdminDashboard = ({ user, userData }) => {
                                                 >
                                                     Delete
                                                 </button>
-                                                <button
-                                                    onClick={() => navigate(`/lms/admin/edit/${item.id}`)}
+                                                <Link
+                                                    to={`/lms/admin/edit/${item.id}`}
                                                     className="text-blue-600 hover:text-blue-900"
                                                 >
                                                     Edit
-                                                </button>
+                                                </Link>
                                             </td>
                                         </tr>
                                     ))}

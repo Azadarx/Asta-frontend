@@ -28,7 +28,7 @@ import UserProfile from "./LMSComponents/UserProfile";
 import MyProfile from "./LMSComponents/MyProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
-// import EditContent from "./LMSComponents/Admin/EditContent";
+import EditContent from "./LMSComponents/Admin/EditContent";
 
 // Helper to hide Nav/Footer on LMS routes
 const LayoutWrapper = ({ children }) => {
@@ -172,14 +172,14 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* <Route
+        <Route
           path="/lms/admin/edit/"
           element={
             <ProtectedRoute>
               <EditContent />
             </ProtectedRoute>
           }
-        /> */}
+        />
         <Route
           path="/lms/my-profile"
           element={
