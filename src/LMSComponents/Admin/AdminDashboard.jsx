@@ -1,6 +1,7 @@
 // src/LMSComponents/Admin/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
-import { auth } from '../../firebase/config';
+import { auth, database } from '../../firebase/config';
+import { ref, onValue } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 // import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
@@ -36,9 +37,41 @@ const AdminDashboard = ({ user, userData }) => {
         }
     }, [user, navigate]);
 
+    // Function to fetch content from Firebase RTDB as a fallback
+    const fetchContentFromFirebase = () => {
+        const contentRef = ref(database, 'content');
+        onValue(contentRef, (snapshot) => {
+            if (snapshot.exists()) {
+                const contentList = [];
+                snapshot.forEach((childSnapshot) => {
+                    contentList.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    });
+                });
+                
+                // Sort by date (newest first)
+                contentList.sort((a, b) => {
+                    const dateA = new Date(a.createdAt || 0);
+                    const dateB = new Date(b.createdAt || 0);
+                    return dateB - dateA;
+                });
+                
+                setContent(contentList);
+            } else {
+                setContent([]);
+            }
+            setLoading(false);
+        }, (error) => {
+            console.error("Error fetching content from Firebase:", error);
+            setLoading(false);
+        });
+    };
+
     // Function to fetch content from PostgreSQL
     const fetchContent = async () => {
         try {
+            // Try to fetch from API first
             const response = await fetch(`${API_URL}/api/content`, {
                 method: 'GET',
                 headers: {
@@ -48,23 +81,25 @@ const AdminDashboard = ({ user, userData }) => {
             });
 
             if (!response.ok) {
-                throw new Error('Failed to fetch content');
+                throw new Error('Failed to fetch content from API');
             }
 
             const contentData = await response.json();
             // Sort by date (newest first)
             contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setContent(contentData);
-        } catch (error) {
-            console.error("Error fetching content:", error);
-        } finally {
             setLoading(false);
+        } catch (error) {
+            console.error("Error fetching content from API:", error);
+            // Fallback to Firebase if API fails
+            fetchContentFromFirebase();
         }
     };
 
-    // Function to fetch students from PostgreSQL
+    // Function to fetch students
     const fetchStudents = async () => {
         try {
+            // Try to fetch from API first
             const response = await fetch(`${API_URL}/api/users?role=student`, {
                 method: 'GET',
                 headers: {
@@ -81,24 +116,35 @@ const AdminDashboard = ({ user, userData }) => {
             setStudents(studentsData);
         } catch (error) {
             console.error("Error fetching students:", error);
+            // You might want to add a fallback for students as well
+            // For now, we'll just set an empty array
+            setStudents([]);
         }
     };
 
     const handleDeleteContent = async (contentItem) => {
         if (window.confirm(`Are you sure you want to delete "${contentItem.title}"?`)) {
             try {
-                // Delete content from PostgreSQL and associated Cloudinary asset
-                const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Authorization': `Bearer ${await user.getIdToken()}`,
-                    },
-                    credentials: 'include'
-                });
+                // Try to delete from PostgreSQL first
+                try {
+                    const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${await user.getIdToken()}`,
+                        },
+                        credentials: 'include'
+                    });
 
-                if (!response.ok) {
-                    throw new Error('Failed to delete content');
+                    if (!response.ok) {
+                        throw new Error('Failed to delete content from API');
+                    }
+                } catch (apiError) {
+                    console.error('Error deleting from API:', apiError);
                 }
+
+                // Also delete from Firebase RTDB as a fallback or additional step
+                const contentRef = ref(database, `content/${contentItem.id || contentItem.firebaseId}`);
+                await ref(contentRef).remove();
 
                 // Update local state to remove the deleted item
                 setContent(content.filter(item => item.id !== contentItem.id));
@@ -159,7 +205,7 @@ const AdminDashboard = ({ user, userData }) => {
                         <h2 className="text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
                         <p className="text-md text-gray-600">
                             {content.length > 0
-                                ? new Date(content[0].created_at).toLocaleDateString()
+                                ? new Date(content[0].created_at || content[0].createdAt).toLocaleDateString()
                                 : 'No content yet'}
                         </p>
                     </div>
@@ -188,20 +234,20 @@ const AdminDashboard = ({ user, userData }) => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {content.map((item) => (
-                                        <tr key={item.id}>
+                                        <tr key={item.id || item.firebaseId}>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm font-medium text-gray-900">{item.title}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    ${item.content_type === 'pdf' ? 'bg-red-100 text-red-800' :
-                                                        item.content_type === 'video' ? 'bg-blue-100 text-blue-800' :
+                                                    ${(item.content_type || item.contentType) === 'pdf' ? 'bg-red-100 text-red-800' :
+                                                        (item.content_type || item.contentType) === 'video' ? 'bg-blue-100 text-blue-800' :
                                                             'bg-green-100 text-green-800'}`}>
-                                                    {item.content_type}
+                                                    {item.content_type || item.contentType}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(item.created_at).toLocaleDateString()}
+                                                {new Date(item.created_at || item.createdAt).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button
