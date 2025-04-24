@@ -4,7 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ref, get } from 'firebase/database';
 import { database as rtdb } from '../../firebase/config';
-import StudentDetailsModal from './StudentDetailsModal';
+import StudentDetailsModal from './StudentDetailsPage';
 import axios from 'axios';
 
 const StudentDetailsPage = () => {
