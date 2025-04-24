@@ -83,7 +83,7 @@ const ContentUploadModal = ({ onClose, user }) => {
         fileUrl: result.secureUrl,
         fileName: file.name,
         fileSize: file.size,
-        contentType: contentType,
+        contentType,
         fileType: file.type,
         createdAt: new Date().toISOString(),
         uploadedBy: user.uid,
