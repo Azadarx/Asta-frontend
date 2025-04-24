@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, database } from '../../firebase/config';
 import { ref, onValue, remove } from 'firebase/database';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 // import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
 import DeleteModal from './DeleteModal';
