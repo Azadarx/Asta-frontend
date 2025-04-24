@@ -94,17 +94,17 @@ const AdminSignup = () => {
       // Create a secondary app just for user registration
       const secondaryApp = initializeApp(firebaseConfig, "secondaryApp");
       const secondaryAuth = getAuth(secondaryApp);
-      
+
       // Create user with the secondary app
       const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
       const newUser = userCredential.user;
-      
+
       // Immediately sign out from the secondary app to avoid affecting main session
       await secondaryAuth.signOut();
 
       // Create user in your PostgreSQL database via your backend
       const dbResponse = await axios.post(`${API_URL}/api/users`, {
-        id: newUser.uid,
+        uid: newUser.uid,
         name,
         email,
         role: 'student'
@@ -144,7 +144,7 @@ const AdminSignup = () => {
     } catch (error) {
       console.error('Signup error:', error);
       if (error.code === 'auth/email-already-in-use') {
-        setError('Email is already in use');
+        setError(error.message || 'Email is already in use');
       } else {
         setError('Error creating account: ' + (error.message || error));
       }

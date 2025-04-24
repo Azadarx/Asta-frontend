@@ -1,27 +1,28 @@
-// src/firebase/config.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
+// Firebase configuration from .env
 export const firebaseConfig = {
-  apiKey: "AIzaSyCk3nSg0O3uxkwyHFJCfcN9SIu17z3W1Ys",
-  authDomain: "phonicslms.firebaseapp.com",
-  projectId: "phonicslms",
-  databaseURL: "https://phonicslms-default-rtdb.firebaseio.com", 
-  storageBucket: "phonicslms.appspot.com",
-  messagingSenderId: "421236695837",
-  appId: "1:421236695837:web:28732b5f99a80f24a237f4",
-  measurementId: "G-05DFTGRJL5"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Cloudinary configuration
+// Cloudinary configuration from .env
 export const cloudinaryConfig = {
-  cloudName: process.env.REACT_APP_CLOUDINARY_CLOUD_NAME,
-  apiKey: process.env.REACT_APP_CLOUDINARY_API_KEY,
-  apiSecret: process.env.REACT_APP_CLOUDINARY_API_SECRET,
-  uploadPreset: process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+  apiKey: import.meta.env.VITE_CLOUDINARY_API_KEY,
+  apiSecret: import.meta.env.VITE_CLOUDINARY_API_SECRET,
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET
 };
 
+// Firebase init
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
