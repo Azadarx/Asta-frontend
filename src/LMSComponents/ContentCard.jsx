@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo, FaExternalLinkAlt, FaTrash } from 'react-icons/fa';
 
-const ContentCard = ({ content, isAdmin = false, onDelete }) => {
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
+const ContentCard = ({ content, isAdmin = false }) => {
+  // const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getFileIcon = () => {
     const fileType = content.fileType || content.file_type;
@@ -34,20 +34,20 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
+  // const handleDeleteClick = () => {
+  //   setShowDeleteModal(true);
+  // };
 
-  const confirmDelete = () => {
-    if (onDelete && typeof onDelete === 'function') {
-      onDelete(content.id);
-    }
-    setShowDeleteModal(false);
-  };
+  // const confirmDelete = () => {
+  //   if (onDelete && typeof onDelete === 'function') {
+  //     onDelete(content.id);
+  //   }
+  //   setShowDeleteModal(false);
+  // };
 
-  const cancelDelete = () => {
-    setShowDeleteModal(false);
-  };
+  // const cancelDelete = () => {
+  //   setShowDeleteModal(false);
+  // };
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
@@ -60,7 +60,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
             <h3 className="text-lg font-semibold text-gray-800">{content.title}</h3>
             <p className="text-sm text-gray-500 mt-1">Added on {formatDate(content.createdAt || content.created_at)}</p>
           </div>
-          {isAdmin && (
+          {/* {isAdmin && (
             <button 
               onClick={handleDeleteClick}
               className="text-red-500 hover:text-red-700 transition-colors"
@@ -69,7 +69,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
             >
               <FaTrash />
             </button>
-          )}
+          )} */}
         </div>
 
         <div className="mb-4">
@@ -99,7 +99,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
       </div>
 
       {/* Custom Delete Modal */}
-      {showDeleteModal && (
+      {/* {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md w-full">
             <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
@@ -120,7 +120,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

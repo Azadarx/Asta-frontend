@@ -119,11 +119,11 @@ const Materials = () => {
     }));
   };
 
-  const handleDeleteContent = (contentId) => {
-    console.log("Deleting content with ID:", contentId);
-    // Implement your delete logic here
-    // This function would typically call a Firebase function to delete the content
-  };
+  // const handleDeleteContent = (contentId) => {
+  //   console.log("Deleting content with ID:", contentId);
+  //   // Implement your delete logic here
+  //   // This function would typically call a Firebase function to delete the content
+  // };
 
   const getFilterIcon = (filterType) => {
     switch (filterType) {
@@ -322,8 +322,6 @@ const Materials = () => {
                         <ContentCard 
                           key={item.id} 
                           content={item}
-                          isAdmin={userData?.role === 'admin'}
-                          onDelete={handleDeleteContent}
                         />
                       ))}
                     </div>
@@ -334,8 +332,6 @@ const Materials = () => {
                   <div className="p-4 border-t border-gray-100">
                     <ContentCard 
                       content={items[0]}
-                      isAdmin={userData?.role === 'admin'}
-                      onDelete={handleDeleteContent}
                     />
                     {items.length > 1 && (
                       <div className="mt-3 text-center">
