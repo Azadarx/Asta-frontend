@@ -1,10 +1,11 @@
 // src/LMSComponents/Admin/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { auth, database } from '../../firebase/config';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, remove } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
 // import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
+import DeleteModal from './DeleteModal';
 
 const AdminDashboard = ({ user, userData }) => {
     const [content, setContent] = useState([]);
@@ -12,6 +13,10 @@ const AdminDashboard = ({ user, userData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [students, setStudents] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [deleteModal, setDeleteModal] = useState({
+        isOpen: false,
+        itemToDelete: null,
+    });
     const navigate = useNavigate();
 
     // Base API URL - use environment variable or default to localhost
@@ -46,17 +51,18 @@ const AdminDashboard = ({ user, userData }) => {
                 snapshot.forEach((childSnapshot) => {
                     contentList.push({
                         id: childSnapshot.key,
+                        firebaseId: childSnapshot.key, // Store Firebase key separately
                         ...childSnapshot.val()
                     });
                 });
-                
+
                 // Sort by date (newest first)
                 contentList.sort((a, b) => {
                     const dateA = new Date(a.createdAt || 0);
                     const dateB = new Date(b.createdAt || 0);
                     return dateB - dateA;
                 });
-                
+
                 setContent(contentList);
             } else {
                 setContent([]);
@@ -122,37 +128,80 @@ const AdminDashboard = ({ user, userData }) => {
         }
     };
 
-    const handleDeleteContent = async (contentItem) => {
-        if (window.confirm(`Are you sure you want to delete "${contentItem.title}"?`)) {
+    const openDeleteModal = (contentItem) => {
+        setDeleteModal({
+            isOpen: true,
+            itemToDelete: contentItem,
+        });
+    };
+
+    const closeDeleteModal = () => {
+        setDeleteModal({
+            isOpen: false,
+            itemToDelete: null,
+        });
+    };
+
+    const confirmDelete = async () => {
+        if (!deleteModal.itemToDelete) return;
+
+        const contentItem = deleteModal.itemToDelete;
+
+        try {
+            setLoading(true);
+
+            // Step 1: Try to delete from PostgreSQL first
             try {
-                // Try to delete from PostgreSQL first
-                try {
-                    const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
-                        method: 'DELETE',
-                        headers: {
-                            'Authorization': `Bearer ${await user.getIdToken()}`,
-                        },
-                        credentials: 'include'
-                    });
+                const response = await fetch(`${API_URL}/api/content/${contentItem.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${await user.getIdToken()}`,
+                    },
+                    credentials: 'include'
+                });
 
-                    if (!response.ok) {
-                        throw new Error('Failed to delete content from API');
-                    }
-                } catch (apiError) {
-                    console.error('Error deleting from API:', apiError);
+                if (!response.ok) {
+                    console.warn('PostgreSQL delete failed, trying Firebase');
                 }
-
-                // Also delete from Firebase RTDB as a fallback or additional step
-                const contentRef = ref(database, `content/${contentItem.id || contentItem.firebaseId}`);
-                await ref(contentRef).remove();
-
-                // Update local state to remove the deleted item
-                setContent(content.filter(item => item.id !== contentItem.id));
-                alert('Content deleted successfully!');
-            } catch (error) {
-                console.error('Error deleting content:', error);
-                alert('Error deleting content. Please try again.');
+            } catch (apiError) {
+                console.error('Error deleting from API:', apiError);
             }
+
+            // Step 2: Also delete from Firebase RTDB (always do this as a fallback)
+            const firebaseId = contentItem.firebaseId || contentItem.id;
+            const contentRef = ref(database, `content/${firebaseId}`);
+            await remove(contentRef);
+
+            // Step 3: Update local state to remove the deleted item
+            setContent(content.filter(item => item.id !== contentItem.id));
+
+            // Close modal and show success message
+            closeDeleteModal();
+
+            // Use a non-blocking notification instead of alert
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50';
+            notification.textContent = 'Content deleted successfully!';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+
+        } catch (error) {
+            console.error('Error deleting content:', error);
+
+            // Show error notification
+            const errorNotification = document.createElement('div');
+            errorNotification.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50';
+            errorNotification.textContent = 'Error deleting content. Please try again.';
+            document.body.appendChild(errorNotification);
+
+            setTimeout(() => {
+                errorNotification.remove();
+            }, 3000);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -232,18 +281,16 @@ const AdminDashboard = ({ user, userData }) => {
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
+                                // Continuing from where the code was cut off
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {content.map((item) => (
-                                        <tr key={item.id || item.firebaseId}>
+                                        <tr key={item.id}>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm font-medium text-gray-900">{item.title}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                                    ${(item.content_type || item.contentType) === 'pdf' ? 'bg-red-100 text-red-800' :
-                                                        (item.content_type || item.contentType) === 'video' ? 'bg-blue-100 text-blue-800' :
-                                                            'bg-green-100 text-green-800'}`}>
-                                                    {item.content_type || item.contentType}
+                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                                    {item.contentType}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -251,10 +298,16 @@ const AdminDashboard = ({ user, userData }) => {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button
-                                                    onClick={() => handleDeleteContent(item)}
-                                                    className="text-red-600 hover:text-red-900"
+                                                    onClick={() => openDeleteModal(item)}
+                                                    className="text-red-600 hover:text-red-900 mr-4"
                                                 >
                                                     Delete
+                                                </button>
+                                                <button
+                                                    onClick={() => navigate(`/lms/admin/edit/${item.id}`)}
+                                                    className="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    Edit
                                                 </button>
                                             </td>
                                         </tr>
@@ -265,7 +318,7 @@ const AdminDashboard = ({ user, userData }) => {
                     )}
                 </div>
 
-                {/* Student Management */}
+                {/* Student Management Section */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
                     <div className="p-6 bg-gray-50 border-b">
                         <h2 className="text-2xl font-semibold text-gray-800">Student Management</h2>
@@ -273,7 +326,7 @@ const AdminDashboard = ({ user, userData }) => {
 
                     {students.length === 0 ? (
                         <div className="p-6 text-center text-gray-500">
-                            <p>No students registered yet.</p>
+                            <p>No students enrolled yet.</p>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
@@ -282,20 +335,35 @@ const AdminDashboard = ({ user, userData }) => {
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {students.map((student) => (
-                                        <tr key={student.id}>
+                                        <tr key={student.id || student.uid}>
                                             <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">{student.name}</div>
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {student.displayName || student.name || 'No Name'}
+                                                </div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-500">{student.email}</div>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(student.created_at).toLocaleDateString()}
+                                                {student.created_at
+                                                    ? new Date(student.created_at).toLocaleDateString()
+                                                    : student.createdAt
+                                                        ? new Date(student.createdAt).toLocaleDateString()
+                                                        : 'Unknown'}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                <button
+                                                    onClick={() => navigate(`/lms/admin/student/${student.id || student.uid}`)}
+                                                    className="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    View Details
+                                                </button>
                                             </td>
                                         </tr>
                                     ))}
@@ -306,12 +374,25 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
             </div>
 
-            {/* Upload Content Modal */}
+            {/* Content Upload Modal */}
             {isModalOpen && (
                 <ContentUploadModal
+                    isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
+                    onContentAdded={fetchContent}
                     user={user}
-                    onContentUploaded={fetchContent}
+                    API_URL={API_URL}
+                />
+            )}
+
+            {/* Delete Confirmation Modal */}
+            {deleteModal.isOpen && (
+                <DeleteModal
+                    isOpen={deleteModal.isOpen}
+                    onClose={closeDeleteModal}
+                    onConfirm={confirmDelete}
+                    title="Delete Content"
+                    message={`Are you sure you want to delete "${deleteModal.itemToDelete?.title}"? This action cannot be undone.`}
                 />
             )}
         </div>

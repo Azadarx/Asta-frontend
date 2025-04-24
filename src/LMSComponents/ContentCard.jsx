@@ -5,7 +5,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getFileIcon = () => {
-    const fileType = content.fileType;
+    const fileType = content.fileType || content.file_type;
     
     switch (fileType) {
       case 'pdf':
@@ -39,7 +39,9 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
   };
 
   const confirmDelete = () => {
-    onDelete(content.id);
+    if (onDelete && typeof onDelete === 'function') {
+      onDelete(content.id);
+    }
     setShowDeleteModal(false);
   };
 
@@ -56,7 +58,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
           </div>
           <div className="flex-grow">
             <h3 className="text-lg font-semibold text-gray-800">{content.title}</h3>
-            <p className="text-sm text-gray-500 mt-1">Added on {formatDate(content.createdAt)}</p>
+            <p className="text-sm text-gray-500 mt-1">Added on {formatDate(content.createdAt || content.created_at)}</p>
           </div>
           {isAdmin && (
             <button 
@@ -76,12 +78,13 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
 
         <div className="flex justify-between items-center">
           <a
-            href={content.fileUrl}
+            href={content.fileUrl || content.file_url}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
-            {content.fileType === 'pdf' || content.fileType === 'doc' || content.fileType === 'docx' || content.fileType === 'ppt' || content.fileType === 'pptx'
+            {(content.fileType === 'pdf' || content.fileType === 'doc' || content.fileType === 'docx' || content.fileType === 'ppt' || content.fileType === 'pptx' ||
+              content.file_type === 'pdf' || content.file_type === 'doc' || content.file_type === 'docx' || content.file_type === 'ppt' || content.file_type === 'pptx')
               ? 'Download'
               : 'View'}
             <svg className="w-4 h-4 ml-2" fill="currentColor" viewBox="0 0 20 20">

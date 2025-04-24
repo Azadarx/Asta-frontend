@@ -193,49 +193,51 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             <div className="px-4 py-2 text-sm text-gray-700 border-b">
               Signed in as: {user?.email}
             </div>
-            <Link
-              to="/lms/home"
-              className="block py-2 text-blue-900 font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              to="/lms/materials"
-              className="block py-2 text-blue-900 font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Materials
-            </Link>
-
-            <Link
-              to="/lms/profile"
-              className="block py-2 text-blue-900 font-medium"
-              onClick={() => setIsOpen(false)}
-            >
-              Your Profile
-            </Link>
+            <div onClick={() => setIsOpen(false)}>
+              <Link
+                to="/lms/home"
+                className="block py-2 text-blue-900 font-medium"
+              >
+                Home
+              </Link>
+            </div>
+            <div onClick={() => setIsOpen(false)}>
+              <Link
+                to="/lms/materials"
+                className="block py-2 text-blue-900 font-medium"
+              >
+                Materials
+              </Link>
+            </div>
+            <div onClick={() => setIsOpen(false)}>
+              <Link
+                to="/lms/profile"
+                className="block py-2 text-blue-900 font-medium"
+              >
+                Your Profile
+              </Link>
+            </div>
 
             {isAdmin && (
               <>
-                <Link
-                  to="/lms/admin"
-                  className="block py-2 text-blue-900 font-medium"
-                  onClick={() => setIsOpen(false)}
-                >
-                  Admin
-                </Link>
+                <div onClick={() => setIsOpen(false)}>
+                  <Link
+                    to="/lms/admin"
+                    className="block py-2 text-blue-900 font-medium"
+                  >
+                    Admin
+                  </Link>
+                </div>
 
                 <div className="flex space-x-2 mt-2 mb-2">
-                  <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      navigate("/lms/create-user");
-                    }}
-                    className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition shadow-md"
-                  >
-                    Add User
-                  </button>
+                  <div onClick={() => setIsOpen(false)}>
+                    <Link
+                      to="/lms/create-user"
+                      className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition shadow-md inline-block"
+                    >
+                      Add User
+                    </Link>
+                  </div>
                   <button
                     onClick={() => {
                       setIsOpen(false);

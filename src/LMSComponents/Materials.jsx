@@ -4,7 +4,7 @@ import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 import ContentCard from './ContentCard';
-import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo, FaChevronDown } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo, FaChevronDown, FaUser } from 'react-icons/fa';
 
 const Materials = () => {
   const [user, setUser] = useState(null);
@@ -15,6 +15,7 @@ const Materials = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categories, setCategories] = useState({});
   const [expandedCategories, setExpandedCategories] = useState({});
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,8 +81,20 @@ const Materials = () => {
       }
     });
     
-    return () => unsubscribe();
-  }, [navigate]);
+    // Close dropdown when clicking outside
+    const handleClickOutside = (event) => {
+      if (userDropdownOpen && !event.target.closest('.user-dropdown')) {
+        setUserDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    
+    return () => {
+      unsubscribe();
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [navigate, userDropdownOpen]);
 
   // Filter content based on selected type and search term
   const filteredCategories = Object.fromEntries(
@@ -123,6 +136,21 @@ const Materials = () => {
     }
   };
 
+  const handleLogout = () => {
+    auth.signOut()
+      .then(() => {
+        navigate('/lms/login');
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error);
+      });
+  };
+
+  const handleProfileClick = () => {
+    navigate('/lms/profile');
+    setUserDropdownOpen(false);
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -135,6 +163,56 @@ const Materials = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
+      {/* User dropdown in header */}
+      <div className="bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <h1 className="text-xl font-semibold text-blue-600">Learning Management System</h1>
+          
+          {/* User dropdown menu */}
+          <div className="relative user-dropdown">
+            <button 
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white">
+                {userData?.name ? userData.name.charAt(0).toUpperCase() : <FaUser />}
+              </div>
+              <span className="font-medium">{userData?.name || user?.email || 'User'}</span>
+              <FaChevronDown className={`text-gray-500 transition-transform ${userDropdownOpen ? 'transform rotate-180' : ''}`} />
+            </button>
+            
+            {userDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10">
+                <div className="px-4 py-2 border-b">
+                  <p className="text-sm font-medium">{userData?.name || 'User'}</p>
+                  <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+                </div>
+                <button 
+                  onClick={handleProfileClick}
+                  className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                >
+                  Profile
+                </button>
+                {userData?.role === 'admin' && (
+                  <button 
+                    onClick={() => navigate('/lms/admin')}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
+                    Admin Dashboard
+                  </button>
+                )}
+                <button 
+                  onClick={handleLogout}
+                  className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Learning Materials</h2>
