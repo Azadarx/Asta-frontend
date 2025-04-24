@@ -1,6 +1,7 @@
 // src/LMSComponents/Admin/AdminDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import { auth } from '../../firebase/config';
+import { useNavigate } from 'react-router-dom';
 // import LMSNavbar from '../LMSNavbar';
 import ContentUploadModal from './ContentUploadModal';
 
@@ -9,68 +10,79 @@ const AdminDashboard = ({ user, userData }) => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [students, setStudents] = useState([]);
-    const isAdmin = true; // The component only renders if user is admin
+    const [isAdmin, setIsAdmin] = useState(false);
+    const navigate = useNavigate();
 
     // Base API URL - use environment variable or default to localhost
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     useEffect(() => {
-        // Only proceed if we have a user
-        if (!user) return;
+        // Check if user is admin
+        if (user && user.email.toLowerCase() === 'inspiringshereen@gmail.com'.toLowerCase()) {
+            setIsAdmin(true);
+        } else if (user) {
+            // If logged in but not admin, redirect to LMS home
+            navigate('/lms/home');
+        } else {
+            // If not logged in, redirect to login
+            navigate('/lms/login');
+            return;
+        }
 
-        // Function to fetch content from PostgreSQL
-        const fetchContent = async () => {
-            try {
-                const response = await fetch(`${API_URL}/api/content`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${await user.getIdToken()}`,
-                    },
-                    credentials: 'include'
-                });
+        // Only fetch data if we have a valid user
+        if (user) {
+            fetchContent();
+            fetchStudents();
+        }
+    }, [user, navigate]);
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch content');
-                }
+    // Function to fetch content from PostgreSQL
+    const fetchContent = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/content`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${await user.getIdToken()}`,
+                },
+                credentials: 'include'
+            });
 
-                const contentData = await response.json();
-                // Sort by date (newest first)
-                contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                setContent(contentData);
-            } catch (error) {
-                console.error("Error fetching content:", error);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error('Failed to fetch content');
             }
-        };
 
-        // Function to fetch students from PostgreSQL
-        const fetchStudents = async () => {
-            try {
-                const response = await fetch(`${API_URL}/api/users?role=student`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${await user.getIdToken()}`,
-                    },
-                    credentials: 'include'
-                });
+            const contentData = await response.json();
+            // Sort by date (newest first)
+            contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            setContent(contentData);
+        } catch (error) {
+            console.error("Error fetching content:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch students');
-                }
+    // Function to fetch students from PostgreSQL
+    const fetchStudents = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/users?role=student`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${await user.getIdToken()}`,
+                },
+                credentials: 'include'
+            });
 
-                const studentsData = await response.json();
-                setStudents(studentsData);
-            } catch (error) {
-                console.error("Error fetching students:", error);
+            if (!response.ok) {
+                throw new Error('Failed to fetch students');
             }
-        };
 
-        // Call fetch functions
-        fetchContent();
-        fetchStudents();
-
-    }, [user, API_URL]);
+            const studentsData = await response.json();
+            setStudents(studentsData);
+        } catch (error) {
+            console.error("Error fetching students:", error);
+        }
+    };
 
     const handleDeleteContent = async (contentItem) => {
         if (window.confirm(`Are you sure you want to delete "${contentItem.title}"?`)) {
@@ -107,6 +119,10 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
             </div>
         );
+    }
+
+    if (!isAdmin) {
+        return <div className="p-8 text-center">Checking permissions...</div>;
     }
 
     return (
@@ -179,8 +195,8 @@ const AdminDashboard = ({ user, userData }) => {
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
                                                     ${item.content_type === 'pdf' ? 'bg-red-100 text-red-800' :
-                                                    item.content_type === 'video' ? 'bg-blue-100 text-blue-800' :
-                                                    'bg-green-100 text-green-800'}`}>
+                                                        item.content_type === 'video' ? 'bg-blue-100 text-blue-800' :
+                                                            'bg-green-100 text-green-800'}`}>
                                                     {item.content_type}
                                                 </span>
                                             </td>
@@ -249,6 +265,7 @@ const AdminDashboard = ({ user, userData }) => {
                 <ContentUploadModal
                     onClose={() => setIsModalOpen(false)}
                     user={user}
+                    onContentUploaded={fetchContent}
                 />
             )}
         </div>

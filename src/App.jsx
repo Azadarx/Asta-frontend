@@ -24,6 +24,8 @@ import AdminSignup from "./LMSComponents/Auth/AdminSignup";
 import LMSHome from "./LMSComponents/LMSHome";
 import Materials from "./LMSComponents/Materials";
 import AdminDashboard from "./LMSComponents/Admin/AdminDashboard";
+import UserProfile from "./LMSComponents/UserProfile";
+import MyProfile from "./LMSComponents/MyProfile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
 
@@ -162,6 +164,22 @@ function App() {
           }
         />
         <Route
+          path="/lms/profile"
+          element={
+            <ProtectedRoute>
+              <UserProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/my-profile"
+          element={
+            <ProtectedRoute>
+              <MyProfile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/lms/create-user"
           element={
             <ProtectedRoute adminOnly={true}>
@@ -194,6 +212,5 @@ function App() {
     </Router>
   );
 }
-
 
 export default App;

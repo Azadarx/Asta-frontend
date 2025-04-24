@@ -1,6 +1,8 @@
 // src/LMSComponents/Auth/AdminSignup.jsx
 import React, { useState, useEffect } from 'react';
-import { createUserWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
+import { initializeApp } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../../firebase/config';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -13,6 +15,9 @@ const AdminSignup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [countdown, setCountdown] = useState(10);
+  const [createdUserEmail, setCreatedUserEmail] = useState('');
   const navigate = useNavigate();
 
   // Base API URL - use environment variable or default to localhost
@@ -34,6 +39,17 @@ const AdminSignup = () => {
 
     return () => unsubscribe();
   }, [navigate]);
+
+  // Countdown timer for success page
+  useEffect(() => {
+    let timer;
+    if (showSuccess && countdown > 0) {
+      timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+    } else if (showSuccess && countdown === 0) {
+      navigate('/lms/home');
+    }
+    return () => clearTimeout(timer);
+  }, [showSuccess, countdown, navigate]);
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -59,33 +75,66 @@ const AdminSignup = () => {
     setError('');
 
     try {
-      // Create user in Firebase Auth
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      // Get the admin token for backend requests
+      const adminToken = await auth.currentUser.getIdToken();
 
-      // Store user data in PostgreSQL via API endpoint
-      const response = await axios.post(`${API_URL}/api/users`, {
-        method: 'POST',
+      // Initialize a separate Firebase app instance for user creation
+      // We're using the same config but with a different app name
+      const firebaseConfig = {
+        // Use the same config as your main app
+        // This is just a reference - you'll use your actual Firebase config
+        apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+        authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+        projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+        storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+        messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+        appId: import.meta.env.VITE_FIREBASE_APP_ID
+      };
+
+      // Create a secondary app just for user registration
+      const secondaryApp = initializeApp(firebaseConfig, "secondaryApp");
+      const secondaryAuth = getAuth(secondaryApp);
+      
+      // Create user with the secondary app
+      const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+      const newUser = userCredential.user;
+      
+      // Immediately sign out from the secondary app to avoid affecting main session
+      await secondaryAuth.signOut();
+
+      // Create user in your PostgreSQL database via your backend
+      const dbResponse = await axios.post(`${API_URL}/api/users`, {
+        id: newUser.uid,
+        name,
+        email,
+        role: 'student'
+      }, {
         headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          uid: user.uid,
-          name,
-          email,
-          role: 'student',
-          created_at: new Date().toISOString()
-        }),
-        credentials: 'include' // Include credentials for CORS
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to save user to database');
+      if (dbResponse.status !== 201) {
+        throw new Error('Failed to create user in database');
       }
 
-      // Success message
-      alert(`User account created successfully for ${email}`);
+      // Send welcome email
+      await axios.post(`${API_URL}/api/send-welcome-email`, {
+        name,
+        email,
+        password
+      }, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      // Save created user email for success message
+      setCreatedUserEmail(email);
+      setShowSuccess(true);
+      setCountdown(10);
 
       // Clear form
       setEmail('');
@@ -99,14 +148,50 @@ const AdminSignup = () => {
       } else {
         setError('Error creating account: ' + (error.message || error));
       }
-
-      // If there was an error with the PostgreSQL database but the Firebase user was created,
-      // we should consider cleaning up the Firebase user
-      // This would require additional logic and potentially a backend endpoint
     } finally {
       setLoading(false);
     }
   };
+
+  // If showing success UI
+  if (showSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100">
+        <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md text-center">
+          <div className="mb-4">
+            <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
+              <svg className="h-10 w-10 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">Account Created Successfully!</h2>
+          <p className="text-gray-600 mb-6">
+            Student account for <span className="font-medium">{createdUserEmail}</span> has been created.
+            <br />
+            Redirecting to LMS Home in <span className="font-bold">{countdown}</span> seconds...
+          </p>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => {
+                setShowSuccess(false);
+                setCountdown(10);
+              }}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              Create Another Account
+            </button>
+            <button
+              onClick={() => navigate('/lms/admin')}
+              className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            >
+              Go to Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAdmin) {
     return <div className="p-8 text-center">Checking permissions...</div>;

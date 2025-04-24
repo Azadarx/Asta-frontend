@@ -3,8 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
-import { useNavigate } from 'react-router-dom';
-// import LMSNavbar from './LMSNavbar';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LMSNavbar from './LMSNavbar';
 import ContentCard from './ContentCard';
 import AdminDashboard from './Admin/AdminDashboard';
 
@@ -15,6 +15,10 @@ const LMSHome = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if we're on the admin page
+  const isAdminPage = location.pathname === '/lms/admin';
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -25,6 +29,12 @@ const LMSHome = () => {
         const adminStatus = currentUser.email.toLowerCase() === 'inspiringshereen@gmail.com'.toLowerCase();
         setIsAdmin(adminStatus);
         console.log("Admin status:", adminStatus); // Debug log
+
+        // If we're on admin page but user is not admin, redirect
+        if (isAdminPage && !adminStatus) {
+          navigate('/lms/home');
+          return;
+        }
 
         // Fetch user data
         const userRef = ref(database, `users/${currentUser.uid}`);
@@ -46,7 +56,6 @@ const LMSHome = () => {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
               // Content data now contains Cloudinary URLs directly
-              // No need for additional Firebase Storage operations
               contentList.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val()
@@ -69,12 +78,12 @@ const LMSHome = () => {
     });
 
     return () => unsubscribe();
-  }, [navigate]);
+  }, [navigate, isAdminPage]);
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* {!isAdmin && <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />} */}
+        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -82,10 +91,11 @@ const LMSHome = () => {
     );
   }
 
-  // If user is admin, render AdminDashboard
-  if (isAdmin) {
+  // Render AdminDashboard for both /lms/admin and when isAdmin=true on /lms/home
+  if (isAdminPage || isAdmin) {
     return (
       <>
+        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
         <AdminDashboard user={user} userData={userData} content={content} />
       </>
     );
@@ -94,7 +104,7 @@ const LMSHome = () => {
   // For students, show LMSNavbar + content
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
+      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
 
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">

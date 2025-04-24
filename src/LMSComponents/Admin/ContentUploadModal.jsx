@@ -1,21 +1,17 @@
 // src/LMSComponents/Admin/ContentUploadModal.jsx
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ref, set } from 'firebase/database';
+import { ref, set, push } from 'firebase/database';
 import { database as rtdb } from '../../firebase/config';
-
+import axios from 'axios';
 
 const ContentUploadModal = ({ onClose, user }) => {
-
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [file, setFile] = useState(null);
-  // const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState('');
-  const [modalOpen, setModalOpen] = useState(true);
   const { uploadFile, uploadProgress, setUploadProgress } = useAuth();
-
 
   // Allowed file types
   const allowedTypes = {
@@ -59,27 +55,53 @@ const ContentUploadModal = ({ onClose, user }) => {
   
     setIsUploading(true);
     setError('');
-  
+    
     try {
+      // Start progress simulation
+      const progressInterval = simulateProgress();
+      
       // Call uploadFile from AuthContext (Cloudinary logic)
       const result = await uploadFile(file);
-  
+      
+      // Stop progress simulation
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
       if (!result || !result.secureUrl) {
         throw new Error('Upload failed');
       }
-  
-      // Save metadata in Firebase RTDB (optional, or use your backend)
-      const contentRef = ref(rtdb, `content/${Date.now()}`);
-      await set(contentRef, {
+      
+      // Generate a unique ID for the content
+      const contentId = Date.now().toString();
+      
+      // Determine content type from file MIME type
+      const contentType = allowedTypes[file.type];
+      
+      // Prepare content object
+      const contentObj = {
         title,
         description,
         fileUrl: result.secureUrl,
+        fileName: file.name,
+        fileSize: file.size,
+        contentType: contentType,
         fileType: file.type,
         createdAt: new Date().toISOString(),
         uploadedBy: user.uid,
-        uploadedByEmail: user.email
-      });
-  
+        uploadedByEmail: user.email,
+        createdBy: user.uid,
+        createdByEmail: user.email,
+        firebaseId: contentId
+      };
+      
+      // Save metadata in Firebase RTDB
+      const contentRef = ref(rtdb, `content/${contentId}`);
+      await set(contentRef, contentObj);
+      
+      // Also save to PostgreSQL via API
+      await axios.post('/api/lms/content', contentObj);
+      
+      // Close modal after successful upload
       onClose();
     } catch (error) {
       console.error('Error in content upload:', error);
@@ -87,10 +109,8 @@ const ContentUploadModal = ({ onClose, user }) => {
       setIsUploading(false);
     }
   };
-  
 
   // Mock progress updates since we can't track Cloudinary upload progress directly
-  // This simulates progress for UX purposes
   const simulateProgress = () => {
     let progress = 0;
     const interval = setInterval(() => {
@@ -109,7 +129,6 @@ const ContentUploadModal = ({ onClose, user }) => {
     setTitle('');
     setDescription('');
     setFile(null);
-    setModalOpen(false);
     onClose();
   };
 
@@ -204,7 +223,6 @@ const ContentUploadModal = ({ onClose, user }) => {
                 <p className="text-sm text-gray-600 mt-1">Uploading: {uploadProgress}%</p>
               </div>
             )}
-
 
             <div className="flex justify-end space-x-3">
               <button

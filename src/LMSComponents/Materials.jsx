@@ -28,20 +28,25 @@ const Materials = () => {
           }
         });
         
-        // Fetch content with Cloudinary URLs directly from the database
+        // Fetch content from the database
         const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
           if (snapshot.exists()) {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
-              // Content data now contains Cloudinary URLs directly
               contentList.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val()
               });
             });
+            
             // Sort by date (newest first)
-            contentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            contentList.sort((a, b) => {
+              const dateA = new Date(a.createdAt || 0);
+              const dateB = new Date(b.createdAt || 0);
+              return dateB - dateA;
+            });
+            
             setContent(contentList);
           } else {
             // Set empty content array if no content exists
