@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo, FaExternalLinkAlt, FaTrash } from 'react-icons/fa';
 
 const ContentCard = ({ content, isAdmin = false, onDelete }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   const getFileIcon = () => {
     const fileType = content.fileType;
     
@@ -32,10 +34,17 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
 
-  const handleDelete = () => {
-    if (window.confirm(`Are you sure you want to delete "${content.title}"?`)) {
-      onDelete(content.id);
-    }
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    onDelete(content.id);
+    setShowDeleteModal(false);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   return (
@@ -51,7 +60,7 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
           </div>
           {isAdmin && (
             <button 
-              onClick={handleDelete}
+              onClick={handleDeleteClick}
               className="text-red-500 hover:text-red-700 transition-colors"
               aria-label="Delete content"
               title="Delete content"
@@ -85,6 +94,30 @@ const ContentCard = ({ content, isAdmin = false, onDelete }) => {
           </a>
         </div>
       </div>
+
+      {/* Custom Delete Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+            <p className="mb-6">Are you sure you want to delete "<span className="font-semibold">{content.title}</span>"? This action cannot be undone.</p>
+            <div className="flex justify-end space-x-3">
+              <button 
+                onClick={cancelDelete}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

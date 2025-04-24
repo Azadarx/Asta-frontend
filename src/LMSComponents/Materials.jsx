@@ -1,12 +1,10 @@
-// src/LMSComponents/Materials.jsx
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
-// import LMSNavbar from './LMSNavbar';
 import ContentCard from './ContentCard';
-import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo } from 'react-icons/fa';
+import { FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint, FaImage, FaVideo, FaChevronDown } from 'react-icons/fa';
 
 const Materials = () => {
   const [user, setUser] = useState(null);
@@ -15,8 +13,8 @@ const Materials = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const [contentGroups, setContentGroups] = useState({});
-  const [expandedGroup, setExpandedGroup] = useState(null);
+  const [categories, setCategories] = useState({});
+  const [expandedCategories, setExpandedCategories] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -53,7 +51,7 @@ const Materials = () => {
             
             setContent(contentList);
             
-            // Group content by title for dropdown feature
+            // Group content by category
             const groups = {};
             contentList.forEach(item => {
               // Extract the main title without potential numbering or parts
@@ -65,11 +63,11 @@ const Materials = () => {
               groups[baseTitle].push(item);
             });
             
-            setContentGroups(groups);
+            setCategories(groups);
           } else {
             // Set empty content array if no content exists
             setContent([]);
-            setContentGroups({});
+            setCategories({});
           }
           setLoading(false);
         }, (error) => {
@@ -86,14 +84,33 @@ const Materials = () => {
   }, [navigate]);
 
   // Filter content based on selected type and search term
-  const filteredContent = content.filter(item => {
-    const contentTypeMatch = filter === 'all' || item.contentType === filter;
-    const searchMatch = !searchTerm || 
-      item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    return contentTypeMatch && searchMatch;
-  });
+  const filteredCategories = Object.fromEntries(
+    Object.entries(categories).map(([category, items]) => {
+      const filteredItems = items.filter(item => {
+        const contentTypeMatch = filter === 'all' || item.contentType === filter;
+        const searchMatch = !searchTerm || 
+          item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+          (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        return contentTypeMatch && searchMatch;
+      });
+      
+      return [category, filteredItems];
+    }).filter(([_, items]) => items.length > 0)
+  );
+
+  const toggleCategory = (category) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
+  const handleDeleteContent = (contentId) => {
+    console.log("Deleting content with ID:", contentId);
+    // Implement your delete logic here
+    // This function would typically call a Firebase function to delete the content
+  };
 
   const getFilterIcon = (filterType) => {
     switch (filterType) {
@@ -106,58 +123,9 @@ const Materials = () => {
     }
   };
 
-  const toggleGroup = (baseTitle) => {
-    if (expandedGroup === baseTitle) {
-      setExpandedGroup(null);
-    } else {
-      setExpandedGroup(baseTitle);
-    }
-  };
-
-  const renderContentCard = (item) => {
-    // If the item is part of a group with multiple items, show the dropdown
-    const baseTitle = item.title.replace(/\s+\d+$|\s+part\s+\d+$|\s+\(\d+\)$/i, '').trim();
-    const isGrouped = contentGroups[baseTitle] && contentGroups[baseTitle].length > 1;
-    
-    if (isGrouped) {
-      return (
-        <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-          <div className="p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">{baseTitle}</h3>
-            <button 
-              onClick={() => toggleGroup(baseTitle)}
-              className="text-blue-600 hover:text-blue-800 flex items-center mb-4"
-            >
-              {expandedGroup === baseTitle ? 'Hide items' : `Show all ${contentGroups[baseTitle].length} items`}
-              <svg className={`w-4 h-4 ml-1 transform ${expandedGroup === baseTitle ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            
-            {expandedGroup === baseTitle && (
-              <div className="mt-4 space-y-4">
-                {contentGroups[baseTitle].map(groupItem => (
-                  <ContentCard key={groupItem.id} content={groupItem} />
-                ))}
-              </div>
-            )}
-            
-            {expandedGroup !== baseTitle && (
-              <ContentCard content={contentGroups[baseTitle][0]} />
-            )}
-          </div>
-        </div>
-      );
-    }
-    
-    // If not part of a group, just show the regular card
-    return <ContentCard key={item.id} content={item} />;
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        {/* <LMSNavbar user={user} userData={userData} /> */}
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -167,8 +135,6 @@ const Materials = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* <LMSNavbar user={user} userData={userData} /> */}
-      
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-2xl font-bold text-blue-600 mb-4">Learning Materials</h2>
@@ -192,7 +158,7 @@ const Materials = () => {
             </div>
             
             {/* Filter dropdown */}
-            <div className="relative">
+            <div className="relative inline-block">
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
@@ -212,7 +178,7 @@ const Materials = () => {
           </div>
         </div>
         
-        {/* Filter chips/pills */}
+        {/* Filter pills */}
         <div className="flex flex-wrap gap-2 mb-6">
           <button 
             onClick={() => setFilter('all')}
@@ -252,62 +218,61 @@ const Materials = () => {
           </button>
         </div>
         
-        {filteredContent.length === 0 ? (
+        {Object.keys(filteredCategories).length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-6 text-center">
             <p className="text-gray-600">No {filter !== 'all' ? filter : ''} materials available{searchTerm ? ' matching your search' : ''}.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Group content by base title */}
-            {Object.keys(contentGroups).map(baseTitle => {
-              // Filter the group based on current filter and search term
-              const filteredGroup = contentGroups[baseTitle].filter(item => {
-                const contentTypeMatch = filter === 'all' || item.contentType === filter;
-                const searchMatch = !searchTerm || 
-                  item.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                  (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase()));
-                
-                return contentTypeMatch && searchMatch;
-              });
-              
-              if (filteredGroup.length === 0) return null;
-              
-              return (
-                <div key={baseTitle} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-2">{baseTitle}</h3>
-                    
-                    {filteredGroup.length > 1 ? (
-                      <>
-                        <button 
-                          onClick={() => toggleGroup(baseTitle)}
-                          className="text-blue-600 hover:text-blue-800 flex items-center mb-4"
-                        >
-                          {expandedGroup === baseTitle ? 'Hide items' : `Show all ${filteredGroup.length} items`}
-                          <svg className={`w-4 h-4 ml-1 transform ${expandedGroup === baseTitle ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                        
-                        {expandedGroup === baseTitle && (
-                          <div className="mt-4 space-y-4 border-t pt-4">
-                            {filteredGroup.map(groupItem => (
-                              <ContentCard key={groupItem.id} content={groupItem} />
-                            ))}
-                          </div>
-                        )}
-                        
-                        {expandedGroup !== baseTitle && (
-                          <ContentCard content={filteredGroup[0]} />
-                        )}
-                      </>
-                    ) : (
-                      <ContentCard content={filteredGroup[0]} />
-                    )}
+          <div className="space-y-6">
+            {Object.entries(filteredCategories).map(([category, items]) => (
+              <div key={category} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div 
+                  className="p-4 bg-gray-50 border-b cursor-pointer flex justify-between items-center"
+                  onClick={() => toggleCategory(category)}
+                >
+                  <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
+                  <div className="flex items-center">
+                    <span className="text-sm text-gray-500 mr-2">{items.length} item{items.length !== 1 ? 's' : ''}</span>
+                    <FaChevronDown className={`text-gray-500 transition-transform ${expandedCategories[category] ? 'transform rotate-180' : ''}`} />
                   </div>
                 </div>
-              );
-            })}
+                
+                {expandedCategories[category] && (
+                  <div className="p-4">
+                    <div className="space-y-4">
+                      {items.map(item => (
+                        <ContentCard 
+                          key={item.id} 
+                          content={item}
+                          isAdmin={userData?.role === 'admin'}
+                          onDelete={handleDeleteContent}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {!expandedCategories[category] && items.length > 0 && (
+                  <div className="p-4 border-t border-gray-100">
+                    <ContentCard 
+                      content={items[0]}
+                      isAdmin={userData?.role === 'admin'}
+                      onDelete={handleDeleteContent}
+                    />
+                    {items.length > 1 && (
+                      <div className="mt-3 text-center">
+                        <button 
+                          onClick={() => toggleCategory(category)}
+                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                        >
+                          Show {items.length - 1} more item{items.length - 1 !== 1 ? 's' : ''}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
