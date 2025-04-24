@@ -6,15 +6,13 @@
  * @param {string} folder - Optional folder path in Cloudinary
  * @returns {Promise<Object>} - Cloudinary response with URL and other data
  */
-import { v2 as cloudinary } from 'cloudinary';
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-});
 export const uploadToCloudinary = async (file, folder = "lms_uploads") => {
-    const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
-    const uploadPreset = process.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
+    // For client-side uploads, use import.meta.env format for Vite
+    // or process.env.REACT_APP_* for Create React App
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 
+                      import.meta.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 
+                        import.meta.env.REACT_APP_CLOUDINARY_UPLOAD_PRESET;
 
     if (!cloudName || !uploadPreset) {
         throw new Error("Cloudinary configuration is missing");
@@ -40,7 +38,7 @@ export const uploadToCloudinary = async (file, folder = "lms_uploads") => {
         const data = await response.json();
         return {
             publicId: data.public_id,
-            url: data.secure_url,
+            secureUrl: data.secure_url,
             format: data.format,
             resourceType: data.resource_type,
             createdAt: new Date().toISOString()
@@ -78,7 +76,8 @@ export const getCloudinaryFolder = (file) => {
  * @returns {string} - Formatted video player URL
  */
 export const createVideoPlayerUrl = (publicId, options = {}) => {
-    const cloudName = process.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
+    const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 
+                     import.meta.env.REACT_APP_CLOUDINARY_CLOUD_NAME;
 
     // Default video player options
     const defaultOptions = {
@@ -99,4 +98,3 @@ export const createVideoPlayerUrl = (publicId, options = {}) => {
 
     return `https://res.cloudinary.com/${cloudName}/video/upload/${transformString}${publicId}`;
 };
-export { cloudinary };

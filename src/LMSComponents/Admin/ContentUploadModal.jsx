@@ -70,7 +70,6 @@ const ContentUploadModal = ({ onClose, user }) => {
       if (!result || !result.secureUrl) {
         throw new Error('Upload failed');
       }
-      
       // Generate a unique ID for the content
       const contentId = Date.now().toString();
       
