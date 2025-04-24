@@ -119,6 +119,7 @@ const logout = async () => {
   setIsAdmin(false);
 };
 
+
 // Cloudinary upload function
 const uploadFile = async (file, customFolder = null) => {
   setError('');
@@ -133,7 +134,7 @@ const uploadFile = async (file, customFolder = null) => {
     // Determine the appropriate folder based on file type
     const folder = customFolder || getCloudinaryFolder(file);
     
-    // Set progress to simulate upload progress (Cloudinary direct upload doesn't support progress events)
+    // Set progress to simulate upload progress
     setUploadProgress(30);
     
     // Upload to Cloudinary
@@ -141,6 +142,10 @@ const uploadFile = async (file, customFolder = null) => {
     
     setUploadProgress(100);
     
+    // Return without trying to write to Firebase RTDB
+    return result;
+    
+    /* Remove this section that's causing permission issues
     // Optional: Store the file reference in Firebase RTDB if needed
     if (result && result.publicId) {
       const fileRef = ref(rtdb, `userFiles/${currentUser.uid}/${result.publicId.replace(/\//g, '_')}`);
@@ -150,8 +155,7 @@ const uploadFile = async (file, customFolder = null) => {
         uploadedByEmail: currentUser.email,
       });
     }
-    
-    return result;
+    */
   } catch (err) {
     console.error('File upload error:', err);
     setError('Failed to upload file: ' + (err.message || 'Unknown error'));
