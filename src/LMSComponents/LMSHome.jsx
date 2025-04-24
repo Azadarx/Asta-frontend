@@ -4,7 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LMSNavbar from './LMSNavbar';
+// import LMSNavbar from './LMSNavbar';
 import ContentCard from './ContentCard';
 import AdminDashboard from './Admin/AdminDashboard';
 
@@ -83,7 +83,7 @@ const LMSHome = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+        {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
         <div className="flex justify-center items-center h-64">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         </div>
@@ -95,7 +95,7 @@ const LMSHome = () => {
   if (isAdminPage || isAdmin) {
     return (
       <>
-        <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+        {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
         <AdminDashboard user={user} userData={userData} content={content} />
       </>
     );
@@ -104,7 +104,7 @@ const LMSHome = () => {
   // For students, show LMSNavbar + content
   return (
     <div className="min-h-screen bg-gray-50">
-      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
 
       <div className="container mx-auto py-8 px-4">
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
