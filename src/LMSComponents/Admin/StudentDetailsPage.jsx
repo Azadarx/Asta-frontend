@@ -4,8 +4,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { ref, get } from 'firebase/database';
 import { database as rtdb } from '../../firebase/config';
-import StudentDetailsModal from './StudentDetailsPage';
-import axios from 'axios';
 
 const StudentDetailsPage = () => {
   const { id } = useParams();
@@ -75,6 +73,31 @@ const StudentDetailsPage = () => {
     }
   }, [id, user, permissionError]);
 
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  // Get role badge styling based on role
+  const getRoleBadge = (role) => {
+    const roleStyles = {
+      student: "bg-blue-100 text-blue-800",
+      admin: "bg-purple-100 text-purple-800",
+      instructor: "bg-green-100 text-green-800",
+      default: "bg-gray-100 text-gray-800"
+    };
+    
+    return roleStyles[role?.toLowerCase()] || roleStyles.default;
+  };
+
   // Show permission error if user is not admin
   if (permissionError) {
     return (
@@ -142,7 +165,107 @@ const StudentDetailsPage = () => {
         </button>
       </div>
       
-      {student && <StudentDetailsModal student={student} onClose={() => navigate('/lms/admin/content')} />}
+      {student && (
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          {/* Header Section with Avatar */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-8 text-white">
+            <div className="flex flex-col md:flex-row items-center md:items-start">
+              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-blue-800 text-3xl font-bold mb-4 md:mb-0 md:mr-6">
+                {student.firstName?.charAt(0) || student.email?.charAt(0) || 'U'}
+              </div>
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl md:text-3xl font-bold">
+                  {student.firstName ? `${student.firstName} ${student.lastName || ''}` : student.displayName || student.email || 'Unknown User'}
+                </h1>
+                <p className="text-blue-100 mt-1">{student.email}</p>
+                <div className="mt-3">
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getRoleBadge(student.role)}`}>
+                    {student.role || 'Student'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Details Sections */}
+          <div className="p-6">
+            {/* Basic Info Section */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Full Name</p>
+                  <p className="font-medium text-gray-900">
+                    {student.firstName ? `${student.firstName} ${student.lastName || ''}` : student.displayName || 'Not provided'}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Email Address</p>
+                  <p className="font-medium text-gray-900">{student.email || 'Not provided'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Phone Number</p>
+                  <p className="font-medium text-gray-900">{student.phoneNumber || 'Not provided'}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">User ID</p>
+                  <p className="font-medium text-gray-900 break-all">{student.uid}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Account Information */}
+            <div className="mb-8">
+              <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Account Information</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-gray-600">Account Created</p>
+                  <p className="font-medium text-gray-900">{formatDate(student.createdAt || student.created_at)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Last Login</p>
+                  <p className="font-medium text-gray-900">{formatDate(student.lastLoginAt || student.last_login_at)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Email Verified</p>
+                  <p className="font-medium text-gray-900">
+                    {student.emailVerified ? 
+                      <span className="text-green-600">Yes</span> : 
+                      <span className="text-red-600">No</span>
+                    }
+                  </p>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-600">Account Status</p>
+                  <p className="font-medium text-gray-900">
+                    {student.disabled ? 
+                      <span className="text-red-600">Disabled</span> : 
+                      <span className="text-green-600">Active</span>
+                    }
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Additional Metadata */}
+            {student.metadata && Object.keys(student.metadata).length > 0 && (
+              <div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Additional Information</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {Object.entries(student.metadata).map(([key, value]) => (
+                    <div key={key}>
+                      <p className="text-sm text-gray-600">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</p>
+                      <p className="font-medium text-gray-900">{
+                        typeof value === 'object' ? JSON.stringify(value) : String(value)
+                      }</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -9,6 +9,8 @@ import DeleteModal from './DeleteModal';
 
 const AdminDashboard = ({ user, userData }) => {
     const [content, setContent] = useState([]);
+    const [groupedContent, setGroupedContent] = useState({});
+    const [expandedGroups, setExpandedGroups] = useState({});
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [students, setStudents] = useState([]);
@@ -42,6 +44,64 @@ const AdminDashboard = ({ user, userData }) => {
         }
     }, [user, navigate]);
 
+    // Function to group content by upload session
+    const groupContentBySession = (contentList) => {
+        const grouped = {};
+        const ungrouped = [];
+        
+        // First, identify all content with upload session IDs
+        contentList.forEach(item => {
+            if (item.uploadSessionId) {
+                if (!grouped[item.uploadSessionId]) {
+                    grouped[item.uploadSessionId] = {
+                        sessionId: item.uploadSessionId,
+                        items: [],
+                        title: item.title,
+                        createdAt: item.created_at || item.createdAt,
+                        contentType: item.contentType,
+                        category: item.category
+                    };
+                }
+                grouped[item.uploadSessionId].items.push(item);
+            } else {
+                ungrouped.push(item);
+            }
+        });
+
+        // For content without session IDs, create individual groups by createdAt date
+        ungrouped.forEach(item => {
+            const dateKey = item.created_at || item.createdAt || new Date().toISOString();
+            const itemKey = `item-${item.id}`;
+            grouped[itemKey] = {
+                sessionId: itemKey,
+                items: [item],
+                title: item.title,
+                createdAt: dateKey,
+                contentType: item.contentType,
+                category: item.category,
+                isSingle: true
+            };
+        });
+
+        return grouped;
+    };
+
+    // Initialize expanded state for a new group
+    const initializeExpandedState = (groupId) => {
+        setExpandedGroups(prev => ({
+            ...prev,
+            [groupId]: false // Start collapsed
+        }));
+    };
+
+    // Function to toggle group expansion
+    const toggleGroupExpand = (groupId) => {
+        setExpandedGroups(prev => ({
+            ...prev,
+            [groupId]: !prev[groupId]
+        }));
+    };
+
     // Function to fetch content from Firebase RTDB as a fallback
     const fetchContentFromFirebase = () => {
         const contentRef = ref(database, 'content');
@@ -64,8 +124,18 @@ const AdminDashboard = ({ user, userData }) => {
                 });
 
                 setContent(contentList);
+                
+                // Group content and initialize expanded states
+                const grouped = groupContentBySession(contentList);
+                setGroupedContent(grouped);
+                
+                // Initialize expanded states for each group
+                Object.keys(grouped).forEach(groupId => {
+                    initializeExpandedState(groupId);
+                });
             } else {
                 setContent([]);
+                setGroupedContent({});
             }
             setLoading(false);
         }, (error) => {
@@ -94,6 +164,16 @@ const AdminDashboard = ({ user, userData }) => {
             // Sort by date (newest first)
             contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setContent(contentData);
+            
+            // Group content and initialize expanded states
+            const grouped = groupContentBySession(contentData);
+            setGroupedContent(grouped);
+            
+            // Initialize expanded states for each group
+            Object.keys(grouped).forEach(groupId => {
+                initializeExpandedState(groupId);
+            });
+            
             setLoading(false);
         } catch (error) {
             console.error("Error fetching content from API:", error);
@@ -174,6 +254,22 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 3: Update local state to remove the deleted item
             setContent(content.filter(item => item.id !== contentItem.id));
+            
+            // Update grouped content as well
+            const updatedGroupedContent = {...groupedContent};
+            
+            // Find which group contains this item
+            Object.keys(updatedGroupedContent).forEach(groupId => {
+                const group = updatedGroupedContent[groupId];
+                group.items = group.items.filter(item => item.id !== contentItem.id);
+                
+                // If group is now empty, remove it
+                if (group.items.length === 0) {
+                    delete updatedGroupedContent[groupId];
+                }
+            });
+            
+            setGroupedContent(updatedGroupedContent);
 
             // Close modal and show success message
             closeDeleteModal();
@@ -203,6 +299,107 @@ const AdminDashboard = ({ user, userData }) => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // Content Group Component
+    const ContentGroupCard = ({ group, isExpanded, onToggle }) => {
+        const { items, title, sessionId, createdAt, isSingle } = group;
+        
+        // Don't render groups with no items
+        if (!items || items.length === 0) return null;
+        
+        // For single items, just render them directly without collapsible section
+        if (isSingle && items.length === 1) {
+            const item = items[0];
+            return (
+                <tr key={item.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            {item.contentType}
+                        </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(item.created_at || item.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button
+                            onClick={() => openDeleteModal(item)}
+                            className="text-red-600 hover:text-red-900 mr-4"
+                        >
+                            Delete
+                        </button>
+                        <Link
+                            to={`/lms/admin/edit/${item.id}`}
+                            className="text-blue-600 hover:text-blue-900"
+                        >
+                            Edit
+                        </Link>
+                    </td>
+                </tr>
+            );
+        }
+        
+        // Get the date for display
+        const dateString = new Date(createdAt).toLocaleDateString();
+        
+        // For groups with multiple items, render as collapsible group
+        return (
+            <>
+                <tr className="bg-gray-50 cursor-pointer hover:bg-gray-100" onClick={() => onToggle(sessionId)}>
+                    <td colSpan="4" className="px-6 py-3">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                                <div className={`mr-2 transition-transform duration-200 ${isExpanded ? 'transform rotate-90' : ''}`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div className="font-medium text-gray-900">{title} <span className="text-sm font-normal text-gray-500">({items.length} files, {dateString})</span></div>
+                            </div>
+                            <div className="text-sm text-blue-600">
+                                {isExpanded ? 'Collapse' : 'Expand'}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {isExpanded && items.map((item) => (
+                    <tr key={item.id} className="bg-gray-50 border-b border-gray-100">
+                        <td className="pl-16 pr-6 py-3 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                        </td>
+                        <td className="px-6 py-3 whitespace-nowrap">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                {item.contentType}
+                            </span>
+                        </td>
+                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                            {new Date(item.created_at || item.createdAt).toLocaleDateString()}
+                        </td>
+                        <td className="px-6 py-3 whitespace-nowrap text-sm font-medium">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    openDeleteModal(item);
+                                }}
+                                className="text-red-600 hover:text-red-900 mr-4"
+                            >
+                                Delete
+                            </button>
+                            <Link
+                                to={`/lms/admin/edit/${item.id}`}
+                                className="text-blue-600 hover:text-blue-900"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                Edit
+                            </Link>
+                        </td>
+                    </tr>
+                ))}
+            </>
+        );
     };
 
     if (loading) {
@@ -282,34 +479,13 @@ const AdminDashboard = ({ user, userData }) => {
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {content.map((item) => (
-                                        <tr key={item.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">{item.title}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                                    {item.contentType}
-                                                </span>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                {new Date(item.created_at || item.createdAt).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                <button
-                                                    onClick={() => openDeleteModal(item)}
-                                                    className="text-red-600 hover:text-red-900 mr-4"
-                                                >
-                                                    Delete
-                                                </button>
-                                                <Link
-                                                    to={`/lms/admin/edit/${item.id}`}
-                                                    className="text-blue-600 hover:text-blue-900"
-                                                >
-                                                    Edit
-                                                </Link>
-                                            </td>
-                                        </tr>
+                                    {Object.keys(groupedContent).map(groupId => (
+                                        <ContentGroupCard 
+                                            key={groupId}
+                                            group={groupedContent[groupId]}
+                                            isExpanded={expandedGroups[groupId]}
+                                            onToggle={toggleGroupExpand}
+                                        />
                                     ))}
                                 </tbody>
                             </table>
