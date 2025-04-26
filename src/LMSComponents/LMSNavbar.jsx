@@ -13,6 +13,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      setIsOpen(false); // Close the menu before navigating
       navigate('/lms/login');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -38,10 +39,13 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
     };
   }, []);
 
-  // Function to handle navigation in mobile view
+  // Improved function to handle navigation in mobile view
   const handleMobileNavigation = (path) => {
-    setIsOpen(false); // Close the mobile menu
-    navigate(path); // Navigate to the desired path
+    setIsOpen(false); // First close the mobile menu
+    // Use setTimeout to ensure the state is updated before navigation
+    setTimeout(() => {
+      navigate(path); // Then navigate
+    }, 10);
   };
 
   // Cloudinary upload widget handler
@@ -201,35 +205,35 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </div>
             
             {/* Fixed mobile navigation links */}
-            <button
+            <div 
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
               onClick={() => handleMobileNavigation('/lms/home')}
-              className="block w-full text-left py-2 text-blue-900 font-medium"
             >
               Home
-            </button>
+            </div>
             
-            <button
+            <div 
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
               onClick={() => handleMobileNavigation('/lms/materials')}
-              className="block w-full text-left py-2 text-blue-900 font-medium"
             >
               Materials
-            </button>
+            </div>
             
-            <button
+            <div 
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
               onClick={() => handleMobileNavigation('/lms/profile')}
-              className="block w-full text-left py-2 text-blue-900 font-medium"
             >
               Your Profile
-            </button>
+            </div>
 
             {isAdmin && (
               <>
-                <button
+                <div 
+                  className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
                   onClick={() => handleMobileNavigation('/lms/admin')}
-                  className="block w-full text-left py-2 text-blue-900 font-medium"
                 >
                   Admin
-                </button>
+                </div>
 
                 <div className="flex space-x-2 mt-2 mb-2">
                   <button
@@ -254,12 +258,12 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
               </>
             )}
 
-            <button
+            <div 
+              className="block w-full text-left py-2 text-red-600 font-medium cursor-pointer"
               onClick={handleLogout}
-              className="block w-full text-left py-2 text-red-600 font-medium"
             >
               Sign out
-            </button>
+            </div>
           </div>
         </div>
       )}
