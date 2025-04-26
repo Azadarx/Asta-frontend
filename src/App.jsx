@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
@@ -30,13 +29,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
 import EditContentPage from "./LMSComponents/Admin/EditContentPage";
 import StudentDetailsPage from "./LMSComponents/Admin/StudentDetailsPage";
-import LMSNavbar from "./LMSComponents/LMSNavbar"; // ✅ Important: Import LMSNavbar here
+import LMSNavbar from "./LMSComponents/LMSNavbar"; // ✅ LMSNavbar imported
 
-// Helper to hide Nav/Footer on non-LMS pages
+// ✅ Home layout
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   const isLMS = location.pathname.startsWith("/lms");
-
   return (
     <>
       {!isLMS && <HomeNavbar />}
@@ -46,7 +44,7 @@ const LayoutWrapper = ({ children }) => {
   );
 };
 
-// Helper to show LMSNavbar on all /lms pages
+// ✅ LMS layout
 const LMSLayoutWrapper = ({ children }) => (
   <>
     <LMSNavbar />
@@ -58,200 +56,36 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 🌐 Main Website Routes with HomeNavbar + HomeFooter */}
-        <Route
-          path="/"
-          element={
-            <LayoutWrapper>
-              <HomePage />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/details"
-          element={
-            <LayoutWrapper>
-              <Details />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/payment"
-          element={
-            <LayoutWrapper>
-              <Payment />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/success"
-          element={
-            <LayoutWrapper>
-              <PaymentSuccess />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/courses"
-          element={
-            <LayoutWrapper>
-              <Courses />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/about"
-          element={
-            <LayoutWrapper>
-              <About />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/rabout"
-          element={
-            <LayoutWrapper>
-              <Rabout />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/termsandconditions"
-          element={
-            <LayoutWrapper>
-              <TermsAndConditions />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/policy"
-          element={
-            <LayoutWrapper>
-              <PrivacyPolicy />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/testimonials"
-          element={
-            <LayoutWrapper>
-              <Testimonials />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/contact-us"
-          element={
-            <LayoutWrapper>
-              <Contact />
-            </LayoutWrapper>
-          }
-        />
-        <Route
-          path="/courses/phonics"
-          element={
-            <LayoutWrapper>
-              <PhonicsCourse />
-            </LayoutWrapper>
-          }
-        />
+        {/* 🌐 Public Website Pages */}
+        <Route path="/" element={<LayoutWrapper><HomePage /></LayoutWrapper>} />
+        <Route path="/details" element={<LayoutWrapper><Details /></LayoutWrapper>} />
+        <Route path="/payment" element={<LayoutWrapper><Payment /></LayoutWrapper>} />
+        <Route path="/success" element={<LayoutWrapper><PaymentSuccess /></LayoutWrapper>} />
+        <Route path="/courses" element={<LayoutWrapper><Courses /></LayoutWrapper>} />
+        <Route path="/about" element={<LayoutWrapper><About /></LayoutWrapper>} />
+        <Route path="/rabout" element={<LayoutWrapper><Rabout /></LayoutWrapper>} />
+        <Route path="/termsandconditions" element={<LayoutWrapper><TermsAndConditions /></LayoutWrapper>} />
+        <Route path="/policy" element={<LayoutWrapper><PrivacyPolicy /></LayoutWrapper>} />
+        <Route path="/testimonials" element={<LayoutWrapper><Testimonials /></LayoutWrapper>} />
+        <Route path="/contact-us" element={<LayoutWrapper><Contact /></LayoutWrapper>} />
+        <Route path="/courses/phonics" element={<LayoutWrapper><PhonicsCourse /></LayoutWrapper>} />
 
-        {/* 🎓 LMS Routes with LMSNavbar */}
+        {/* 🎓 LMS Pages (with LMS Navbar) */}
         <Route path="/lms/login" element={<Login />} />
-        
-        <Route
-          path="/lms/home"
-          element={
-            <ProtectedRoute>
-              <LMSLayoutWrapper>
-                <LMSHome />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/materials"
-          element={
-            <ProtectedRoute>
-              <LMSLayoutWrapper>
-                <Materials />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/profile"
-          element={
-            <ProtectedRoute>
-              <LMSLayoutWrapper>
-                <UserProfile />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <LMSLayoutWrapper>
-                <AdminDashboard />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/create-user"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <LMSLayoutWrapper>
-                <AdminSignup />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/my-profile"
-          element={
-            <ProtectedRoute>
-              <LMSLayoutWrapper>
-                <MyProfile />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin/edit/:id"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <LMSLayoutWrapper>
-                <EditContentPage />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin/student/:id"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <LMSLayoutWrapper>
-                <StudentDetailsPage />
-              </LMSLayoutWrapper>
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/lms/home" element={<ProtectedRoute><LMSLayoutWrapper><LMSHome /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/materials" element={<ProtectedRoute><LMSLayoutWrapper><Materials /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/profile" element={<ProtectedRoute><LMSLayoutWrapper><UserProfile /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/my-profile" element={<ProtectedRoute><LMSLayoutWrapper><MyProfile /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/admin" element={<ProtectedRoute adminOnly={true}><LMSLayoutWrapper><AdminDashboard /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/create-user" element={<ProtectedRoute adminOnly={true}><LMSLayoutWrapper><AdminSignup /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/admin/edit/:id" element={<ProtectedRoute adminOnly={true}><LMSLayoutWrapper><EditContentPage /></LMSLayoutWrapper></ProtectedRoute>} />
+        <Route path="/lms/admin/student/:id" element={<ProtectedRoute adminOnly={true}><LMSLayoutWrapper><StudentDetailsPage /></LMSLayoutWrapper></ProtectedRoute>} />
 
-        {/* Redirect LMS root to login */}
+        {/* 🚀 Redirects */}
         <Route path="/lms" element={<Navigate to="/lms/login" />} />
 
-        {/* Not Found */}
-        <Route
-          path="*"
-          element={
-            <LayoutWrapper>
-              <NotFound />
-            </LayoutWrapper>
-          }
-        />
+        {/* 🚫 404 Not Found */}
+        <Route path="*" element={<LayoutWrapper><NotFound /></LayoutWrapper>} />
       </Routes>
     </Router>
   );
