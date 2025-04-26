@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, database as db } from '../firebase/config';
-import LMSNavbar from '../LMSComponents/LMSNavbar';
+// import LMSNavbar from '../LMSComponents/LMSNavbar';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const [user, setUser] = useState(null);
@@ -62,7 +62,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
   return (
     <>
-      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
       {children}
     </>
   );
