@@ -11,14 +11,32 @@ const PaymentSuccess = () => {
     const [countdown, setCountdown] = useState(15);
 
     useEffect(() => {
-        // Try to get data from location state first
+        // First try to get data from location state
         let data = location.state;
 
-        // If not available, try localStorage
+        // If not available, try localStorage for lastSuccessfulPayment
         if (!data) {
-            const storedData = localStorage.getItem('paymentDetails');
-            if (storedData) {
-                data = JSON.parse(storedData);
+            try {
+                const storedPayment = localStorage.getItem('lastSuccessfulPayment');
+                if (storedPayment) {
+                    data = JSON.parse(storedPayment);
+                    console.log('Retrieved payment data from localStorage:', data);
+                }
+            } catch (err) {
+                console.error('Error parsing stored payment data:', err);
+            }
+        }
+
+        // Last resort - try paymentDetails (though this is less likely to have complete info)
+        if (!data) {
+            try {
+                const storedDetails = localStorage.getItem('paymentDetails');
+                if (storedDetails) {
+                    data = JSON.parse(storedDetails);
+                    console.log('Retrieved generic payment details from localStorage:', data);
+                }
+            } catch (err) {
+                console.error('Error parsing stored payment details:', err);
             }
         }
 
@@ -92,13 +110,79 @@ const PaymentSuccess = () => {
 
     const handleDownloadReceipt = () => {
         const doc = new jsPDF();
-        
-        doc.text("Receipt", 10, 10);
-        doc.text("Thank you for your purchase!", 10, 20);
-        
-        doc.save("receipt.pdf");
+        const studentInfo = getStudentInfo();
+
+        // Add logo/header
+        doc.setFontSize(20);
+        doc.setTextColor(0, 51, 153);
+        doc.text("ASTA Education", 105, 20, { align: 'center' });
+
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Payment Receipt", 105, 30, { align: 'center' });
+
+        // Add horizontal line
+        doc.setDrawColor(0, 51, 153);
+        doc.setLineWidth(0.5);
+        doc.line(20, 35, 190, 35);
+
+        // Add receipt details
+        const startY = 50;
+        const colWidth = 80;
+
+        doc.setFontSize(12);
+
+        // Customer details
+        doc.setFont(undefined, 'bold');
+        doc.text("Customer Details", 20, startY);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Name: ${studentInfo.name}`, 20, startY + 10);
+        doc.text(`Email: ${studentInfo.email}`, 20, startY + 20);
+        doc.text(`Phone: ${studentInfo.phone}`, 20, startY + 30);
+
+        // Payment details
+        doc.setFont(undefined, 'bold');
+        doc.text("Payment Details", 20, startY + 50);
+        doc.setFont(undefined, 'normal');
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, startY + 60);
+        doc.text(`Transaction ID: ${paymentData?.paymentId || paymentData?.orderId || 'N/A'}`, 20, startY + 70);
+        doc.text(`Order ID: ${paymentData?.orderId || 'N/A'}`, 20, startY + 80);
+
+        // Course details
+        doc.setFont(undefined, 'bold');
+        doc.text("Order Summary", 20, startY + 100);
+
+        // Table header
+        doc.setFillColor(240, 240, 240);
+        doc.rect(20, startY + 110, 170, 10, 'F');
+        doc.setFont(undefined, 'bold');
+        doc.text("Description", 25, startY + 117);
+        doc.text("Amount", 160, startY + 117, { align: 'right' });
+
+        // Table content
+        doc.setFont(undefined, 'normal');
+        doc.text(studentInfo.course, 25, startY + 130);
+        doc.text(getFormattedAmount(), 160, startY + 130, { align: 'right' });
+
+        // Total
+        doc.setDrawColor(0, 0, 0);
+        doc.setLineWidth(0.2);
+        doc.line(20, startY + 140, 190, startY + 140);
+        doc.setFont(undefined, 'bold');
+        doc.text("Total", 25, startY + 150);
+        doc.text(getFormattedAmount(), 160, startY + 150, { align: 'right' });
+
+        // Footer
+        doc.setFontSize(10);
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text("Thank you for enrolling with ASTA Education.", 105, 250, { align: 'center' });
+        doc.text("For any queries, please contact: support@astaeducation.com", 105, 257, { align: 'center' });
+
+        // Save the PDF
+        doc.save(`receipt_${paymentData?.orderId || 'payment'}.pdf`);
     };
-    
+
 
     const handleReturnHome = () => {
         navigate('/');
@@ -106,39 +190,53 @@ const PaymentSuccess = () => {
 
     // Get student info from the payment data
     const getStudentInfo = () => {
-        if (paymentData?.student_info) {
-            return paymentData.student_info;
-        } else if (paymentData?.name) {
-            // Create a student_info object if data is directly at the root level
+        if (!paymentData) {
             return {
-                name: paymentData.name,
-                email: paymentData.email,
-                phone: paymentData.phone,
-                course: paymentData.course || 'Phonics English Course'
-            };
-        } else {
-            // Fallback defaults
-            return {
-                name: 'Student Name',
+                name: 'Student',
                 email: 'student@example.com',
-                phone: '9876543210',
+                phone: 'N/A',
                 course: 'Phonics English Course'
             };
         }
+
+        // Extract from nested student_info if available
+        if (paymentData.student_info) {
+            return {
+                name: paymentData.student_info.name || 'Student',
+                email: paymentData.student_info.email || 'student@example.com',
+                phone: paymentData.student_info.phone || 'N/A',
+                course: paymentData.student_info.course || 'Phonics English Course'
+            };
+        }
+
+        // Extract from direct fields
+        return {
+            name: paymentData.name || 'Student',
+            email: paymentData.email || 'student@example.com',
+            phone: paymentData.phone || paymentData.contact || 'N/A',
+            course: paymentData.course || paymentData.description || 'Phonics English Course'
+        };
     };
 
     // Format the amount properly (ensuring it's displayed as INR 79.00 not 0.79)
     const getFormattedAmount = () => {
-        if (paymentData?.amount) {
+        if (!paymentData) return '₹79.00'; // Default fallback
+
+        let amount;
+
+        // Try to get amount from different possible locations
+        if (typeof paymentData.amount === 'number') {
             // If amount is stored in paise (e.g., 7900 for ₹79.00), divide by 100
             // If already in rupees (e.g., 79), use as is
-            const amount = paymentData.amount >= 1000 ? (paymentData.amount / 100) : paymentData.amount;
-            return `₹${amount.toFixed(2)}`;
-        } else if (paymentData?.student_info?.amount) {
-            return `₹${parseFloat(paymentData.student_info.amount).toFixed(2)}`;
+            amount = paymentData.amount >= 1000 ? (paymentData.amount / 100) : paymentData.amount;
+        } else if (paymentData.student_info?.amount) {
+            amount = parseFloat(paymentData.student_info.amount);
         } else {
-            return '₹79.00'; // Default fallback
+            amount = 79.00; // Default fallback
         }
+
+        const currency = paymentData.currency || '₹';
+        return currency === 'INR' ? `₹${amount.toFixed(2)}` : `${currency} ${amount.toFixed(2)}`;
     };
 
     const studentInfo = getStudentInfo();
@@ -166,7 +264,7 @@ const PaymentSuccess = () => {
                         transition={{ delay: 0.4, duration: 0.7 }}
                         className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto"
                     >
-                        Thank you for enrolling in our Phonics English Course
+                        Thank you for enrolling in our {studentInfo.course}
                     </motion.p>
                 </div>
 
@@ -231,7 +329,7 @@ const PaymentSuccess = () => {
                                 </motion.div>
                                 <motion.div variants={itemVariants}>
                                     <p className="text-sm text-gray-500">Transaction ID</p>
-                                    <p className="font-medium font-mono text-xs truncate">{paymentData?.order_id || 'TXN12345678'}</p>
+                                    <p className="font-medium font-mono text-xs truncate">{paymentData?.paymentId || paymentData?.order_id || paymentData?.orderId || 'TXN12345678'}</p>
                                 </motion.div>
                             </div>
                         </motion.div>
@@ -281,22 +379,30 @@ const PaymentSuccess = () => {
                                 </svg>
                                 Next Steps
                             </h3>
-                            <ul className="space-y-4">
+                            <ul className="space-y-4 text-gray-600">
                                 <li className="flex items-start">
-                                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 mr-3 mt-0.5">1</span>
-                                    <span>Check your email for course access instructions and materials</span>
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-green-500 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="ml-3">Check your email for course details and access instructions.</p>
                                 </li>
                                 <li className="flex items-start">
-                                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 mr-3 mt-0.5">2</span>
-                                    <span>Complete your student profile in our learning portal</span>
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-green-500 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="ml-3">Save your receipt for future reference.</p>
                                 </li>
                                 <li className="flex items-start">
-                                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 mr-3 mt-0.5">3</span>
-                                    <span>Mark your calendar for the orientation session on April 5th</span>
-                                </li>
-                                <li className="flex items-start">
-                                    <span className="flex-shrink-0 flex items-center justify-center h-6 w-6 rounded-full bg-blue-100 text-blue-600 mr-3 mt-0.5">4</span>
-                                    <span>Join our student community group to connect with peers</span>
+                                    <div className="flex-shrink-0">
+                                        <svg className="h-5 w-5 text-green-500 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                    <p className="ml-3">Course access will be activated within the next 24 hours.</p>
                                 </li>
                             </ul>
                         </div>
@@ -306,55 +412,57 @@ const PaymentSuccess = () => {
                         className="bg-white rounded-xl shadow-lg overflow-hidden"
                         initial={{ x: 50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
+                        transition={{ duration: 0.6, delay: 0.5 }}
                     >
                         <div className="p-6">
                             <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Course Schedule
+                                Need Help?
                             </h3>
+                            <p className="text-gray-600 mb-4">
+                                If you have any questions or need assistance with your course, we're here to help.
+                            </p>
                             <div className="space-y-3">
-                                <div className="flex justify-between pb-2 border-b border-gray-100">
-                                    <span className="font-medium">Orientation</span>
-                                    <span className="text-gray-600">April 5, 2025</span>
+                                <div className="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    <span className="text-gray-700">support@astaeducation.com</span>
                                 </div>
-                                <div className="flex justify-between pb-2 border-b border-gray-100">
-                                    <span className="font-medium">Module 1 Start</span>
-                                    <span className="text-gray-600">April 8, 2025</span>
+                                <div className="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                    <span className="text-gray-700">+91 1234567890</span>
                                 </div>
-                                <div className="flex justify-between pb-2 border-b border-gray-100">
-                                    <span className="font-medium">Practice Session</span>
-                                    <span className="text-gray-600">April 15, 2025</span>
+                                <div className="flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <span className="text-gray-700">Mon-Fri: 9:00 AM - 6:00 PM IST</span>
                                 </div>
-                                <div className="flex justify-between">
-                                    <span className="font-medium">Module 1 Assessment</span>
-                                    <span className="text-gray-600">April 22, 2025</span>
-                                </div>
-                            </div>
-                            <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-                                <p className="text-sm text-blue-700">
-                                    <span className="font-semibold block">Pro Tip:</span>
-                                    Add these dates to your calendar to stay on track with your learning journey.
-                                </p>
                             </div>
                         </div>
                     </motion.div>
                 </div>
 
                 <motion.div
-                    className="mt-8 text-center text-gray-500 text-sm"
+                    className="mt-8 text-center text-gray-500"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2, duration: 0.5 }}
+                    transition={{ duration: 0.7, delay: 0.7 }}
                 >
-                    <p>Need help? Contact our support team at support@astaeducation.com</p>
-                    {countdown > 0 && (
-                        <p className="mt-2 text-xs text-gray-400">
-                            You will be redirected to the homepage in {countdown} seconds
-                        </p>
-                    )}
+                    <p>
+                        Redirecting to homepage in {countdown} seconds or {' '}
+                        <button
+                            onClick={handleReturnHome}
+                            className="text-blue-600 underline hover:text-blue-800"
+                        >
+                            click here
+                        </button>
+                    </p>
                 </motion.div>
             </motion.div>
         </div>

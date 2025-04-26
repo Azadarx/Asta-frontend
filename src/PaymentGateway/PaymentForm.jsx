@@ -72,9 +72,20 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
         }
       }
 
+      // Ensure we have a valid Razorpay key
+      const key_id = paymentData.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID;
+      if (!key_id) {
+        throw new Error('Razorpay Key ID is missing');
+      }
+
+      // Ensure we have an order_id
+      if (!paymentData.order_id) {
+        console.warn('Razorpay order_id is missing, payment might fail');
+      }
+
       // Configure Razorpay options
       const options = {
-        key: paymentData.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        key: key_id,
         amount: paymentData.amount,
         currency: paymentData.currency || 'INR',
         name: paymentData.name || 'English Course',
@@ -105,10 +116,18 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
         }
       };
 
+      console.log('Initializing Razorpay with options:', { 
+        key: options.key,
+        amount: options.amount,
+        order_id: options.order_id,
+        has_prefill: !!options.prefill
+      });
+
       // Initialize Razorpay
       const paymentObject = new window.Razorpay(options);
       paymentObject.on('payment.failed', function(response) {
         const errorMessage = response.error.description || 'Payment failed';
+        console.error('Payment failed:', response.error);
         setError(errorMessage);
         setIsLoading(false);
         if (onPaymentError) onPaymentError({
@@ -137,20 +156,41 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
     setError(null);
     
     try {
+      console.log('Payment success response:', response);
+      
       // Make sure we have all required fields
       if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
         throw new Error('Missing required payment response fields');
       }
+
+      // Store the complete payment info including student details in localStorage
+      // as a backup in case navigation state is lost
+      const paymentSuccessData = {
+        paymentId: response.razorpay_payment_id,
+        orderId: response.razorpay_order_id,
+        signature: response.razorpay_signature,
+        course: paymentData.description || 'Phonics English Course',
+        email: paymentData.prefill?.email || '',
+        name: paymentData.prefill?.name || '',
+        phone: paymentData.prefill?.contact || '',
+        amount: paymentData.amount,
+        currency: paymentData.currency || 'INR',
+        timestamp: new Date().toISOString()
+      };
+      
+      localStorage.setItem('lastSuccessfulPayment', JSON.stringify(paymentSuccessData));
 
       // Verify payment on server
       const verifyData = {
         razorpay_order_id: response.razorpay_order_id,
         razorpay_payment_id: response.razorpay_payment_id,
         razorpay_signature: response.razorpay_signature,
-        student_id: paymentData.student_id,
-        course_id: paymentData.course_id,
+        student_id: paymentData.student_id || paymentData.prefill?.email || '',
+        course_id: paymentData.course_id || '',
         amount: paymentData.amount
       };
+
+      console.log('Sending verification data:', verifyData);
 
       // Use the correct backend URL
       const apiUrl = 'https://asta-backend-o8um.onrender.com';
@@ -159,6 +199,8 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
           'Content-Type': 'application/json'
         }
       });
+
+      console.log('Verification response:', verifyResponse.data);
 
       // Check if verification was successful
       if (verifyResponse.data.status === 'success') {
@@ -171,6 +213,11 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
             paymentId: response.razorpay_payment_id,
             orderId: response.razorpay_order_id,
             signature: response.razorpay_signature,
+            course: paymentData.description || 'Phonics English Course',
+            email: paymentData.prefill?.email || '',
+            name: paymentData.prefill?.name || '',
+            phone: paymentData.prefill?.contact || '',
+            amount: paymentData.amount,
             ...verifyResponse.data
           });
         }
