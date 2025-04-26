@@ -22,11 +22,19 @@ const Payment = () => {
                     data = JSON.parse(storedData);
                 } catch (err) {
                     console.error('Error parsing stored payment data:', err);
+                    setError('Invalid payment information. Please return to the registration page.');
+                    setIsLoading(false);
+                    return;
                 }
             }
         }
 
         if (data) {
+            // Ensure we have the required Razorpay key
+            if (!data.key_id) {
+                data.key_id = import.meta.env.VITE_RAZORPAY_KEY_ID;
+            }
+            
             setPaymentData(data);
             setIsLoading(false);
         } else {
@@ -36,7 +44,23 @@ const Payment = () => {
     }, [location]);
 
     const handlePaymentSuccess = (response) => {
+        console.log('Payment successful:', response);
         setPaymentStatus('success');
+        
+        // Store success data in localStorage as a backup
+        try {
+            const successData = {
+                paymentId: response.paymentId,
+                orderId: response.orderId,
+                course: paymentData.description,
+                email: paymentData.prefill?.email,
+                name: paymentData.prefill?.name,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem('lastSuccessfulPayment', JSON.stringify(successData));
+        } catch (err) {
+            console.error('Error storing payment success data:', err);
+        }
         
         // Navigate to success page with relevant data
         navigate('/success', {
@@ -46,11 +70,13 @@ const Payment = () => {
                 course: paymentData.description,
                 email: paymentData.prefill?.email,
                 name: paymentData.prefill?.name
-            }
+            },
+            replace: true // Replace current history entry to prevent back navigation to payment page
         });
     };
 
     const handlePaymentError = (error) => {
+        console.error('Payment error:', error);
         setPaymentStatus('failed');
         setError(error.message || 'Payment processing failed. Please try again.');
     };
@@ -104,7 +130,7 @@ const Payment = () => {
                             <p className="text-sm text-green-800">You will receive further instructions and course materials shortly.</p>
                         </div>
                         <button
-                            onClick={() => navigate('/')}
+                            onClick={() => navigate('/', { replace: true })}
                             className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
                         >
                             Return to Home

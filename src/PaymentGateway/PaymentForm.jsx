@@ -1,20 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
-  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
 
   useEffect(() => {
     // Load the Razorpay script when component mounts
     const loadRazorpayScript = async () => {
+      // Check if script is already loaded
+      if (window.Razorpay) {
+        setScriptLoaded(true);
+        return true;
+      }
+
       return new Promise((resolve) => {
         const script = document.createElement('script');
         script.src = 'https://checkout.razorpay.com/v1/checkout.js';
         script.async = true;
-        script.onload = () => resolve(true);
+        script.onload = () => {
+          setScriptLoaded(true);
+          resolve(true);
+        };
         script.onerror = () => {
           setError('Failed to load Razorpay. Please try again later.');
           resolve(false);
@@ -27,9 +35,12 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
 
     // Clean up function to remove script when component unmounts
     return () => {
-      const razorpayScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
-      if (razorpayScript) {
-        razorpayScript.remove();
+      // Only remove script if we added it (and not if it was already present)
+      if (!window.Razorpay) {
+        const razorpayScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+        if (razorpayScript) {
+          razorpayScript.remove();
+        }
       }
     };
   }, []);
@@ -37,20 +48,33 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
   const handlePayment = async () => {
     if (!paymentData) {
       setError('Payment data is missing');
+      if (onPaymentError) onPaymentError(new Error('Payment data is missing'));
       return;
     }
     
     setIsLoading(true);
+    setError(null);
     
     try {
-      // Check if Razorpay is loaded
+      // Add retry if script isn't loaded yet
       if (!window.Razorpay) {
-        throw new Error('Razorpay SDK failed to load');
+        const scriptLoaded = await new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.async = true;
+          script.onload = () => resolve(true);
+          script.onerror = () => resolve(false);
+          document.body.appendChild(script);
+        });
+        
+        if (!scriptLoaded) {
+          throw new Error('Razorpay SDK failed to load');
+        }
       }
 
       // Configure Razorpay options
       const options = {
-        key: paymentData.key_id,
+        key: paymentData.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: paymentData.amount,
         currency: paymentData.currency || 'INR',
         name: paymentData.name || 'English Course',
@@ -69,38 +93,55 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
           color: '#3B82F6'
         },
         handler: function(response) {
+          // Pass to our success handler
           handlePaymentSuccess(response);
         },
         modal: {
           ondismiss: function() {
             setIsLoading(false);
-          }
+          },
+          escape: false,
+          backdropclose: false
         }
       };
 
       // Initialize Razorpay
       const paymentObject = new window.Razorpay(options);
       paymentObject.on('payment.failed', function(response) {
-        setError(`Payment failed: ${response.error.description}`);
+        const errorMessage = response.error.description || 'Payment failed';
+        setError(errorMessage);
         setIsLoading(false);
-        if (onPaymentError) onPaymentError(response.error);
+        if (onPaymentError) onPaymentError({
+          message: errorMessage,
+          code: response.error.code,
+          ...response.error
+        });
       });
       
       // Open Razorpay checkout
       paymentObject.open();
     } catch (err) {
       console.error('Payment initialization error:', err);
-      setError(err.message || 'Failed to initialize payment');
-      if (onPaymentError) onPaymentError(err);
-    } finally {
+      const errorMessage = err.message || 'Failed to initialize payment';
+      setError(errorMessage);
       setIsLoading(false);
+      if (onPaymentError) onPaymentError({
+        message: errorMessage,
+        originalError: err
+      });
     }
   };
 
   const handlePaymentSuccess = async (response) => {
     setIsLoading(true);
+    setError(null);
     
     try {
+      // Make sure we have all required fields
+      if (!response.razorpay_payment_id || !response.razorpay_order_id || !response.razorpay_signature) {
+        throw new Error('Missing required payment response fields');
+      }
+
       // Verify payment on server
       const verifyData = {
         razorpay_order_id: response.razorpay_order_id,
@@ -111,19 +152,25 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
         amount: paymentData.amount
       };
 
-      // Use environment variable for API URL
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      const verifyResponse = await axios.post(`${apiUrl}/verify-payment`, verifyData);
+      // Use the correct backend URL
+      const apiUrl = 'https://asta-backend-o8um.onrender.com';
+      const verifyResponse = await axios.post(`${apiUrl}/verify-payment`, verifyData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
 
+      // Check if verification was successful
       if (verifyResponse.data.status === 'success') {
         // Clear payment data from localStorage
         localStorage.removeItem('paymentDetails');
         
-        // Call success callback
+        // Call success callback with all relevant data
         if (onPaymentSuccess) {
           onPaymentSuccess({
             paymentId: response.razorpay_payment_id,
             orderId: response.razorpay_order_id,
+            signature: response.razorpay_signature,
             ...verifyResponse.data
           });
         }
@@ -132,8 +179,14 @@ const PaymentForm = ({ paymentData, onPaymentSuccess, onPaymentError }) => {
       }
     } catch (err) {
       console.error('Payment verification error:', err);
-      setError(err.response?.data?.message || err.message || 'Payment verification failed');
-      if (onPaymentError) onPaymentError(err);
+      const errorMessage = err.response?.data?.message || err.message || 'Payment verification failed';
+      setError(errorMessage);
+      
+      if (onPaymentError) onPaymentError({
+        message: errorMessage,
+        originalError: err,
+        stage: 'verification'
+      });
     } finally {
       setIsLoading(false);
     }
