@@ -41,11 +41,13 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
 
   // Improved function to handle navigation in mobile view
   const handleMobileNavigation = (path) => {
-    setIsOpen(false); // First close the mobile menu
-    // Use setTimeout to ensure the state is updated before navigation
+    // First close the mobile menu
+    setIsOpen(false);
+    
+    // Then navigate after a brief delay to ensure state updates
     setTimeout(() => {
-      navigate(path); // Then navigate
-    }, 10);
+      navigate(path, { replace: true });
+    }, 50);
   };
 
   // Cloudinary upload widget handler
@@ -206,21 +208,21 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             
             {/* Fixed mobile navigation links */}
             <div 
-              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/home')}
             >
               Home
             </div>
             
             <div 
-              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/materials')}
             >
               Materials
             </div>
             
             <div 
-              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
+              className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/profile')}
             >
               Your Profile
@@ -229,7 +231,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             {isAdmin && (
               <>
                 <div 
-                  className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer"
+                  className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
                   onClick={() => handleMobileNavigation('/lms/admin')}
                 >
                   Admin
@@ -245,7 +247,9 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                   <button
                     onClick={() => {
                       setIsOpen(false);
-                      openCloudinaryWidget();
+                      setTimeout(() => {
+                        openCloudinaryWidget();
+                      }, 50);
                     }}
                     className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center shadow-md"
                   >
@@ -259,7 +263,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             )}
 
             <div 
-              className="block w-full text-left py-2 text-red-600 font-medium cursor-pointer"
+              className="block w-full text-left py-2 text-red-600 font-medium cursor-pointer hover:bg-red-50"
               onClick={handleLogout}
             >
               Sign out
