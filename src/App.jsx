@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './firebase/config';
 
 // Home Site Components
 import HomePage from "./HomeComponents/HomePage";
@@ -29,9 +31,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
 import EditContentPage from "./LMSComponents/Admin/EditContentPage";
 import StudentDetailsPage from "./LMSComponents/Admin/StudentDetailsPage";
-import LMSNavbar from "./LMSComponents/LMSNavbar"; // ✅ LMSNavbar imported
+import LMSNavbar from "./LMSComponents/LMSNavbar";
 
-// ✅ Home layout
+// Home layout
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   const isLMS = location.pathname.startsWith("/lms");
@@ -44,13 +46,51 @@ const LayoutWrapper = ({ children }) => {
   );
 };
 
-// ✅ LMS layout
-const LMSLayoutWrapper = ({ children }) => (
-  <>
-    <LMSNavbar />
-    {children}
-  </>
-);
+// LMS layout with user context
+const LMSLayoutWrapper = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+
+        // Check if user is admin
+        const adminStatus = currentUser.email.toLowerCase() === 'inspiringshereen@gmail.com'.toLowerCase();
+        setIsAdmin(adminStatus);
+
+        // Get user data from database if needed
+        // This is simplified - you'll need to adjust according to your data structure
+        setLoading(false);
+      } else {
+        setUser(null);
+        setUserData(null);
+        setIsAdmin(false);
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
+      {children}
+    </>
+  );
+};
 
 function App() {
   return (

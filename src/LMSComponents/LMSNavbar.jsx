@@ -5,7 +5,6 @@ import { auth } from '../firebase/config';
 
 const LMSNavbar = ({ user, userData, isAdmin }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
@@ -39,15 +38,17 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
     };
   }, []);
 
-  // Improved function to handle navigation in mobile view
+  // Close mobile menu on route change
+  useEffect(() => {
+    return () => {
+      setIsOpen(false);
+    };
+  }, [navigate]);
+
+  // Improved function to handle navigation - no delay needed
   const handleMobileNavigation = (path) => {
-    // First close the mobile menu
     setIsOpen(false);
-    
-    // Then navigate after a brief delay to ensure state updates
-    setTimeout(() => {
-      navigate(path, { replace: true });
-    }, 50);
+    navigate(path);
   };
 
   // Cloudinary upload widget handler
@@ -66,7 +67,6 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
           if (!error && result && result.event === 'success') {
             console.log('Upload successful:', result.info);
             // You can add additional logic here to save the uploaded file info to your database
-            setIsUploadModalOpen(false);
           }
           if (error) {
             console.error('Upload error:', error);
@@ -138,7 +138,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                 >
                   <span className="sr-only">Open user menu</span>
                   <div className="h-10 w-10 rounded-full bg-gradient-to-r from-yellow-300 to-yellow-400 flex items-center justify-center text-blue-700 font-bold shadow-md border-2 border-white">
-                    {userData?.name ? userData.name.charAt(0).toUpperCase() : user?.email.charAt(0).toUpperCase()}
+                    {userData?.name ? userData.name.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase()}
                   </div>
                 </button>
               </div>
@@ -207,35 +207,35 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </div>
             
             {/* Fixed mobile navigation links */}
-            <div 
+            <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/home')}
             >
               Home
-            </div>
+            </button>
             
-            <div 
+            <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/materials')}
             >
               Materials
-            </div>
+            </button>
             
-            <div 
+            <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={() => handleMobileNavigation('/lms/profile')}
             >
               Your Profile
-            </div>
+            </button>
 
             {isAdmin && (
               <>
-                <div 
+                <button 
                   className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
                   onClick={() => handleMobileNavigation('/lms/admin')}
                 >
                   Admin
-                </div>
+                </button>
 
                 <div className="flex space-x-2 mt-2 mb-2">
                   <button
@@ -247,9 +247,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                   <button
                     onClick={() => {
                       setIsOpen(false);
-                      setTimeout(() => {
-                        openCloudinaryWidget();
-                      }, 50);
+                      openCloudinaryWidget();
                     }}
                     className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center shadow-md"
                   >
@@ -262,12 +260,12 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
               </>
             )}
 
-            <div 
+            <button 
               className="block w-full text-left py-2 text-red-600 font-medium cursor-pointer hover:bg-red-50"
               onClick={handleLogout}
             >
               Sign out
-            </div>
+            </button>
           </div>
         </div>
       )}

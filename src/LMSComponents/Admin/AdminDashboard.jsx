@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { auth, database } from '../../firebase/config';
 import { ref, onValue, remove } from 'firebase/database';
 import { Link, useNavigate } from 'react-router-dom';
-// import LMSNavbar from '../LMSNavbar';
+// Removed LMSNavbar import
 import ContentUploadModal from './ContentUploadModal';
 import DeleteModal from './DeleteModal';
 
@@ -48,7 +48,7 @@ const AdminDashboard = ({ user, userData }) => {
     const groupContentBySession = (contentList) => {
         const grouped = {};
         const ungrouped = [];
-        
+
         // First, identify all content with upload session IDs
         contentList.forEach(item => {
             if (item.uploadSessionId) {
@@ -124,11 +124,11 @@ const AdminDashboard = ({ user, userData }) => {
                 });
 
                 setContent(contentList);
-                
+
                 // Group content and initialize expanded states
                 const grouped = groupContentBySession(contentList);
                 setGroupedContent(grouped);
-                
+
                 // Initialize expanded states for each group
                 Object.keys(grouped).forEach(groupId => {
                     initializeExpandedState(groupId);
@@ -164,16 +164,16 @@ const AdminDashboard = ({ user, userData }) => {
             // Sort by date (newest first)
             contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             setContent(contentData);
-            
+
             // Group content and initialize expanded states
             const grouped = groupContentBySession(contentData);
             setGroupedContent(grouped);
-            
+
             // Initialize expanded states for each group
             Object.keys(grouped).forEach(groupId => {
                 initializeExpandedState(groupId);
             });
-            
+
             setLoading(false);
         } catch (error) {
             console.error("Error fetching content from API:", error);
@@ -254,21 +254,21 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 3: Update local state to remove the deleted item
             setContent(content.filter(item => item.id !== contentItem.id));
-            
+
             // Update grouped content as well
-            const updatedGroupedContent = {...groupedContent};
-            
+            const updatedGroupedContent = { ...groupedContent };
+
             // Find which group contains this item
             Object.keys(updatedGroupedContent).forEach(groupId => {
                 const group = updatedGroupedContent[groupId];
                 group.items = group.items.filter(item => item.id !== contentItem.id);
-                
+
                 // If group is now empty, remove it
                 if (group.items.length === 0) {
                     delete updatedGroupedContent[groupId];
                 }
             });
-            
+
             setGroupedContent(updatedGroupedContent);
 
             // Close modal and show success message
@@ -304,10 +304,10 @@ const AdminDashboard = ({ user, userData }) => {
     // Content Group Component
     const ContentGroupCard = ({ group, isExpanded, onToggle }) => {
         const { items, title, sessionId, createdAt, isSingle } = group;
-        
+
         // Don't render groups with no items
         if (!items || items.length === 0) return null;
-        
+
         // For single items, just render them directly without collapsible section
         if (isSingle && items.length === 1) {
             const item = items[0];
@@ -341,10 +341,10 @@ const AdminDashboard = ({ user, userData }) => {
                 </tr>
             );
         }
-        
+
         // Get the date for display
         const dateString = new Date(createdAt).toLocaleDateString();
-        
+
         // For groups with multiple items, render as collapsible group
         return (
             <>
@@ -405,7 +405,7 @@ const AdminDashboard = ({ user, userData }) => {
     if (loading) {
         return (
             <div className="min-h-screen bg-gray-50">
-                {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
+                {/* Removed LMSNavbar */}
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
@@ -419,7 +419,7 @@ const AdminDashboard = ({ user, userData }) => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
+            {/* Removed LMSNavbar */}
 
             <div className="container mx-auto py-8 px-4">
                 <div className="flex justify-between items-center mb-8">
@@ -480,7 +480,7 @@ const AdminDashboard = ({ user, userData }) => {
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {Object.keys(groupedContent).map(groupId => (
-                                        <ContentGroupCard 
+                                        <ContentGroupCard
                                             key={groupId}
                                             group={groupedContent[groupId]}
                                             isExpanded={expandedGroups[groupId]}
