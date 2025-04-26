@@ -30,8 +30,9 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import NotFound from "./components/NotFound";
 import EditContentPage from "./LMSComponents/Admin/EditContentPage";
 import StudentDetailsPage from "./LMSComponents/Admin/StudentDetailsPage";
+import LMSNavbar from "./LMSComponents/LMSNavbar"; // ✅ Important: Import LMSNavbar here
 
-// Helper to hide Nav/Footer on LMS routes
+// Helper to hide Nav/Footer on non-LMS pages
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   const isLMS = location.pathname.startsWith("/lms");
@@ -45,11 +46,19 @@ const LayoutWrapper = ({ children }) => {
   );
 };
 
+// Helper to show LMSNavbar on all /lms pages
+const LMSLayoutWrapper = ({ children }) => (
+  <>
+    <LMSNavbar />
+    {children}
+  </>
+);
+
 function App() {
   return (
     <Router>
       <Routes>
-        {/* 🌐 Main Website Routes with layout */}
+        {/* 🌐 Main Website Routes with HomeNavbar + HomeFooter */}
         <Route
           path="/"
           element={
@@ -147,13 +156,16 @@ function App() {
           }
         />
 
-        {/* 🎓 LMS Routes WITHOUT layout wrapper */}
+        {/* 🎓 LMS Routes with LMSNavbar */}
         <Route path="/lms/login" element={<Login />} />
+        
         <Route
           path="/lms/home"
           element={
             <ProtectedRoute>
-              <LMSHome />
+              <LMSLayoutWrapper>
+                <LMSHome />
+              </LMSLayoutWrapper>
             </ProtectedRoute>
           }
         />
@@ -161,7 +173,9 @@ function App() {
           path="/lms/materials"
           element={
             <ProtectedRoute>
-              <Materials />
+              <LMSLayoutWrapper>
+                <Materials />
+              </LMSLayoutWrapper>
             </ProtectedRoute>
           }
         />
@@ -169,47 +183,9 @@ function App() {
           path="/lms/profile"
           element={
             <ProtectedRoute>
-              <UserProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin/edit/:id"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <EditContentPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin/student/:id"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <StudentDetailsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/admin/content"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/my-profile"
-          element={
-            <ProtectedRoute>
-              <MyProfile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/lms/create-user"
-          element={
-            <ProtectedRoute adminOnly={true}>
-              <AdminSignup />
+              <LMSLayoutWrapper>
+                <UserProfile />
+              </LMSLayoutWrapper>
             </ProtectedRoute>
           }
         />
@@ -217,12 +193,54 @@ function App() {
           path="/lms/admin"
           element={
             <ProtectedRoute adminOnly={true}>
-              <AdminDashboard />
+              <LMSLayoutWrapper>
+                <AdminDashboard />
+              </LMSLayoutWrapper>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/create-user"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <LMSLayoutWrapper>
+                <AdminSignup />
+              </LMSLayoutWrapper>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/my-profile"
+          element={
+            <ProtectedRoute>
+              <LMSLayoutWrapper>
+                <MyProfile />
+              </LMSLayoutWrapper>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/admin/edit/:id"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <LMSLayoutWrapper>
+                <EditContentPage />
+              </LMSLayoutWrapper>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/lms/admin/student/:id"
+          element={
+            <ProtectedRoute adminOnly={true}>
+              <LMSLayoutWrapper>
+                <StudentDetailsPage />
+              </LMSLayoutWrapper>
             </ProtectedRoute>
           }
         />
 
-        {/* Redirects */}
+        {/* Redirect LMS root to login */}
         <Route path="/lms" element={<Navigate to="/lms/login" />} />
 
         {/* Not Found */}
