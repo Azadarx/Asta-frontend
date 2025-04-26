@@ -20,23 +20,23 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
   };
 
   // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        dropdownRef.current && 
-        !dropdownRef.current.contains(event.target) &&
-        buttonRef.current && 
-        !buttonRef.current.contains(event.target)
-      ) {
-        setIsOpen(false);
-      }
-    };
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       dropdownRef.current && 
+  //       !dropdownRef.current.contains(event.target) &&
+  //       buttonRef.current && 
+  //       !buttonRef.current.contains(event.target)
+  //     ) {
+  //       setIsOpen(false);
+  //     }
+  //   };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -46,9 +46,13 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
   }, [navigate]);
 
   // Improved function to handle navigation - no delay needed
-  const handleMobileNavigation = (path) => {
+  const handleMobileNavigation = (e, path) => {
+    e.preventDefault();
     setIsOpen(false);
+  setTimeout(() => {
     navigate(path);
+  }, 10); // Small delay
+
   };
 
   // Cloudinary upload widget handler
@@ -81,6 +85,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
     }
   };
 
+  console.log(isOpen, 'LMSNavbar====')
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-md">
       <div className="container mx-auto px-6">
@@ -157,7 +162,10 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                     <Link
                       to="/lms/profile"
                       className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => {
+                        console.log('profile==')
+                        setIsOpen(false)
+                      }}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -208,21 +216,24 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </div>
             
             {/* Fixed mobile navigation links */}
-            <Link 
+            <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              to={"/lms/home"}
-              // onClick={() => handleMobileNavigation('/lms/home')}
+              // to={"/lms/home"}
+              onClick={(e) => handleMobileNavigation(e, '/lms/home')}
             >
               Home
-            </Link>
+            </button>
             
-            <Link 
+            <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              to={"/lms/materials"}
-              // onClick={() => handleMobileNavigation('/lms/materials')}
+              // to={"/lms/materials"}
+              onClick={(e) => {
+                console.log('materials==')
+                handleMobileNavigation(e, '/lms/materials')
+              }}
             >
               Materials
-            </Link>
+            </button>
             
             <Link 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
