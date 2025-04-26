@@ -62,7 +62,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
 
   return (
     <>
-      {/* <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} /> */}
+      <LMSNavbar user={user} userData={userData} isAdmin={isAdmin} />
       {children}
     </>
   );
