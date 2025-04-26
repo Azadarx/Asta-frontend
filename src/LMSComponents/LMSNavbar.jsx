@@ -53,6 +53,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
 
   // Cloudinary upload widget handler
   const openCloudinaryWidget = () => {
+    console.log('openCloudinaryWidget====');
     if (window.cloudinary) {
       const widget = window.cloudinary.createUploadWidget(
         {
@@ -207,43 +208,48 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             </div>
             
             {/* Fixed mobile navigation links */}
-            <button 
+            <Link 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              onClick={() => handleMobileNavigation('/lms/home')}
+              to={"/lms/home"}
+              // onClick={() => handleMobileNavigation('/lms/home')}
             >
               Home
-            </button>
+            </Link>
             
-            <button 
+            <Link 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              onClick={() => handleMobileNavigation('/lms/materials')}
+              to={"/lms/materials"}
+              // onClick={() => handleMobileNavigation('/lms/materials')}
             >
               Materials
-            </button>
+            </Link>
             
-            <button 
+            <Link 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              onClick={() => handleMobileNavigation('/lms/profile')}
+              to={"/lms/profile"}
+              // onClick={() => handleMobileNavigation('/lms/profile')}
             >
               Your Profile
-            </button>
+            </Link>
 
             {isAdmin && (
               <>
-                <button 
+                <Link 
                   className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-                  onClick={() => handleMobileNavigation('/lms/admin')}
+                  to={"/lms/admin"}
+                  // onClick={() => handleMobileNavigation('/lms/admin')}
                 >
                   Admin
-                </button>
+                </Link>
 
                 <div className="flex space-x-2 mt-2 mb-2">
-                  <button
-                    onClick={() => handleMobileNavigation('/lms/create-user')}
+                  <Link
+                    // onClick={() => handleMobileNavigation('/lms/create-user')}
+                    to={"/lms/create-user"}
                     className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition shadow-md inline-block"
                   >
                     Add User
-                  </button>
+                  </Link>
                   <button
                     onClick={() => {
                       setIsOpen(false);
