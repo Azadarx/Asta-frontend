@@ -7,6 +7,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import ContentUploadModal from './ContentUploadModal';
 import DeleteModal from './DeleteModal';
 
+// Toast notification component
+const Toast = ({ message, type = 'success', onClose }) => {
+  const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, [onClose]);
+  
+  return (
+    <div className={`fixed top-4 right-4 ${bgColor} text-white p-4 rounded-lg shadow-lg z-50 flex items-center`}>
+      <span>{message}</span>
+      <button onClick={onClose} className="ml-4 text-white hover:text-gray-200">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+        </svg>
+      </button>
+    </div>
+  );
+};
+
 const AdminDashboard = ({ user, userData }) => {
     const [content, setContent] = useState([]);
     const [groupedContent, setGroupedContent] = useState({});
@@ -15,6 +39,7 @@ const AdminDashboard = ({ user, userData }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [students, setStudents] = useState([]);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
     const [deleteModal, setDeleteModal] = useState({
         isOpen: false,
         itemToDelete: null,
@@ -23,6 +48,16 @@ const AdminDashboard = ({ user, userData }) => {
 
     // Base API URL - use environment variable or default to localhost
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+    // Show toast notification
+    const showToast = (message, type = 'success') => {
+        setToast({ visible: true, message, type });
+    };
+
+    // Hide toast notification
+    const hideToast = () => {
+        setToast({ visible: false, message: '', type: 'success' });
+    };
 
     useEffect(() => {
         // Check if user is admin
@@ -123,6 +158,7 @@ const AdminDashboard = ({ user, userData }) => {
 
     // Function to fetch content from Firebase RTDB as a fallback
     const fetchContentFromFirebase = () => {
+        setLoading(true);
         const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
             if (snapshot.exists()) {
@@ -159,18 +195,24 @@ const AdminDashboard = ({ user, userData }) => {
             setLoading(false);
         }, (error) => {
             console.error("Error fetching content from Firebase:", error);
+            showToast("Error loading content. Please try again.", "error");
             setLoading(false);
         });
     };
 
     // Function to fetch content from PostgreSQL
     const fetchContent = async () => {
+        setLoading(true);
         try {
             // Try to fetch from API first
             const response = await fetch(`${API_URL}/api/lms/content`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${await user.getIdToken()}`,
+                    // Add cache control headers to prevent caching
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 },
                 credentials: 'include'
             });
@@ -180,6 +222,7 @@ const AdminDashboard = ({ user, userData }) => {
             }
 
             const contentData = await response.json();
+            
             // Sort by date (newest first) with safe fallback
             contentData.sort((a, b) => {
                 const dateA = getItemDate(a);
@@ -214,6 +257,10 @@ const AdminDashboard = ({ user, userData }) => {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${await user.getIdToken()}`,
+                    // Add cache control headers to prevent caching
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
                 },
                 credentials: 'include'
             });
@@ -229,6 +276,7 @@ const AdminDashboard = ({ user, userData }) => {
             // You might want to add a fallback for students as well
             // For now, we'll just set an empty array
             setStudents([]);
+            showToast("Error loading students data.", "error");
         }
     };
 
@@ -260,6 +308,10 @@ const AdminDashboard = ({ user, userData }) => {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${await user.getIdToken()}`,
+                        // Add cache control headers to prevent caching
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
                     },
                     credentials: 'include'
                 });
@@ -277,49 +329,29 @@ const AdminDashboard = ({ user, userData }) => {
             await remove(contentRef);
 
             // Step 3: Update local state to remove the deleted item
-            setContent(content.filter(item => item.id !== contentItem.id));
+            // First update content array
+            const updatedContent = content.filter(item => item.id !== contentItem.id);
+            setContent(updatedContent);
 
-            // Update grouped content as well
-            const updatedGroupedContent = { ...groupedContent };
+            // Then rebuild groups based on the updated content
+            const updatedGroups = groupContentBySession(updatedContent);
+            setGroupedContent(updatedGroups);
 
-            // Find which group contains this item
-            Object.keys(updatedGroupedContent).forEach(groupId => {
-                const group = updatedGroupedContent[groupId];
-                group.items = group.items.filter(item => item.id !== contentItem.id);
-
-                // If group is now empty, remove it
-                if (group.items.length === 0) {
-                    delete updatedGroupedContent[groupId];
-                }
+            // Update expanded states to match new group structure
+            const newExpandedGroups = {};
+            Object.keys(updatedGroups).forEach(groupId => {
+                // Preserve expanded state if group existed before, otherwise default to collapsed
+                newExpandedGroups[groupId] = expandedGroups[groupId] || false;
             });
-
-            setGroupedContent(updatedGroupedContent);
+            setExpandedGroups(newExpandedGroups);
 
             // Close modal and show success message
             closeDeleteModal();
-
-            // Use a non-blocking notification instead of alert
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50';
-            notification.textContent = 'Content deleted successfully!';
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
+            showToast('Content deleted successfully!', 'success');
 
         } catch (error) {
             console.error('Error deleting content:', error);
-
-            // Show error notification
-            const errorNotification = document.createElement('div');
-            errorNotification.className = 'fixed top-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow-lg z-50';
-            errorNotification.textContent = 'Error deleting content. Please try again.';
-            document.body.appendChild(errorNotification);
-
-            setTimeout(() => {
-                errorNotification.remove();
-            }, 3000);
+            showToast('Error deleting content. Please try again.', 'error');
         } finally {
             setLoading(false);
         }
@@ -349,18 +381,20 @@ const AdminDashboard = ({ user, userData }) => {
                         {getDisplayDate(item)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                            onClick={() => openDeleteModal(item)}
-                            className="text-red-600 hover:text-red-900 mr-4"
-                        >
-                            Delete
-                        </button>
-                        <Link
-                            to={`/lms/admin/edit/${item.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                        >
-                            Edit
-                        </Link>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <button
+                                onClick={() => openDeleteModal(item)}
+                                className="text-red-600 hover:text-red-900"
+                            >
+                                Delete
+                            </button>
+                            <Link
+                                to={`/lms/admin/edit/${item.id}`}
+                                className="text-blue-600 hover:text-blue-900"
+                            >
+                                Edit
+                            </Link>
+                        </div>
                     </td>
                 </tr>
             );
@@ -415,22 +449,24 @@ const AdminDashboard = ({ user, userData }) => {
                             {getDisplayDate(item)}
                         </td>
                         <td className="px-6 py-3 whitespace-nowrap text-sm font-medium">
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDeleteModal(item);
-                                }}
-                                className="text-red-600 hover:text-red-900 mr-4"
-                            >
-                                Delete
-                            </button>
-                            <Link
-                                to={`/lms/admin/edit/${item.id}`}
-                                className="text-blue-600 hover:text-blue-900"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Edit
-                            </Link>
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        openDeleteModal(item);
+                                    }}
+                                    className="text-red-600 hover:text-red-900"
+                                >
+                                    Delete
+                                </button>
+                                <Link
+                                    to={`/lms/admin/edit/${item.id}`}
+                                    className="text-blue-600 hover:text-blue-900"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Edit
+                                </Link>
+                            </div>
                         </td>
                     </tr>
                 ))}
@@ -438,13 +474,20 @@ const AdminDashboard = ({ user, userData }) => {
         );
     };
 
+    // Loading spinner component
+    const LoadingSpinner = () => (
+        <div className="flex justify-center items-center h-64">
+            <div className="relative">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                <p className="mt-4 text-gray-600">Loading...</p>
+            </div>
+        </div>
+    );
+
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50">
-                {/* Removed LMSNavbar */}
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
+            <div className="min-h-screen bg-gray-50 p-4">
+                <LoadingSpinner />
             </div>
         );
     }
@@ -455,14 +498,21 @@ const AdminDashboard = ({ user, userData }) => {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Removed LMSNavbar */}
+            {/* Show toast notification if visible */}
+            {toast.visible && (
+                <Toast 
+                    message={toast.message} 
+                    type={toast.type} 
+                    onClose={hideToast} 
+                />
+            )}
 
-            <div className="container mx-auto py-8 px-4">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-blue-600">Admin's Dashboard</h1>
+            <div className="container mx-auto py-4 sm:py-8 px-4">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold text-blue-600 mb-4 sm:mb-0">Admin's Dashboard</h1>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center w-full sm:w-auto justify-center"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -472,19 +522,19 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Dashboard Sections */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Total Content</h2>
-                        <p className="text-3xl font-bold text-blue-600">{content.length}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
+                    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Total Content</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-blue-600">{content.length}</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Total Students</h2>
-                        <p className="text-3xl font-bold text-blue-600">{students.length}</p>
+                    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Total Students</h2>
+                        <p className="text-2xl sm:text-3xl font-bold text-blue-600">{students.length}</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
+                    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+                        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
                         <p className="text-md text-gray-600">
                             {content.length > 0
                                 ? getDisplayDate(content[0])
@@ -494,9 +544,9 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Content Management */}
-                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                    <div className="p-6 bg-gray-50 border-b">
-                        <h2 className="text-2xl font-semibold text-gray-800">Content Management</h2>
+                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6 sm:mb-8">
+                    <div className="p-4 sm:p-6 bg-gray-50 border-b">
+                        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Content Management</h2>
                     </div>
 
                     {content.length === 0 ? (
@@ -508,10 +558,10 @@ const AdminDashboard = ({ user, userData }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -531,8 +581,8 @@ const AdminDashboard = ({ user, userData }) => {
 
                 {/* Student Management Section */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div className="p-6 bg-gray-50 border-b">
-                        <h2 className="text-2xl font-semibold text-gray-800">Student Management</h2>
+                    <div className="p-4 sm:p-6 bg-gray-50 border-b">
+                        <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Student Management</h2>
                     </div>
 
                     {students.length === 0 ? (
@@ -544,31 +594,31 @@ const AdminDashboard = ({ user, userData }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
+                                        <th className="px-4 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {students.map((student) => (
                                         <tr key={student.id || student.uid}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm font-medium text-gray-900">
                                                     {student.displayName || student.name || 'No Name'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                                 <div className="text-sm text-gray-500">{student.email}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                                 {student.created_at
                                                     ? new Date(student.created_at).toLocaleDateString()
                                                     : student.createdAt
                                                         ? new Date(student.createdAt).toLocaleDateString()
                                                         : 'Unknown'}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap text-sm font-medium">
                                                 <button
                                                     onClick={() => navigate(`/lms/admin/student/${student.id || student.uid}`)}
                                                     className="text-blue-600 hover:text-blue-900"
