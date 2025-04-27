@@ -153,6 +153,7 @@ export const AuthProvider = ({ children }) => {
   const value = {
     currentUser,
     userRTDBData,
+    // user: userRTDBData,
     isAdmin,
     loading,
     error,

@@ -62,6 +62,7 @@ const EditContentPage = () => {
 
     // Check if user is admin
     useEffect(() => {
+        console.log('User:', user);
         // Specific admin check for the requested email
         if (user && user.email !== 'inspiringshereen@gmail.com') {
             setPermissionError(true);
