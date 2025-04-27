@@ -15,7 +15,7 @@ const LMSHome = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const isAdminPage = location.pathname === '/lms/admin';
 
   useEffect(() => {
@@ -52,7 +52,12 @@ const LMSHome = () => {
                 ...childSnapshot.val()
               });
             });
-            contentList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            const sortedContent = contentList
+              .filter(item => item && item.createdAt)
+              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+            setContent(sortedContent);
+
             setContent(contentList);
           } else {
             setContent([]);
