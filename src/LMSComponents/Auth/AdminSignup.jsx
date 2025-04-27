@@ -141,8 +141,10 @@ const AdminSignup = () => {
       setName('');
     } catch (error) {
       console.error('Signup error:', error);
-      if (error.code === 'auth/email-already-in-use') {
-        setError(error.message || 'Email is already in use');
+      if (error.response && error.response.status === 409) {
+        setError('User already exists. Please use a different email.');
+      } else if (error.code === 'auth/email-already-in-use') {
+        setError('Email is already in use');
       } else {
         setError('Error creating account: ' + (error.message || error));
       }
