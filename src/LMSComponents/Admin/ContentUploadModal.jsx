@@ -151,7 +151,10 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
         ? `${groupName || title} - ${file.name.split('.')[0]}`
         : title;
       
-      // Prepare content object
+      // IMPORTANT: Always include createdAt timestamp
+      const timestamp = new Date().toISOString();
+      
+      // Prepare content object with guaranteed createdAt field
       const contentObj = {
         title: individualTitle,
         description: description,
@@ -162,7 +165,9 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
         category: category || 'general',
         fileType: file.type,
         fileCategory: fileTypeCategory,
-        createdAt: new Date().toISOString(),
+        // Ensure timestamps are always included
+        createdAt: timestamp,
+        updatedAt: timestamp,
         uploadedBy: user.uid,
         uploadedByEmail: user.email,
         createdBy: user.uid,
@@ -172,7 +177,10 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
       };
       
       // Save metadata in Firebase RTDB
+      // Using a direct path with contentId to ensure consistency
       const contentRef = ref(rtdb, `content/${contentId}`);
+      
+      // Use set() to ensure the complete object is saved with all fields
       await set(contentRef, contentObj);
       
       // Also save to PostgreSQL via API

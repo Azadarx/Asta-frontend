@@ -44,6 +44,25 @@ const AdminDashboard = ({ user, userData }) => {
         }
     }, [user, navigate]);
 
+    // Function to safely get date from item (with fallback)
+    const getItemDate = (item) => {
+        // Try different date properties with fallback to epoch 0
+        const dateValue = item.created_at || item.createdAt || new Date(0).toISOString();
+        return new Date(dateValue);
+    };
+
+    // Function to get a date string for display (with fallback)
+    const getDisplayDate = (item) => {
+        const date = getItemDate(item);
+        
+        // Check if date is valid (not epoch 0)
+        if (date.getTime() === 0) {
+            return 'Unknown Date';
+        }
+        
+        return date.toLocaleDateString();
+    };
+
     // Function to group content by upload session
     const groupContentBySession = (contentList) => {
         const grouped = {};
@@ -56,10 +75,10 @@ const AdminDashboard = ({ user, userData }) => {
                     grouped[item.uploadSessionId] = {
                         sessionId: item.uploadSessionId,
                         items: [],
-                        title: item.title,
-                        createdAt: item.created_at || item.createdAt,
-                        contentType: item.contentType,
-                        category: item.category
+                        title: item.title || 'Untitled Content',
+                        createdAt: getItemDate(item),
+                        contentType: item.contentType || 'Unknown Type',
+                        category: item.category || 'Uncategorized'
                     };
                 }
                 grouped[item.uploadSessionId].items.push(item);
@@ -70,15 +89,15 @@ const AdminDashboard = ({ user, userData }) => {
 
         // For content without session IDs, create individual groups by createdAt date
         ungrouped.forEach(item => {
-            const dateKey = item.created_at || item.createdAt || new Date().toISOString();
+            const dateKey = getItemDate(item).toISOString();
             const itemKey = `item-${item.id}`;
             grouped[itemKey] = {
                 sessionId: itemKey,
                 items: [item],
-                title: item.title,
+                title: item.title || 'Untitled Content',
                 createdAt: dateKey,
-                contentType: item.contentType,
-                category: item.category,
+                contentType: item.contentType || 'Unknown Type',
+                category: item.category || 'Uncategorized',
                 isSingle: true
             };
         });
@@ -116,10 +135,10 @@ const AdminDashboard = ({ user, userData }) => {
                     });
                 });
 
-                // Sort by date (newest first)
+                // Sort by date (newest first) with safe fallback
                 contentList.sort((a, b) => {
-                    const dateA = new Date(a.createdAt || 0);
-                    const dateB = new Date(b.createdAt || 0);
+                    const dateA = getItemDate(a);
+                    const dateB = getItemDate(b);
                     return dateB - dateA;
                 });
 
@@ -161,8 +180,13 @@ const AdminDashboard = ({ user, userData }) => {
             }
 
             const contentData = await response.json();
-            // Sort by date (newest first)
-            contentData.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            // Sort by date (newest first) with safe fallback
+            contentData.sort((a, b) => {
+                const dateA = getItemDate(a);
+                const dateB = getItemDate(b);
+                return dateB - dateA;
+            });
+            
             setContent(contentData);
 
             // Group content and initialize expanded states
@@ -314,15 +338,15 @@ const AdminDashboard = ({ user, userData }) => {
             return (
                 <tr key={item.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                        <div className="text-sm font-medium text-gray-900">{item.title || 'Untitled Content'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                            {item.contentType}
+                            {item.contentType || 'Unknown Type'}
                         </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(item.created_at || item.createdAt).toLocaleDateString()}
+                        {getDisplayDate(item)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <button
@@ -342,8 +366,20 @@ const AdminDashboard = ({ user, userData }) => {
             );
         }
 
-        // Get the date for display
-        const dateString = new Date(createdAt).toLocaleDateString();
+        // Get the date string for display with fallback
+        let dateString = 'Unknown Date';
+        if (createdAt) {
+            // Check if createdAt is a date object or a string
+            if (createdAt instanceof Date) {
+                dateString = createdAt.toLocaleDateString();
+            } else {
+                try {
+                    dateString = new Date(createdAt).toLocaleDateString();
+                } catch (e) {
+                    dateString = 'Unknown Date';
+                }
+            }
+        }
 
         // For groups with multiple items, render as collapsible group
         return (
@@ -357,7 +393,7 @@ const AdminDashboard = ({ user, userData }) => {
                                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
-                                <div className="font-medium text-gray-900">{title} <span className="text-sm font-normal text-gray-500">({items.length} files, {dateString})</span></div>
+                                <div className="font-medium text-gray-900">{title || 'Untitled Group'} <span className="text-sm font-normal text-gray-500">({items.length} files, {dateString})</span></div>
                             </div>
                             <div className="text-sm text-blue-600">
                                 {isExpanded ? 'Collapse' : 'Expand'}
@@ -368,15 +404,15 @@ const AdminDashboard = ({ user, userData }) => {
                 {isExpanded && items.map((item) => (
                     <tr key={item.id} className="bg-gray-50 border-b border-gray-100">
                         <td className="pl-16 pr-6 py-3 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{item.title}</div>
+                            <div className="text-sm font-medium text-gray-900">{item.title || 'Untitled Content'}</div>
                         </td>
                         <td className="px-6 py-3 whitespace-nowrap">
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                                {item.contentType}
+                                {item.contentType || 'Unknown Type'}
                             </span>
                         </td>
                         <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
-                            {new Date(item.created_at || item.createdAt).toLocaleDateString()}
+                            {getDisplayDate(item)}
                         </td>
                         <td className="px-6 py-3 whitespace-nowrap text-sm font-medium">
                             <button
@@ -451,7 +487,7 @@ const AdminDashboard = ({ user, userData }) => {
                         <h2 className="text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
                         <p className="text-md text-gray-600">
                             {content.length > 0
-                                ? new Date(content[0].created_at || content[0].createdAt).toLocaleDateString()
+                                ? getDisplayDate(content[0])
                                 : 'No content yet'}
                         </p>
                     </div>
@@ -567,7 +603,7 @@ const AdminDashboard = ({ user, userData }) => {
                     onClose={closeDeleteModal}
                     onConfirm={confirmDelete}
                     title="Delete Content"
-                    message={`Are you sure you want to delete "${deleteModal.itemToDelete?.title}"? This action cannot be undone.`}
+                    message={`Are you sure you want to delete "${deleteModal.itemToDelete?.title || 'this content'}"? This action cannot be undone.`}
                 />
             )}
         </div>

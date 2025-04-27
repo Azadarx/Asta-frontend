@@ -56,7 +56,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
     if (!dateString) return 'Unknown Date'; // ✅ Return fallback safely
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };
+  };  
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
