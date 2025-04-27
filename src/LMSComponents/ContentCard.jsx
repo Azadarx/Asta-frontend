@@ -56,7 +56,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
     if (!dateString) return 'Unknown Date'; // ✅ Return fallback safely
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-  };  
+  };
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -108,7 +108,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   // Use timestamp from various possible properties
-  const createdDate = content.createdAt || content.created_at || content.uploadedAt || content.timestamp || null;
+  const createdDate = content?.createdAt || content?.created_at || content?.uploadedAt || content?.timestamp || null;
 
   return (
     <div className="bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 h-full flex flex-col">
@@ -128,8 +128,8 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
           </div>
           <div className="flex-grow">
             <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{content.title}</h3>
-            <p className="text-xs text-gray-500 mt-1">
-              Added on {createdDate ? formatDate(createdDate) : 'Unknown Date'}
+            <p className="text-sm text-gray-500">
+              {createdDate ? `Added on ${new Date(createdDate).toLocaleDateString()}` : 'Unknown Date'}
             </p>
           </div>
           {isAdmin && (

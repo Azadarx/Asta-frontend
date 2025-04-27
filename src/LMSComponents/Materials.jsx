@@ -69,8 +69,10 @@ const Materials = () => {
 
   // Safe getter for timestamp from item with fallbacks
   const getItemTimestamp = (item) => {
-    return item?.createdAt || item?.uploadedAt || item?.timestamp || item?.date || 0;
+    if (!item) return null;
+    return item.createdAt || item.uploadedAt || item.timestamp || item.date || null;
   };
+
 
   // Safe getter for content type with fallbacks
   const getItemType = (item) => {
@@ -152,8 +154,8 @@ const Materials = () => {
 
               // ✅ Sort items inside group safely
               groups[key].items.sort((a, b) => {
-                const dateA = getItemTimestamp(a);
-                const dateB = getItemTimestamp(b);
+                const dateA = getItemTimestamp(a) ? new Date(getItemTimestamp(a)).getTime() : 0;
+                const dateB = getItemTimestamp(b) ? new Date(getItemTimestamp(b)).getTime() : 0;
                 return dateB - dateA;
               });
             });
