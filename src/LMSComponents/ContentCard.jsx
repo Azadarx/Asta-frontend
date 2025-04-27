@@ -53,7 +53,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown Date';
+    if (!dateString) return 'Unknown Date'; // ✅ Return fallback safely
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
   };
@@ -128,7 +128,9 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
           </div>
           <div className="flex-grow">
             <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{content.title}</h3>
-            <p className="text-xs text-gray-500 mt-1">Added on {formatDate(createdDate)}</p>
+            <p className="text-xs text-gray-500 mt-1">
+              Added on {createdDate ? formatDate(createdDate) : 'Unknown Date'}
+            </p>
           </div>
           {isAdmin && (
             <button
