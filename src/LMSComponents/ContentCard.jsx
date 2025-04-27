@@ -9,22 +9,15 @@ import {
   FaTrash,
   FaLayerGroup,
   FaDownload,
-  FaEye,
-  FaFileAlt
+  FaEye
 } from 'react-icons/fa';
 
 const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Ensure content object is never null/undefined
-  const safeContent = content || {};
-
   const getFileIcon = () => {
     // Check various possible properties where file type might be stored
-    const fileType = (safeContent.fileCategory ||
-      safeContent.fileType ||
-      safeContent.file_type ||
-      safeContent.contentType || '').toLowerCase();
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
 
     switch (fileType) {
       case 'application/pdf':
@@ -37,47 +30,33 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
       case 'word':
         return <FaFileWord className="text-blue-500 text-4xl" />;
       case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-      case 'application/vnd.ms-powerpoint':
       case 'ppt':
       case 'pptx':
         return <FaFilePowerpoint className="text-orange-500 text-4xl" />;
       case 'image/jpeg':
       case 'image/jpg':
       case 'image/png':
-      case 'image/gif':
       case 'jpg':
       case 'jpeg':
       case 'png':
-      case 'gif':
       case 'image':
         return <FaImage className="text-green-500 text-4xl" />;
       case 'video/mp4':
-      case 'video/quicktime':
-      case 'video/avi':
       case 'mp4':
       case 'mov':
       case 'avi':
       case 'video':
         return <FaVideo className="text-purple-500 text-4xl" />;
-      case '':
-        return <FaFileAlt className="text-gray-500 text-4xl" />;
       default:
         return <FaExternalLinkAlt className="text-gray-500 text-4xl" />;
     }
   };
 
   const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown Date';
-
-    try {
-      const date = new Date(dateString);
-      // Check if date is valid
-      if (isNaN(date.getTime())) return 'Unknown Date';
-      return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-    } catch (error) {
-      return 'Unknown Date';
-    }
-  };
+    if (!dateString) return 'Unknown Date'; // ✅ Return fallback safely
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };  
 
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
@@ -85,7 +64,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
   const confirmDelete = () => {
     if (onDelete && typeof onDelete === 'function') {
-      onDelete(safeContent.id || safeContent.firebaseId);
+      onDelete(content.id || content.firebaseId);
     }
     setShowDeleteModal(false);
   };
@@ -94,91 +73,69 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
     setShowDeleteModal(false);
   };
 
-  const getFileType = () => {
-    const fileType = safeContent.fileCategory ||
-      safeContent.fileType ||
-      safeContent.file_type ||
-      safeContent.contentType || '';
-    return fileType.toUpperCase();
-  };
-
-  const shouldDownload = () => {
-    const fileType = (safeContent.fileCategory ||
-      safeContent.fileType ||
-      safeContent.file_type ||
-      safeContent.contentType || '').toLowerCase();
-
-    const downloadTypes = [
-      'pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
+  const getActionButtonText = () => {
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
       'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-      'application/vnd.ms-excel',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    ];
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
 
-    return downloadTypes.some(type => fileType.includes(type));
-  };
+    // Check if fileType is one of the download types
+    for (const type of downloadTypes) {
+      if (fileType && fileType.includes(type)) {
+        return 'Download';
+      }
+    }
 
-  const getActionButtonText = () => {
-    return shouldDownload() ? 'Download' : 'View';
+    return 'View';
   };
 
   const getActionIcon = () => {
-    return shouldDownload()
-      ? <FaDownload className="w-4 h-4 ml-2" />
-      : <FaEye className="w-4 h-4 ml-2" />;
-  };
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
+      'application/pdf', 'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
 
-  // Use timestamp from various possible properties with fallback
-  const createdDate = safeContent.createdAt ||
-    safeContent.created_at ||
-    safeContent.uploadedAt ||
-    safeContent.timestamp || null;
-
-  // Format file size safely
-  const formatFileSize = () => {
-    const fileSize = safeContent.fileSize || safeContent.file_size;
-    if (!fileSize) return null;
-
-    try {
-      if (typeof fileSize === 'number') {
-        return `${(fileSize / 1024 / 1024).toFixed(2)} MB`;
+    // Check if fileType is one of the download types
+    for (const type of downloadTypes) {
+      if (fileType && fileType.includes(type)) {
+        return <FaDownload className="w-4 h-4 ml-2" />;
       }
-      return fileSize.toString();
-    } catch (error) {
-      return 'Unknown Size';
     }
+
+    return <FaEye className="w-4 h-4 ml-2" />;
   };
+
+  // Use timestamp from various possible properties
+  const createdDate = content.createdAt || content.created_at || content.uploadedAt || content.timestamp || null;
 
   return (
     <div className="bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 h-full flex flex-col">
       {/* Group Title Banner (if part of a group) */}
       {groupTitle && (
         <div className="bg-gradient-to-r from-indigo-100 to-blue-100 px-4 py-2 flex items-center">
-          <FaLayerGroup className="text-indigo-500 mr-2 flex-shrink-0" />
+          <FaLayerGroup className="text-indigo-500 mr-2" />
           <span className="text-sm font-medium text-indigo-800 truncate">{groupTitle}</span>
         </div>
       )}
 
-      <div className="p-3 sm:p-4 md:p-5 flex flex-col flex-grow">
+      <div className="p-5 flex flex-col flex-grow">
         {/* Header with file icon and title */}
-        <div className="flex items-start mb-3 sm:mb-4">
-          <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gray-100 mr-3 sm:mr-4 flex-shrink-0">
+        <div className="flex items-start mb-4">
+          <div className="flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 mr-4 flex-shrink-0">
             {getFileIcon()}
           </div>
-          <div className="flex-grow min-w-0">
-            <h3 className="text-base sm:text-lg font-semibold text-gray-800 truncate">
-              {safeContent.title || 'Untitled Document'}
-            </h3>
+          <div className="flex-grow">
+            <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{content.title}</h3>
             <p className="text-xs text-gray-500 mt-1">
-              Added on {formatDate(createdDate)}
+              Added on {createdDate ? formatDate(createdDate) : 'Unknown Date'}
             </p>
           </div>
           {isAdmin && (
             <button
               onClick={handleDeleteClick}
-              className="text-gray-400 hover:text-red-500 transition-colors p-1 sm:p-2 ml-1 sm:ml-2 flex-shrink-0"
+              className="text-gray-400 hover:text-red-500 transition-colors p-2 ml-2"
               aria-label="Delete content"
               title="Delete content"
             >
@@ -188,57 +145,57 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
         </div>
 
         {/* File type badge */}
-        <div className="mb-2 sm:mb-3">
-          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            {getFileType() || 'UNKNOWN'}
+        <div className="mb-3">
+          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+            {(content.contentType || content.fileCategory || content.fileType || content.file_type || '').toUpperCase()}
           </span>
         </div>
 
         {/* Description */}
-        <div className="mb-3 sm:mb-4 flex-grow">
-          <p className="text-gray-600 text-xs sm:text-sm line-clamp-3">
-            {safeContent.description || 'No description available'}
-          </p>
+        <div className="mb-4 flex-grow">
+          <p className="text-gray-600 text-sm line-clamp-3">{content.description}</p>
         </div>
 
         {/* Action buttons */}
         <div className="flex justify-between items-center pt-2 mt-auto">
           <a
-            href={safeContent.fileUrl || safeContent.file_url || '#'}
+            href={content.fileUrl || content.file_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-3 py-1.5 sm:px-4 sm:py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white text-sm rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-sm transition-all duration-200"
+            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-sm transition-all duration-200"
           >
             {getActionButtonText()}
             {getActionIcon()}
           </a>
 
           {/* File size if available */}
-          {formatFileSize() && (
+          {(content.fileSize || content.file_size) && (
             <span className="text-xs text-gray-500">
-              {formatFileSize()}
+              {typeof (content.fileSize || content.file_size) === 'number'
+                ? `${((content.fileSize || content.file_size) / 1024 / 1024).toFixed(2)} MB`
+                : (content.fileSize || content.file_size)}
             </span>
           )}
         </div>
 
         {/* Delete confirmation modal */}
         {showDeleteModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full shadow-xl">
-              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-gray-800">Confirm Deletion</h3>
-              <p className="mb-5 sm:mb-6 text-gray-600 text-sm sm:text-base">
-                Are you sure you want to delete "<span className="font-semibold">{safeContent.title || 'this content'}</span>"? This action cannot be undone.
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+              <h3 className="text-xl font-bold mb-4 text-gray-800">Confirm Deletion</h3>
+              <p className="mb-6 text-gray-600">
+                Are you sure you want to delete "<span className="font-semibold">{content.title}</span>"? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={cancelDelete}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700 text-sm"
+                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmDelete}
-                  className="px-3 py-1.5 sm:px-4 sm:py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm text-sm"
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors shadow-sm"
                 >
                   Delete
                 </button>
@@ -249,6 +206,6 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
       </div>
     </div>
   );
-};
+}
 
 export default ContentCard;

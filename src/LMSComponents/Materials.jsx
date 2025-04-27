@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
-import { ref, onValue, off } from 'firebase/database';
+import { ref, onValue } from 'firebase/database';
 import { auth, database } from '../firebase/config';
 import { useNavigate } from 'react-router-dom';
 import ContentCard from './ContentCard';
@@ -8,7 +8,7 @@ import {
   FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint,
   FaImage, FaVideo, FaChevronDown, FaUser, FaCalendarAlt,
   FaLayerGroup, FaFolder, FaFolderOpen, FaTimes, FaBars,
-  FaChevronRight, FaFile
+  FaChevronRight
 } from 'react-icons/fa';
 
 const Materials = () => {
@@ -22,7 +22,7 @@ const Materials = () => {
   const [expandedGroups, setExpandedGroups] = useState({});
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [view, setView] = useState('grid'); // 'grid' or 'list'
-  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth >= 1024);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [dateFilter, setDateFilter] = useState('all');
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -69,45 +69,22 @@ const Materials = () => {
 
   // Safe getter for timestamp from item with fallbacks
   const getItemTimestamp = (item) => {
-    if (!item) return 0;
-    return item.createdAt || item.uploadedAt || item.timestamp || item.date || 0;
+    return item?.createdAt || item?.uploadedAt || item?.timestamp || item?.date || 0;
   };
 
   // Safe getter for content type with fallbacks
   const getItemType = (item) => {
-    if (!item) return 'unknown';
-    return item.fileCategory || item.contentType || item.fileType || 'unknown';
+    return item?.fileCategory || item?.contentType || item?.fileType || 'unknown';
   };
 
-  // Set up window resize listener for responsive sidebar
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setSidebarOpen(true);
-      } else {
-        setSidebarOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(() => {
-    let contentRef = null;
-    let userRef = null;
-    let isSubscribed = true;
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      if (!isSubscribed) return;
-
       if (currentUser) {
         setUser(currentUser);
 
         // Fetch user data
-        userRef = ref(database, `users/${currentUser.uid}`);
+        const userRef = ref(database, `users/${currentUser.uid}`);
         onValue(userRef, (snapshot) => {
-          if (!isSubscribed) return;
           if (snapshot.exists()) {
             setUserData(snapshot.val());
           }
@@ -116,11 +93,8 @@ const Materials = () => {
         });
 
         // Fetch content from the database
-        contentRef = ref(database, 'content');
+        const contentRef = ref(database, 'content');
         onValue(contentRef, (snapshot) => {
-          if (!isSubscribed) return;
-          setLoading(true);
-
           if (snapshot.exists()) {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
@@ -131,14 +105,77 @@ const Materials = () => {
             });
 
             // Group content by uploadSessionId or other grouping identifier
-            const groups = processContentGroups(contentList);
+            const groups = {};
+
+            contentList.forEach(item => {
+              // Use uploadSessionId as the primary grouping key with fallbacks
+              const groupKey = item.uploadSessionId || item.batchId || 'ungrouped';
+
+              if (!groups[groupKey]) {
+                groups[groupKey] = {
+                  items: [],
+                  timestamp: getItemTimestamp(item),
+                  groupName: item.groupName || (groupKey === 'ungrouped' ? 'Ungrouped Content' : 'Content Group'),
+                  // Extract unique group title if all items share the same title base
+                  groupTitle: item.title ? item.title.split(' - ')[0] : null
+                };
+              }
+
+              // Update group timestamp if this item has a newer timestamp
+              const itemTimestamp = getItemTimestamp(item);
+              if (itemTimestamp > groups[groupKey].timestamp) {
+                groups[groupKey].timestamp = itemTimestamp;
+              }
+
+              // Update group title if we have better info
+              if (item.groupName && !groups[groupKey].groupName) {
+                groups[groupKey].groupName = item.groupName;
+              }
+
+              groups[groupKey].items.push(item);
+            });
+
+            // For each group, find the most common title prefix if groupTitle is not set
+            Object.keys(groups).forEach(key => {
+              if (!groups[key].groupTitle && groups[key].items.length > 1) {
+                // Try to find common title prefix
+                const titles = groups[key].items
+                  .map(item => item.title)
+                  .filter(title => title && typeof title === 'string'); // Filter out null/undefined titles
+
+                if (titles.length > 0) {
+                  const commonPrefix = findCommonPrefix(titles);
+                  if (commonPrefix && commonPrefix.length > 5) {
+                    groups[key].groupTitle = commonPrefix.trim();
+                  }
+                }
+              }
+
+              // Sort items within each group by date (newest first) with safe handling
+              groups[key].items.sort((a, b) => {
+                const dateA = getItemTimestamp(a);
+                const dateB = getItemTimestamp(b);
+                return dateB - dateA;
+              });
+            });
+
+            // Sort groups by timestamp (newest first) with safe handling
+            const sortedGroups = Object.entries(groups)
+              .sort(([, groupA], [, groupB]) => {
+                return (groupB.timestamp || 0) - (groupA.timestamp || 0);
+              })
+              .reduce((acc, [key, value]) => {
+                acc[key] = value;
+                return acc;
+              }, {});
+
             setContent(contentList);
-            setGroupedContent(groups);
+            setGroupedContent(sortedGroups);
 
             // Auto-expand the newest group
-            if (Object.keys(groups).length > 0) {
-              const newestGroupKey = Object.keys(groups)[0];
-              setExpandedGroups(prev => ({ ...prev, [newestGroupKey]: true }));
+            if (Object.keys(sortedGroups).length > 0) {
+              const newestGroupKey = Object.keys(sortedGroups)[0];
+              setExpandedGroups({ [newestGroupKey]: true });
             }
           } else {
             setContent([]);
@@ -150,7 +187,6 @@ const Materials = () => {
           setLoading(false);
         });
       } else {
-        // User not logged in, redirect to login
         navigate('/lms/login');
       }
     });
@@ -162,7 +198,7 @@ const Materials = () => {
       }
 
       // Close mobile filters when clicking outside
-      if (mobileFiltersOpen && !event.target.closest('.mobile-filters') && !event.target.closest('[aria-label="Mobile search and filters"]')) {
+      if (mobileFiltersOpen && !event.target.closest('.mobile-filters')) {
         setMobileFiltersOpen(false);
       }
     };
@@ -170,90 +206,10 @@ const Materials = () => {
     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      isSubscribed = false;
       unsubscribe();
       document.removeEventListener('mousedown', handleClickOutside);
-
-      // Clean up Firebase listeners when component unmounts
-      if (userRef) off(userRef);
-      if (contentRef) off(contentRef);
     };
   }, [navigate, userDropdownOpen, mobileFiltersOpen]);
-
-  // Process content into logical groups
-  const processContentGroups = (contentList) => {
-    if (!contentList || !Array.isArray(contentList) || contentList.length === 0) {
-      return {};
-    }
-
-    const groups = {};
-
-    contentList.forEach(item => {
-      if (!item) return;
-
-      // Use uploadSessionId as the primary grouping key with fallbacks
-      const groupKey = item.uploadSessionId || item.batchId || 'ungrouped';
-
-      if (!groups[groupKey]) {
-        groups[groupKey] = {
-          items: [],
-          timestamp: getItemTimestamp(item),
-          groupName: item.groupName || (groupKey === 'ungrouped' ? 'Ungrouped Content' : 'Content Group'),
-          // Extract unique group title if all items share the same title base
-          groupTitle: item.title ? item.title.split(' - ')[0] : null
-        };
-      }
-
-      // Update group timestamp if this item has a newer timestamp
-      const itemTimestamp = getItemTimestamp(item);
-      if (itemTimestamp > groups[groupKey].timestamp) {
-        groups[groupKey].timestamp = itemTimestamp;
-      }
-
-      // Update group title if we have better info
-      if (item.groupName && !groups[groupKey].groupName) {
-        groups[groupKey].groupName = item.groupName;
-      }
-
-      groups[groupKey].items.push(item);
-    });
-
-    // For each group, find the most common title prefix if groupTitle is not set
-    Object.keys(groups).forEach(key => {
-      if (!groups[key].groupTitle && groups[key].items.length > 1) {
-        // Try to find common title prefix
-        const titles = groups[key].items
-          .map(item => item.title)
-          .filter(title => title && typeof title === 'string'); // Filter out null/undefined titles
-
-        if (titles.length > 0) {
-          const commonPrefix = findCommonPrefix(titles);
-          if (commonPrefix && commonPrefix.length > 5) {
-            groups[key].groupTitle = commonPrefix.trim();
-          }
-        }
-      }
-
-      // Sort items within each group by date (newest first) with safe handling
-      groups[key].items.sort((a, b) => {
-        const dateA = getItemTimestamp(a);
-        const dateB = getItemTimestamp(b);
-        return dateB - dateA;
-      });
-    });
-
-    // Sort groups by timestamp (newest first) with safe handling
-    const sortedGroups = Object.entries(groups)
-      .sort(([, groupA], [, groupB]) => {
-        return (groupB.timestamp || 0) - (groupA.timestamp || 0);
-      })
-      .reduce((acc, [key, value]) => {
-        acc[key] = value;
-        return acc;
-      }, {});
-
-    return sortedGroups;
-  };
 
   // Find common prefix in an array of strings with safety checks
   const findCommonPrefix = (strings) => {
@@ -294,28 +250,24 @@ const Materials = () => {
             if (!item) return false; // Skip null items
 
             // Apply content type filter
-            const itemType = getItemType(item).toLowerCase();
             const typeMatch = filter === 'all' ||
-              (itemType === filter) ||
-              (itemType.includes && itemType.includes(filter));
+              (getItemType(item) === filter) ||
+              (item.fileType && item.fileType.includes && item.fileType.includes(filter));
 
-            // Apply category filter with safe string comparison
-            const itemCategory = (item.category || '').toLowerCase();
-            const categoryMatch = categoryFilter === 'all' ||
-              (itemCategory === categoryFilter.toLowerCase());
+            // Apply category filter
+            const categoryMatch = categoryFilter === 'all' || item.category === categoryFilter;
 
             // Apply date filter with safe timestamp handling
             const itemDate = getItemTimestamp(item);
             const dateMatch = dateFilter === 'all' || itemDate >= dateThreshold;
 
             // Apply search term with safe string handling
-            const itemTitle = (item.title || '').toLowerCase();
-            const itemDescription = (item.description || '').toLowerCase();
-            const searchTermLower = (searchTerm || '').toLowerCase();
+            const itemTitle = item.title || '';
+            const itemDescription = item.description || '';
 
             const searchMatch = !searchTerm ||
-              itemTitle.includes(searchTermLower) ||
-              itemDescription.includes(searchTermLower);
+              (typeof itemTitle === 'string' && itemTitle.toLowerCase().includes(searchTerm.toLowerCase())) ||
+              (typeof itemDescription === 'string' && itemDescription.toLowerCase().includes(searchTerm.toLowerCase()));
 
             return typeMatch && categoryMatch && dateMatch && searchMatch;
           });
@@ -361,14 +313,14 @@ const Materials = () => {
   const getFilterIcon = (filterType) => {
     if (!filterType) return null;
 
-    const type = String(filterType).toLowerCase();
+    const type = filterType.toLowerCase();
     switch (type) {
       case 'pdf': return <FaFilePdf />;
       case 'word': case 'doc': case 'docx': return <FaFileWord />;
       case 'ppt': case 'pptx': return <FaFilePowerpoint />;
       case 'image': case 'jpg': case 'jpeg': case 'png': return <FaImage />;
       case 'video': case 'mp4': return <FaVideo />;
-      default: return <FaFile />;
+      default: return null;
     }
   };
 
@@ -404,9 +356,9 @@ const Materials = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex flex-wrap gap-2 mb-6">
           {[1, 2, 3, 4, 5].map(i => (
-            <div key={i} className="h-10 bg-gray-200 rounded-full w-24 flex-shrink-0 animate-pulse"></div>
+            <div key={i} className="h-10 bg-gray-200 rounded-full w-24 animate-pulse"></div>
           ))}
         </div>
 
@@ -416,7 +368,7 @@ const Materials = () => {
               <div className="h-6 bg-gray-200 rounded w-1/2"></div>
             </div>
             <div className="p-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {[1, 2, 3].map(j => (
                   <div key={j} className="h-56 bg-gray-200 rounded-lg"></div>
                 ))}
@@ -660,7 +612,7 @@ const Materials = () => {
       <div className="container mx-auto py-8 px-4">
         <div className="flex">
           {/* Sidebar filters - desktop */}
-          <div className={`${sidebarOpen ? 'lg:block' : 'hidden'} lg:w-64 mr-8 transition-all duration-300`}>
+          <div className={`hidden lg:block w-64 mr-8 transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 mr-0'}`}>
             <div className="bg-white rounded-xl shadow-sm p-4 sticky top-20">
               <h2 className="text-lg font-semibold mb-4 text-gray-800">Filters</h2>
 
@@ -739,79 +691,67 @@ const Materials = () => {
                   ))}
                 </div>
               </div>
-
-              {/* View Toggle */}
-              <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-700 mb-2">View</h3>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() => setView('grid')}
-                    className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-colors ${view === 'grid'
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    aria-label="Grid view"
-                  >
-                    <div className="grid grid-cols-2 gap-1">
-                      <div className="w-2 h-2 bg-current rounded-sm"></div>
-                      <div className="w-2 h-2 bg-current rounded-sm"></div>
-                      <div className="w-2 h-2 bg-current rounded-sm"></div>
-                      <div className="w-2 h-2 bg-current rounded-sm"></div>
-                    </div>
-                    <span className="ml-2">Grid</span>
-                  </button>
-                  <button
-                    onClick={() => setView('list')}
-                    className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-colors ${view === 'list'
-                      ? 'bg-blue-50 text-blue-700 font-medium'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                      }`}
-                    aria-label="List view"
-                  >
-                    <div className="flex flex-col space-y-1 items-start">
-                      <div className="w-6 h-1 bg-current rounded-sm"></div>
-                      <div className="w-6 h-1 bg-current rounded-sm"></div>
-                      <div className="w-6 h-1 bg-current rounded-sm"></div>
-                    </div>
-                    <span className="ml-2">List</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Group Actions */}
-              <div>
-                <h3 className="text-sm font-medium text-gray-700 mb-2">Group Actions</h3>
-                <div className="space-y-2">
-                  <button
-                    onClick={expandAllGroups}
-                    className="w-full flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <FaFolderOpen className="mr-2 text-blue-500" />
-                    Expand All
-                  </button>
-                  <button
-                    onClick={collapseAllGroups}
-                    className="w-full flex items-center px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <FaFolder className="mr-2 text-blue-500" />
-                    Collapse All
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
 
-          {/* Main content */}
-          <div className="flex-1">
-            {/* Mobile search bar */}
-            <div className="lg:hidden mb-4">
-              <div className="relative">
+          <div className="flex-grow">
+            {/* Page Header */}
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+              <div className="flex flex-col md:flex-row md:items-center justify-between mb-4">
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-800 mb-2">Learning Materials</h1>
+                  <p className="text-gray-600">
+                    Browse through {Object.values(filteredGroups).reduce((acc, group) => acc + (group.items || []).length, 0)} learning resources
+                  </p>
+                </div>
+
+                {/* View toggle and expand/collapse buttons */}
+                <div className="flex items-center mt-4 md:mt-0">
+                  <div className="flex items-center bg-gray-100 rounded-lg p-1 mr-3">
+                    <button
+                      onClick={() => setView('grid')}
+                      className={`flex items-center px-3 py-1.5 rounded-md ${view === 'grid'
+                        ? 'bg-white shadow-sm text-blue-600'
+                        : 'text-gray-600 hover:text-gray-800'}`}
+                    >
+                      <FaLayerGroup className="mr-1.5" />
+                      <span>Grid</span>
+                    </button>
+                    <button
+                      onClick={() => setView('list')}
+                      className={`flex items-center px-3 py-1.5 rounded-md ${view === 'list'
+                        ? 'bg-white shadow-sm text-blue-600'
+                        : 'text-gray-600 hover:text-gray-800'}`}
+                    >
+                      <FaList className="mr-1.5" />
+                      <span>List</span>
+                    </button>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={expandAllGroups}
+                      className="text-sm px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center"
+                    >
+                      <FaFolderOpen className="mr-1.5" /> Expand All
+                    </button>
+                    <button
+                      onClick={collapseAllGroups}
+                      className="text-sm px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg transition-colors flex items-center"
+                    >
+                      <FaFolder className="mr-1.5" /> Collapse All
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mobile search bar */}
+              <div className="md:hidden relative mt-4">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                   <FaSearch className="text-gray-400" />
                 </div>
                 <input
                   type="text"
-                  className="w-full pl-10 pr-10 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500"
                   placeholder="Search materials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -821,76 +761,55 @@ const Materials = () => {
                     onClick={() => setSearchTerm('')}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
-                    <FaTimes className="w-4 h-4" />
+                    <FaTimes />
                   </button>
                 )}
               </div>
             </div>
 
-            {/* Filter pills for mobile/tablet */}
+            {/* Filter Pills - Mobile and Tablet */}
             <div className="lg:hidden flex flex-wrap gap-2 mb-6 overflow-x-auto pb-2">
               <button
                 onClick={() => setMobileFiltersOpen(true)}
-                className="flex items-center px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
+                className="flex items-center px-4 py-2 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
               >
                 <FaFilter className="mr-2 text-gray-500" />
-                Filters
+                <span>Filters</span>
               </button>
 
-              {filter !== 'all' && (
-                <div className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-full">
-                  {getFilterIcon(filter)}
-                  <span className="ml-2">{filter.charAt(0).toUpperCase() + filter.slice(1)}</span>
-                  <button
-                    onClick={() => setFilter('all')}
-                    className="ml-2 text-blue-500 hover:text-blue-700"
-                  >
-                    <FaTimes className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
-              {categoryFilter !== 'all' && (
-                <div className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-full">
-                  <span>{categoryFilter.charAt(0).toUpperCase() + categoryFilter.slice(1)}</span>
-                  <button
-                    onClick={() => setCategoryFilter('all')}
-                    className="ml-2 text-blue-500 hover:text-blue-700"
-                  >
-                    <FaTimes className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
-
-              {dateFilter !== 'all' && (
-                <div className="flex items-center px-4 py-2 bg-blue-50 text-blue-700 border border-blue-100 rounded-full">
-                  <FaCalendarAlt className="mr-2" />
-                  <span>
-                    {dateFilter === 'today'
-                      ? 'Today'
-                      : dateFilter === 'week'
-                        ? 'This Week'
-                        : 'This Month'}
-                  </span>
-                  <button
-                    onClick={() => setDateFilter('all')}
-                    className="ml-2 text-blue-500 hover:text-blue-700"
-                  >
-                    <FaTimes className="w-3 h-3" />
-                  </button>
-                </div>
-              )}
+              {/* Content Type Pills */}
+              {[
+                { value: 'all', label: 'All Types', icon: null },
+                { value: 'pdf', label: 'PDFs', icon: <FaFilePdf className="mr-1 text-red-500" /> },
+                { value: 'word', label: 'Docs', icon: <FaFileWord className="mr-1 text-blue-500" /> },
+                { value: 'ppt', label: 'Slides', icon: <FaFilePowerpoint className="mr-1 text-orange-500" /> },
+                { value: 'video', label: 'Videos', icon: <FaVideo className="mr-1 text-purple-500" /> },
+                { value: 'image', label: 'Images', icon: <FaImage className="mr-1 text-green-500" /> }
+              ].map(option => (
+                <button
+                  key={option.value}
+                  onClick={() => setFilter(option.value)}
+                  className={`flex items-center px-4 py-2 rounded-full ${filter === option.value
+                    ? 'bg-blue-50 text-blue-700 border border-blue-200 font-medium'
+                    : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    } transition-colors shadow-sm`}
+                >
+                  {option.icon}
+                  {option.label}
+                </button>
+              ))}
             </div>
 
             {/* No results message */}
             {!hasFilteredResults && !loading && (
-              <div className="bg-white rounded-xl shadow-md p-8 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="bg-white rounded-xl shadow-sm p-8 text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 mb-4">
                   <FaSearch className="text-gray-400 text-xl" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-1">No materials found</h3>
-                <p className="text-gray-500 mb-4">
-                  Try adjusting your search or filter criteria to find what you're looking for.
+                <h3 className="text-lg font-semibold text-gray-800 mb-2">No materials found</h3>
+                <p className="text-gray-600 max-w-md mx-auto">
+                  We couldn't find any learning materials matching your current filters and search terms.
+                  Try adjusting your filters or search criteria.
                 </p>
                 <button
                   onClick={() => {
@@ -899,110 +818,118 @@ const Materials = () => {
                     setDateFilter('all');
                     setSearchTerm('');
                   }}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Clear all filters
+                  Clear All Filters
                 </button>
               </div>
             )}
 
-            {/* Content groups */}
-            {hasFilteredResults && (
-              <div className="space-y-6">
-                {Object.entries(filteredGroups).map(([groupId, groupData]) => {
-                  const isExpanded = expandedGroups[groupId] || false;
-                  const groupTimestamp = groupData.timestamp;
-                  const formattedDate = formatDate(groupTimestamp);
+            {/* Content Groups */}
+            {Object.entries(filteredGroups).map(([groupId, groupData]) => {
+              // Safely get group items with fallback to empty array
+              const items = groupData.items || [];
+              // Skip rendering empty groups
+              if (items.length === 0) return null;
 
-                  // Get the best available group title
-                  const groupTitle = groupData.groupTitle ||
-                    groupData.groupName ||
-                    (groupId === 'ungrouped' ? 'Ungrouped Materials' : 'Content Group');
+              // Safely get group title with fallbacks
+              const groupTitle = groupData.groupTitle || groupData.groupName || 'Content Group';
 
-                  return (
-                    <div key={groupId} className="bg-white rounded-xl shadow-md overflow-hidden">
-                      {/* Group header */}
-                      <div
-                        className="p-4 bg-gray-50 border-b border-gray-100 flex justify-between items-center cursor-pointer"
-                        onClick={() => toggleGroup(groupId)}
-                      >
-                        <div className="flex items-center space-x-2">
-                          <div className="text-blue-600">
-                            {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
-                          </div>
-                          <div>
-                            <h3 className="font-medium text-gray-900">{groupTitle}</h3>
-                            <p className="text-sm text-gray-500 flex items-center">
-                              <FaCalendarAlt className="mr-1 text-xs" />
-                              {formattedDate}
-                              <span className="mx-2">•</span>
-                              <FaLayerGroup className="mr-1 text-xs" />
-                              {groupData.items.length} {groupData.items.length === 1 ? 'item' : 'items'}
-                            </p>
-                          </div>
+              return (
+                <div key={groupId} className="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+                  {/* Group Header */}
+                  <div
+                    className="p-4 bg-gray-50 border-b border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors flex justify-between items-center"
+                    onClick={() => toggleGroup(groupId)}
+                  >
+                    <div className="flex items-center space-x-2">
+                      {expandedGroups[groupId] ?
+                        <FaFolderOpen className="text-blue-500" /> :
+                        <FaFolder className="text-blue-500" />
+                      }
+                      <h2 className="font-semibold text-gray-800">
+                        {groupTitle}
+                        <span className="text-gray-500 text-sm font-normal ml-2">
+                          ({items.length} {items.length === 1 ? 'item' : 'items'})
+                        </span>
+                      </h2>
+                    </div>
+                    <div className="flex items-center">
+                      <span className="text-sm text-gray-500 mr-3 hidden sm:inline-block">
+                        Updated {formatDate(groupData.timestamp)}
+                      </span>
+                      <FaChevronDown
+                        className={`text-gray-400 transition-transform duration-200 ${expandedGroups[groupId] ? 'transform rotate-180' : ''
+                          }`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Group Content */}
+                  {expandedGroups[groupId] && (
+                    <div className="p-6">
+                      {view === 'grid' ? (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {items.map(item => (
+                            <ContentCard
+                              key={item.id}
+                              content={item}
+                              formatDate={formatDate}
+                              getFilterIcon={getFilterIcon}
+                            />
+                          ))}
                         </div>
-                      </div>
-
-                      {/* Group content */}
-                      {isExpanded && (
-                        <div className="p-4">
-                          {view === 'grid' ? (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                              {groupData.items.map(item => (
-                                <ContentCard
-                                  key={item.id}
-                                  item={item}
-                                  formatDate={formatDate}
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="space-y-2">
-                              {groupData.items.map(item => (
+                      ) : (
+                        <div className="divide-y divide-gray-200">
+                          {items.map(item => (
+                            <div
+                              key={item.id}
+                              className="flex items-center py-3 hover:bg-gray-50 rounded-lg px-3 -mx-3 transition-colors"
+                            >
+                              <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center mr-4">
+                                {getFilterIcon(getItemType(item)) || <FaFile className="text-gray-400" />}
+                              </div>
+                              <div className="flex-grow min-w-0">
+                                <h3 className="font-medium text-gray-800 truncate">{item.title || 'Untitled'}</h3>
+                                <p className="text-sm text-gray-500 truncate">
+                                  {item.description || 'No description available'}
+                                </p>
+                              </div>
+                              <div className="flex-shrink-0 ml-4 flex items-center">
+                                <span className="text-xs text-gray-500 mr-4 hidden md:block">
+                                  {formatDate(getItemTimestamp(item))}
+                                </span>
                                 <a
-                                  key={item.id}
-                                  href={item.fileUrl || item.url || '#'}
+                                  href={item.fileUrl || '#'}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="block group p-4 border border-gray-200 rounded-lg hover:bg-blue-50 transition-colors"
+                                  className="text-blue-600 hover:text-blue-800 flex items-center"
                                 >
-                                  <div className="flex items-center">
-                                    <div className="mr-4 text-lg">
-                                      {getFilterIcon(item.fileCategory || item.contentType)}
-                                    </div>
-                                    <div className="flex-1">
-                                      <h3 className="font-medium text-gray-900 group-hover:text-blue-700">{item.title || 'Untitled'}</h3>
-                                      <p className="text-sm text-gray-500 truncate">{item.description || 'No description available'}</p>
-                                      <div className="flex items-center mt-1 text-xs text-gray-500">
-                                        <span className="flex items-center">
-                                          <FaCalendarAlt className="mr-1" />
-                                          {formatDate(item.createdAt || item.uploadedAt || item.timestamp)}
-                                        </span>
-                                        {item.category && (
-                                          <span className="flex items-center ml-3">
-                                            <FaLayerGroup className="mr-1" />
-                                            {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <span className="mr-1">View</span>
+                                  <FaChevronRight className="w-3 h-3" />
                                 </a>
-                              ))}
+                              </div>
                             </div>
-                          )}
+                          ))}
                         </div>
                       )}
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
     </div>
   );
+};
+
+// Placeholder component for FaList icon since it wasn't imported
+const FaList = () => {
+  return <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 512 512">
+    <path d="M64 144C64 136.3 56.8 128 48 128S32 135.3 32 144V368C32 376.8 39.2 384 48 384S64 376.8 64 368V144zM448 144C448 136.3 440.8 128 432 128H176C167.2 128 160 135.3 160 144V176C160 184.8 167.2 192 176 192H432C440.8 192 448 184.8 448 176V144zM448 240C448 232.3 440.8 224 432 224H176C167.2 224 160 231.3 160 240V272C160 280.8 167.2 288 176 288H432C440.8 288 448 280.8 448 272V240zM448 336C448 328.3 440.8 320 432 320H176C167.2 320 160 327.3 160 336V368C160 376.8 167.2 384 176 384H432C440.8 384 448 376.8 448 368V336z" />
+  </svg>;
 };
 
 export default Materials;
