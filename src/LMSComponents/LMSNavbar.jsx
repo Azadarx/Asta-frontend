@@ -3,7 +3,6 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth, database } from '../firebase/config';
 import { ref, onValue } from 'firebase/database';
-import ContentUploadModal from './Admin/ContentUploadModal';
 
 const LMSNavbar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +11,6 @@ const LMSNavbar = ({ user }) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch user data from RTDB instead of Firestore
   useEffect(() => {
@@ -129,16 +127,6 @@ const LMSNavbar = ({ user }) => {
                 >
                   Add User
                 </Link>
-
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="bg-[#FFD700] hover:bg-[#FFC300] text-white p-2 rounded-full transition-colors shadow-lg"
-                  title="Add Content"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
               </>
             )}
 
@@ -261,15 +249,6 @@ const LMSNavbar = ({ user }) => {
                   >
                     Add User
                   </Link>
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="bg-[#FFD700] text-white px-3 py-1 rounded-md hover:bg-[#FFC300] transition flex items-center shadow-md"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Content
-                  </button>
                 </div>
               </>
             )}
@@ -291,15 +270,6 @@ const LMSNavbar = ({ user }) => {
           type="text/javascript"
         />
       )} */}
-      {isModalOpen && (
-        <ContentUploadModal
-          isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onContentAdded={fetchContent}
-          user={user}
-          API_URL={API_URL}
-        />
-      )}
     </nav>
   );
 };
