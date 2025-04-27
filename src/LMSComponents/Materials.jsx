@@ -7,7 +7,8 @@ import ContentCard from './ContentCard';
 import {
   FaSearch, FaFilter, FaFilePdf, FaFileWord, FaFilePowerpoint,
   FaImage, FaVideo, FaChevronDown, FaUser, FaCalendarAlt,
-  FaLayerGroup, FaFolder, FaFolderOpen, FaTimes, FaBars
+  FaLayerGroup, FaFolder, FaFolderOpen, FaTimes, FaBars,
+  FaChevronRight
 } from 'react-icons/fa';
 
 const Materials = () => {
