@@ -256,6 +256,7 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 1: Try to delete from PostgreSQL first
             try {
+                console.log();
                 const response = await fetch(`${API_URL}/api/lms/content/${contentItem.id}`, {
                     method: 'DELETE',
                     headers: {
@@ -272,8 +273,11 @@ const AdminDashboard = ({ user, userData }) => {
             }
 
             // Step 2: Also delete from Firebase RTDB (always do this as a fallback)
+            
             const firebaseId = contentItem.firebaseId || contentItem.id;
+            console.log(database, firebaseId, 'firebaseId==');
             const contentRef = ref(database, `content/${firebaseId}`);
+            console.log(contentRef, 'contentRef==');
             await remove(contentRef);
 
             // Step 3: Update local state to remove the deleted item
