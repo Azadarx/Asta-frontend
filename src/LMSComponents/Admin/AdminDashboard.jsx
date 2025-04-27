@@ -54,12 +54,12 @@ const AdminDashboard = ({ user, userData }) => {
     // Function to get a date string for display (with fallback)
     const getDisplayDate = (item) => {
         const date = getItemDate(item);
-        
+
         // Check if date is valid (not epoch 0)
         if (date.getTime() === 0) {
             return 'Unknown Date';
         }
-        
+
         return date.toLocaleDateString();
     };
 
@@ -186,7 +186,7 @@ const AdminDashboard = ({ user, userData }) => {
                 const dateB = getItemDate(b);
                 return dateB - dateA;
             });
-            
+
             setContent(contentData);
 
             // Group content and initialize expanded states
