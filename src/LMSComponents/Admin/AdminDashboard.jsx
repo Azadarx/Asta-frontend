@@ -332,6 +332,7 @@ const AdminDashboard = ({ user, userData }) => {
     // Content Group Component
     const ContentGroupCard = ({ group, isExpanded, onToggle }) => {
         const { items, title, sessionId, createdAt, isSingle } = group;
+        console.log(items, 'items===')
 
         // Don't render groups with no items
         if (!items || items.length === 0) return null;
