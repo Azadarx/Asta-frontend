@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { auth, database } from '../../firebase/config';
 import { ref, onValue, remove } from 'firebase/database';
 import { Link, useNavigate } from 'react-router-dom';
-// Removed LMSNavbar import
 import ContentUploadModal from './ContentUploadModal';
 import DeleteModal from './DeleteModal';
 
@@ -256,7 +255,6 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 1: Try to delete from PostgreSQL first
             try {
-                console.log();
                 const response = await fetch(`${API_URL}/api/lms/content/${contentItem.id}`, {
                     method: 'DELETE',
                     headers: {
@@ -273,11 +271,8 @@ const AdminDashboard = ({ user, userData }) => {
             }
 
             // Step 2: Also delete from Firebase RTDB (always do this as a fallback)
-            console.log(contentItem.firebaseId, contentItem.id, 'contentItem.id==');
             const firebaseId = contentItem.firebase_id || contentItem.id;
-            console.log(database, firebaseId, 'firebaseId==');
             const contentRef = ref(database, `content/${firebaseId}`);
-            console.log(contentRef, 'contentRef==');
             await remove(contentRef);
 
             // Step 3: Update local state to remove the deleted item
@@ -332,7 +327,6 @@ const AdminDashboard = ({ user, userData }) => {
     // Content Group Component
     const ContentGroupCard = ({ group, isExpanded, onToggle }) => {
         const { items, title, sessionId, createdAt, isSingle } = group;
-        console.log(items, 'items===')
 
         // Don't render groups with no items
         if (!items || items.length === 0) return null;
@@ -342,30 +336,34 @@ const AdminDashboard = ({ user, userData }) => {
             const item = items[0];
             return (
                 <tr key={item.id}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{item.title || 'Untitled Content'}</div>
+                    <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4">
+                        <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[120px] sm:max-w-none">
+                            {item.title || 'Untitled Content'}
+                        </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                    <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4">
+                        <span className="px-1 sm:px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                             {item.contentType || 'Unknown Type'}
                         </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4 text-xs sm:text-sm text-gray-500">
                         {getDisplayDate(item)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <button
-                            onClick={() => openDeleteModal(item)}
-                            className="text-red-600 hover:text-red-900 mr-4"
-                        >
-                            Delete
-                        </button>
-                        <Link
-                            to={`/lms/admin/edit/${item.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                        >
-                            Edit
-                        </Link>
+                    <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4 text-xs sm:text-sm font-medium">
+                        <div className="flex flex-col sm:flex-row gap-2">
+                            <button
+                                onClick={() => openDeleteModal(item)}
+                                className="text-red-600 hover:text-red-900 transition-colors"
+                            >
+                                Delete
+                            </button>
+                            <Link
+                                to={`/lms/admin/edit/${item.id}`}
+                                className="text-blue-600 hover:text-blue-900 transition-colors"
+                            >
+                                Edit
+                            </Link>
+                        </div>
                     </td>
                 </tr>
             );
@@ -390,17 +388,20 @@ const AdminDashboard = ({ user, userData }) => {
         return (
             <>
                 <tr className="bg-gray-50 cursor-pointer hover:bg-gray-100" onClick={() => onToggle(sessionId)}>
-                    <td colSpan="4" className="px-6 py-3">
+                    <td colSpan="4" className="px-2 sm:px-4 md:px-6 py-2 md:py-3">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
                                 <div className={`mr-2 transition-transform duration-200 ${isExpanded ? 'transform rotate-90' : ''}`}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
                                         <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
-                                <div className="font-medium text-gray-900">{title || 'Untitled Group'} <span className="text-sm font-normal text-gray-500">({items.length} files, {dateString})</span></div>
+                                <div className="text-xs sm:text-sm md:text-base font-medium text-gray-900 truncate max-w-[180px] sm:max-w-none">
+                                    {title || 'Untitled Group'}
+                                    <span className="hidden sm:inline text-xs md:text-sm font-normal text-gray-500 ml-1">({items.length} files, {dateString})</span>
+                                </div>
                             </div>
-                            <div className="text-sm text-blue-600">
+                            <div className="text-xs sm:text-sm text-blue-600">
                                 {isExpanded ? 'Collapse' : 'Expand'}
                             </div>
                         </div>
@@ -408,34 +409,38 @@ const AdminDashboard = ({ user, userData }) => {
                 </tr>
                 {isExpanded && items.map((item) => (
                     <tr key={item.id} className="bg-gray-50 border-b border-gray-100">
-                        <td className="pl-16 pr-6 py-3 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{item.title || 'Untitled Content'}</div>
+                        <td className="pl-8 sm:pl-12 md:pl-16 pr-2 sm:pr-4 md:pr-6 py-2 md:py-3">
+                            <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[100px] sm:max-w-none">
+                                {item.title || 'Untitled Content'}
+                            </div>
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap">
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                        <td className="px-2 sm:px-4 md:px-6 py-2 md:py-3">
+                            <span className="px-1 sm:px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
                                 {item.contentType || 'Unknown Type'}
                             </span>
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm text-gray-500">
                             {getDisplayDate(item)}
                         </td>
-                        <td className="px-6 py-3 whitespace-nowrap text-sm font-medium">
-                            <button
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    openDeleteModal(item);
-                                }}
-                                className="text-red-600 hover:text-red-900 mr-4"
-                            >
-                                Delete
-                            </button>
-                            <Link
-                                to={`/lms/admin/edit/${item.id}`}
-                                className="text-blue-600 hover:text-blue-900"
-                                onClick={(e) => e.stopPropagation()}
-                            >
-                                Edit
-                            </Link>
+                        <td className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-xs sm:text-sm font-medium">
+                            <div className="flex flex-col sm:flex-row gap-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        openDeleteModal(item);
+                                    }}
+                                    className="text-red-600 hover:text-red-900 transition-colors"
+                                >
+                                    Delete
+                                </button>
+                                <Link
+                                    to={`/lms/admin/edit/${item.id}`}
+                                    className="text-blue-600 hover:text-blue-900 transition-colors"
+                                    onClick={(e) => e.stopPropagation()}
+                                >
+                                    Edit
+                                </Link>
+                            </div>
                         </td>
                     </tr>
                 ))}
@@ -445,29 +450,24 @@ const AdminDashboard = ({ user, userData }) => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50">
-                {/* Removed LMSNavbar */}
-                <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                </div>
+            <div className="min-h-screen bg-gray-50 flex justify-center items-center p-4">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
             </div>
         );
     }
 
     if (!isAdmin) {
-        return <div className="p-8 text-center">Checking permissions...</div>;
+        return <div className="p-4 md:p-8 text-center">Checking permissions...</div>;
     }
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Removed LMSNavbar */}
-
-            <div className="container mx-auto py-8 px-4">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-blue-600">Admin's Dashboard</h1>
+            <div className="container mx-auto py-4 md:py-8 px-3 sm:px-4">
+                <div className="flex flex-col sm:flex-row justify-between items-center mb-6 md:mb-8 gap-4">
+                    <h1 className="text-2xl md:text-3xl font-bold text-blue-600 text-center sm:text-left">Admin's Dashboard</h1>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center w-full sm:w-auto transition-colors duration-200 shadow-md"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -477,19 +477,19 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Dashboard Sections */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Total Content</h2>
-                        <p className="text-3xl font-bold text-blue-600">{content.length}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
+                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Total Content</h2>
+                        <p className="text-2xl md:text-3xl font-bold text-blue-600">{content.length}</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Total Students</h2>
-                        <p className="text-3xl font-bold text-blue-600">{students.length}</p>
+                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Total Students</h2>
+                        <p className="text-2xl md:text-3xl font-bold text-blue-600">{students.length}</p>
                     </div>
 
-                    <div className="bg-white p-6 rounded-lg shadow-md">
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
+                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 sm:col-span-2 lg:col-span-1">
+                        <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
                         <p className="text-md text-gray-600">
                             {content.length > 0
                                 ? getDisplayDate(content[0])
@@ -499,13 +499,13 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Content Management */}
-                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-8">
-                    <div className="p-6 bg-gray-50 border-b">
-                        <h2 className="text-2xl font-semibold text-gray-800">Content Management</h2>
+                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6 md:mb-8">
+                    <div className="p-4 md:p-6 bg-gray-50 border-b">
+                        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Content Management</h2>
                     </div>
 
                     {content.length === 0 ? (
-                        <div className="p-6 text-center text-gray-500">
+                        <div className="p-4 md:p-6 text-center text-gray-500">
                             <p>No content available. Add your first content!</p>
                         </div>
                     ) : (
@@ -513,10 +513,10 @@ const AdminDashboard = ({ user, userData }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -536,12 +536,12 @@ const AdminDashboard = ({ user, userData }) => {
 
                 {/* Student Management Section */}
                 <div className="bg-white rounded-lg shadow-md overflow-hidden">
-                    <div className="p-6 bg-gray-50 border-b">
-                        <h2 className="text-2xl font-semibold text-gray-800">Student Management</h2>
+                    <div className="p-4 md:p-6 bg-gray-50 border-b">
+                        <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Student Management</h2>
                     </div>
 
                     {students.length === 0 ? (
-                        <div className="p-6 text-center text-gray-500">
+                        <div className="p-4 md:p-6 text-center text-gray-500">
                             <p>No students enrolled yet.</p>
                         </div>
                     ) : (
@@ -549,34 +549,34 @@ const AdminDashboard = ({ user, userData }) => {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Join Date</th>
+                                        <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {students.map((student) => (
                                         <tr key={student.id || student.uid}>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm font-medium text-gray-900">
+                                            <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4">
+                                                <div className="text-xs sm:text-sm font-medium text-gray-900 truncate max-w-[100px] sm:max-w-none">
                                                     {student.displayName || student.name || 'No Name'}
                                                 </div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="text-sm text-gray-500">{student.email}</div>
+                                            <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4">
+                                                <div className="text-xs sm:text-sm text-gray-500 truncate max-w-[120px] sm:max-w-none">{student.email}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4 text-xs sm:text-sm text-gray-500">
                                                 {student.created_at
                                                     ? new Date(student.created_at).toLocaleDateString()
                                                     : student.createdAt
                                                         ? new Date(student.createdAt).toLocaleDateString()
                                                         : 'Unknown'}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4 text-xs sm:text-sm font-medium">
                                                 <button
                                                     onClick={() => navigate(`/lms/admin/student/${student.id || student.uid}`)}
-                                                    className="text-blue-600 hover:text-blue-900"
+                                                    className="text-blue-600 hover:text-blue-900 transition-colors"
                                                 >
                                                     View Details
                                                 </button>
