@@ -110,7 +110,6 @@ const AdminSignup = () => {
         role: 'student'
       }, {
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
           'Content-Type': 'application/json'
         }
       });
@@ -126,7 +125,6 @@ const AdminSignup = () => {
         password
       }, {
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
           'Content-Type': 'application/json'
         }
       });
