@@ -56,7 +56,7 @@ const HomeNavbar = () => {
                     Phonics English
                   </Link>
                   <Link
-                    to="/courses/life-coaching"
+                    to="https://life-coaching-frontend.vercel.app/"
                     className="block px-4 py-2 text-gray-800 hover:bg-blue-50"
                   >
                     Life Coaching

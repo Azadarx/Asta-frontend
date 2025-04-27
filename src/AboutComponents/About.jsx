@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const About = () => {
     // Animation variants
@@ -90,6 +91,7 @@ const About = () => {
             setIsSubmitting(false);
         }
     };
+    const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-amber-50">
@@ -151,10 +153,10 @@ const About = () => {
                             transition={{ duration: 0.6, delay: 0.6 }}
                             className="mt-8 flex flex-wrap justify-center gap-4"
                         >
-                            <button className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1">
+                            <button onClick={() => { navigate('/courses/phonics') }} className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1">
                                 Explore Programs
                             </button>
-                            <button className="px-8 py-3 bg-[#F9FAFB] hover:bg-gray-50 text-purple-700 border border-purple-200 rounded-full font-medium shadow-lg hover:shadow-purple-500/20 transition-all duration-300 transform hover:-translate-y-1">
+                            <button onClick={() => { navigate('/') }} className="px-8 py-3 bg-[#F9FAFB] hover:bg-gray-50 text-purple-700 border border-purple-200 rounded-full font-medium shadow-lg hover:shadow-purple-500/20 transition-all duration-300 transform hover:-translate-y-1">
                                 Book a Tour
                             </button>
                         </motion.div>
@@ -243,7 +245,7 @@ const About = () => {
                                 viewport={{ once: true }}
                                 className="mt-10 flex flex-wrap gap-4"
                             >
-                                <button
+                                <button onClick={() => { navigate('/courses/phonics') }}
                                     className="px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-xl font-medium shadow-xl hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1"
                                 >
                                     Discover Our Programs
@@ -610,11 +612,12 @@ const About = () => {
                             </div>
                             <div className="md:w-1/3 flex justify-center md:justify-end">
                                 <motion.button
+                                    onClick={() => { navigate('/details') }}
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.98 }}
                                     className="px-8 py-4 bg-[#F9FAFB] text-purple-600 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300"
                                 >
-                                    Book a Free Assessment
+                                    Book Assessment Now
                                 </motion.button>
                             </div>
                         </div>
@@ -642,9 +645,9 @@ const About = () => {
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Our Location</h3>
                             <p className="text-[#666666]">
-                                123 Education Avenue<br />
-                                Learning District<br />
-                                Knowledge City, 400001
+                                Yakutpura Station Road,<br />
+                                Kotla Alijah Road,<br />
+                                Yakhutpura, Hyderabad – 500023,
                             </p>
                         </div>
 
@@ -656,8 +659,8 @@ const About = () => {
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Contact Us</h3>
                             <p className="text-[#666666]">
-                                Phone: +91 1234567890<br />
-                                Email: info@astaeducation.com
+                                Phone: +918897125110<br />
+                                Email: phonicswithshereen@gmail.com
                             </p>
                         </div>
 
@@ -667,7 +670,7 @@ const About = () => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-bold text-gray-800 mb-2">Office Hours</h3>
+                            <h3 className="text-lg font-bold text-gray-800 mb-2">Office Hours (Online Mode)</h3>
                             <p className="text-[#666666]">
                                 Monday - Friday: 9:00 AM - 6:00 PM<br />
                                 Saturday: 9:00 AM - 1:00 PM<br />
