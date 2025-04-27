@@ -15,9 +15,13 @@ import {
 const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+  if (!content) {
+    return null; // Prevent crash if content is missing
+  }
+
   const getFileIcon = () => {
     // Check various possible properties where file type might be stored
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const fileType = content?.fileCategory || content?.fileType || content?.file_type || content?.contentType || 'unknown';
 
     switch (fileType) {
       case 'application/pdf':
@@ -74,7 +78,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   const getActionButtonText = () => {
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const fileType = content?.fileCategory || content?.fileType || content?.file_type || content?.contentType || 'unknown';
     const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
       'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -91,7 +95,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   const getActionIcon = () => {
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const fileType = content?.fileCategory || content?.fileType || content?.file_type || content?.contentType || 'unknown';
     const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
       'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
