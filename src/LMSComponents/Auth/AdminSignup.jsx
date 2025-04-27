@@ -156,7 +156,7 @@ const AdminSignup = () => {
   // If showing success UI
   if (showSuccess) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-[#E5E7EB] dark:border-gray-700">
           <div className="mb-6">
             <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900">
@@ -205,7 +205,7 @@ const AdminSignup = () => {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600">
         <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl">
           <div className="flex items-center space-x-3">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
@@ -217,7 +217,7 @@ const AdminSignup = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900 px-4 py-12">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-12">
       <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-[#E5E7EB] dark:border-gray-700">
         <div className="text-center mb-8">
           <div className="mb-4 inline-block p-3 rounded-full bg-blue-100 dark:bg-blue-900">

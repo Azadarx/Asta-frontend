@@ -58,7 +58,7 @@ const Login = () => {
   return (
     <>
       <HomeNavbar />
-      <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900 overflow-hidden">
+      <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-r from-blue-600 to-purple-600 overflow-hidden">
         {/* Left Panel - Only visible on md screens and up */}
         <div className="hidden md:flex md:w-1/2 p-8 items-center justify-center">
           <div className="text-center">
