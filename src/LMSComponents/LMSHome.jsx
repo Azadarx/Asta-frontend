@@ -53,8 +53,12 @@ const LMSHome = () => {
               });
             });
             const sortedContent = contentList
-              .filter(item => item && item.createdAt)
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+              .filter(item => item) // Make sure item exists
+              .sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+                const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+                return dateB - dateA;
+              });
 
             setContent(sortedContent);
           } else {

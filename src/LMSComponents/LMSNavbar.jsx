@@ -1,13 +1,40 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebase/config';
+import { auth, database } from '../firebase/config';
+import { ref, onValue } from 'firebase/database';
 
-const LMSNavbar = ({ user, userData, isAdmin }) => {
+const LMSNavbar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+
+  // Fetch user data from RTDB instead of Firestore
+  useEffect(() => {
+    if (user && user.uid) {
+      const userRef = ref(database, `users/${user.uid}`);
+      
+      const unsubscribe = onValue(userRef, (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+          setUserData(data);
+          setIsAdmin(data.role === 'admin');
+        } else {
+          console.log('No user data available');
+        }
+      }, (error) => {
+        console.error('Error fetching user data:', error);
+      });
+
+      return () => {
+        // Clean up the listener
+        unsubscribe();
+      };
+    }
+  }, [user]);
 
   const handleLogout = async () => {
     try {
@@ -18,25 +45,6 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
       console.error('Error signing out:', error);
     }
   };
-
-  // Close dropdown when clicking outside
-  // useEffect(() => {
-  //   const handleClickOutside = (event) => {
-  //     if (
-  //       dropdownRef.current && 
-  //       !dropdownRef.current.contains(event.target) &&
-  //       buttonRef.current && 
-  //       !buttonRef.current.contains(event.target)
-  //     ) {
-  //       setIsOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -49,20 +57,18 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
   const handleMobileNavigation = (e, path) => {
     e.preventDefault();
     setIsOpen(false);
-  setTimeout(() => {
-    navigate(path);
-  }, 10); // Small delay
-
+    setTimeout(() => {
+      navigate(path);
+    }, 10); // Small delay
   };
 
   // Cloudinary upload widget handler
   const openCloudinaryWidget = () => {
-    console.log('openCloudinaryWidget====');
     if (window.cloudinary) {
       const widget = window.cloudinary.createUploadWidget(
         {
-          cloudName: 'your-cloud-name', // Replace with your Cloudinary cloud name
-          uploadPreset: 'lms-materials', // Replace with your upload preset
+          cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'your-cloud-name',
+          uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'lms-materials',
           folder: 'lms-content',
           sources: ['local', 'url', 'camera', 'google_drive', 'dropbox'],
           multiple: true,
@@ -72,6 +78,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
           if (!error && result && result.event === 'success') {
             console.log('Upload successful:', result.info);
             // You can add additional logic here to save the uploaded file info to your database
+            // using RTDB methods: ref, set, update, etc.
           }
           if (error) {
             console.error('Upload error:', error);
@@ -85,7 +92,6 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
     }
   };
 
-  console.log(isOpen, 'LMSNavbar====')
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-purple-600 shadow-md">
       <div className="container mx-auto px-6">
@@ -162,10 +168,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                     <Link
                       to="/lms/profile"
                       className="flex items-center w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
-                      onClick={() => {
-                        console.log('profile==')
-                        setIsOpen(false)
-                      }}
+                      onClick={() => setIsOpen(false)}
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -218,7 +221,6 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             {/* Fixed mobile navigation links */}
             <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              // to={"/lms/home"}
               onClick={(e) => handleMobileNavigation(e, '/lms/home')}
             >
               Home
@@ -226,11 +228,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             
             <button 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
-              // to={"/lms/materials"}
-              onClick={(e) => {
-                console.log('materials==')
-                handleMobileNavigation(e, '/lms/materials')
-              }}
+              onClick={(e) => handleMobileNavigation(e, '/lms/materials')}
             >
               Materials
             </button>
@@ -238,7 +236,7 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
             <Link 
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               to={"/lms/profile"}
-              // onClick={() => handleMobileNavigation('/lms/profile')}
+              onClick={() => setIsOpen(false)}
             >
               Your Profile
             </Link>
@@ -248,16 +246,16 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
                 <Link 
                   className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
                   to={"/lms/admin"}
-                  // onClick={() => handleMobileNavigation('/lms/admin')}
+                  onClick={() => setIsOpen(false)}
                 >
                   Admin
                 </Link>
 
                 <div className="flex space-x-2 mt-2 mb-2">
                   <Link
-                    // onClick={() => handleMobileNavigation('/lms/create-user')}
                     to={"/lms/create-user"}
                     className="bg-yellow-400 text-blue-900 px-3 py-1 rounded-md hover:bg-yellow-500 transition shadow-md inline-block"
+                    onClick={() => setIsOpen(false)}
                   >
                     Add User
                   </Link>
@@ -287,13 +285,13 @@ const LMSNavbar = ({ user, userData, isAdmin }) => {
         </div>
       )}
 
-      {/* Cloudinary Script - Add this to your index.html or load it conditionally */}
-      {isAdmin && (
+      {/* Cloudinary Script - This should be added to your index.html instead */}
+      {/* {isAdmin && (
         <script
           src="https://widget.cloudinary.com/v2.0/global/all.js"
           type="text/javascript"
         />
-      )}
+      )} */}
     </nav>
   );
 };

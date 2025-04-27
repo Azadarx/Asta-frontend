@@ -108,7 +108,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   // Use timestamp from various possible properties
-  const createdDate = content.createdAt || content.created_at || content.uploadedAt || content.timestamp;
+  const createdDate = content.createdAt || content.created_at || content.uploadedAt || content.timestamp || null;
 
   return (
     <div className="bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 h-full flex flex-col">
