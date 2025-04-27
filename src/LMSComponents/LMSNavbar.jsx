@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth, database } from '../firebase/config';
 import { ref, onValue } from 'firebase/database';
+import ContentUploadModal from './Admin/ContentUploadModal';
 
 const LMSNavbar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
