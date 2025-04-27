@@ -57,8 +57,6 @@ const LMSHome = () => {
               .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             setContent(sortedContent);
-
-            setContent(contentList);
           } else {
             setContent([]);
           }
