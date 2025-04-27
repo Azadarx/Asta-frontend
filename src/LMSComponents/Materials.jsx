@@ -872,7 +872,7 @@ const Materials = () => {
                           {items.map(item => (
                             <ContentCard
                               key={item.id}
-                              item={item}
+                              content={item}
                               formatDate={formatDate}
                               getFilterIcon={getFilterIcon}
                             />
