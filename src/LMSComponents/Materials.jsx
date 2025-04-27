@@ -78,11 +78,11 @@ const Materials = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
 
-        // Fetch user data
+        // ✅ Fetch user data from RTDB
         const userRef = ref(database, `users/${currentUser.uid}`);
         onValue(userRef, (snapshot) => {
           if (snapshot.exists()) {
@@ -92,9 +92,9 @@ const Materials = () => {
           console.error("Error fetching user data:", error);
         });
 
-        // Fetch content from the database
+        // ✅ Fetch and listen to content node
         const contentRef = ref(database, 'content');
-        onValue(contentRef, (snapshot) => {
+        const unsubscribeContent = onValue(contentRef, (snapshot) => {
           if (snapshot.exists()) {
             const contentList = [];
             snapshot.forEach((childSnapshot) => {
@@ -104,11 +104,10 @@ const Materials = () => {
               });
             });
 
-            // Group content by uploadSessionId or other grouping identifier
+            // ✅ Group content by uploadSessionId / batchId
             const groups = {};
 
             contentList.forEach(item => {
-              // Use uploadSessionId as the primary grouping key with fallbacks
               const groupKey = item.uploadSessionId || item.batchId || 'ungrouped';
 
               if (!groups[groupKey]) {
@@ -116,18 +115,15 @@ const Materials = () => {
                   items: [],
                   timestamp: getItemTimestamp(item),
                   groupName: item.groupName || (groupKey === 'ungrouped' ? 'Ungrouped Content' : 'Content Group'),
-                  // Extract unique group title if all items share the same title base
                   groupTitle: item.title ? item.title.split(' - ')[0] : null
                 };
               }
 
-              // Update group timestamp if this item has a newer timestamp
               const itemTimestamp = getItemTimestamp(item);
               if (itemTimestamp > groups[groupKey].timestamp) {
                 groups[groupKey].timestamp = itemTimestamp;
               }
 
-              // Update group title if we have better info
               if (item.groupName && !groups[groupKey].groupName) {
                 groups[groupKey].groupName = item.groupName;
               }
@@ -135,14 +131,12 @@ const Materials = () => {
               groups[groupKey].items.push(item);
             });
 
-            // For each group, find the most common title prefix if groupTitle is not set
+            // ✅ Find common title prefix if needed
             Object.keys(groups).forEach(key => {
               if (!groups[key].groupTitle && groups[key].items.length > 1) {
-                // Try to find common title prefix
                 const titles = groups[key].items
                   .map(item => item.title)
-                  .filter(title => title && typeof title === 'string'); // Filter out null/undefined titles
-
+                  .filter(title => title && typeof title === 'string');
                 if (titles.length > 0) {
                   const commonPrefix = findCommonPrefix(titles);
                   if (commonPrefix && commonPrefix.length > 5) {
@@ -151,7 +145,7 @@ const Materials = () => {
                 }
               }
 
-              // Sort items within each group by date (newest first) with safe handling
+              // ✅ Sort items inside group safely
               groups[key].items.sort((a, b) => {
                 const dateA = getItemTimestamp(a);
                 const dateB = getItemTimestamp(b);
@@ -159,7 +153,7 @@ const Materials = () => {
               });
             });
 
-            // Sort groups by timestamp (newest first) with safe handling
+            // ✅ Sort groups by newest timestamp
             const sortedGroups = Object.entries(groups)
               .sort(([, groupA], [, groupB]) => {
                 return (groupB.timestamp || 0) - (groupA.timestamp || 0);
@@ -169,10 +163,11 @@ const Materials = () => {
                 return acc;
               }, {});
 
+            // ✅ Set states
             setContent(contentList);
             setGroupedContent(sortedGroups);
 
-            // Auto-expand the newest group
+            // ✅ Auto-expand newest group
             if (Object.keys(sortedGroups).length > 0) {
               const newestGroupKey = Object.keys(sortedGroups)[0];
               setExpandedGroups({ [newestGroupKey]: true });
@@ -186,18 +181,18 @@ const Materials = () => {
           console.error("Error fetching content:", error);
           setLoading(false);
         });
+
       } else {
         navigate('/lms/login');
       }
     });
 
-    // Close dropdown when clicking outside
+    // ✅ Close dropdowns when clicking outside
     const handleClickOutside = (event) => {
       if (userDropdownOpen && !event.target.closest('.user-dropdown')) {
         setUserDropdownOpen(false);
       }
 
-      // Close mobile filters when clicking outside
       if (mobileFiltersOpen && !event.target.closest('.mobile-filters')) {
         setMobileFiltersOpen(false);
       }
@@ -206,10 +201,11 @@ const Materials = () => {
     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      unsubscribe();
+      unsubscribeAuth();
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [navigate, userDropdownOpen, mobileFiltersOpen]);
+
 
   // Find common prefix in an array of strings with safety checks
   const findCommonPrefix = (strings) => {
