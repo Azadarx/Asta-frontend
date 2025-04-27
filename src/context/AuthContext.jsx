@@ -11,6 +11,7 @@ import {
 import { getDatabase, ref, get, set } from 'firebase/database';
 import { firebaseConfig } from '../firebase/config';
 import { uploadToCloudinary, getCloudinaryFolder } from '../utils/cloudinaryUtils';
+import { initializeApp } from 'firebase/app';
 
 // Initialize Firebase app and RTDB (avoid duplicate initialization)
 const app = initializeApp(firebaseConfig);
