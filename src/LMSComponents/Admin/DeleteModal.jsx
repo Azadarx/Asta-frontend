@@ -5,7 +5,7 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, itemName }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="bg-[#F9FAFB] rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
         <div className="bg-red-50 p-4 border-b border-red-100">
           <h3 className="text-lg font-semibold text-red-700">Confirm Deletion</h3>
         </div>
@@ -27,7 +27,7 @@ const DeleteModal = ({ isOpen, onClose, onConfirm, itemName }) => {
         <div className="bg-gray-50 px-6 py-3 flex justify-end space-x-3">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-[#E5E7EB] rounded-md text-gray-700 bg-[#F9FAFB] hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Cancel
           </button>

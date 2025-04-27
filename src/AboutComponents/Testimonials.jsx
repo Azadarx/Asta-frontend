@@ -175,7 +175,7 @@ const Testimonials = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.7 }}
-                        className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto"
+                        className="mt-3 text-xl text-[#666666] max-w-2xl mx-auto"
                     >
                         Discover how our English courses have transformed the lives and careers of students worldwide
                     </motion.p>
@@ -189,7 +189,7 @@ const Testimonials = () => {
                         transition={{ delay: 0.6, duration: 0.7 }}
                         className="mb-16"
                     >
-                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                        <div className="bg-[#F9FAFB] rounded-xl shadow-lg overflow-hidden">
                             <div className="p-8 md:p-12 bg-gradient-to-r from-blue-600 to-indigo-700">
                                 <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">Featured Student Testimonials</h2>
                                 <p className="text-blue-100">Hear from some of our most successful students</p>
@@ -220,7 +220,7 @@ const Testimonials = () => {
                                             </div>
                                             <div className="ml-4">
                                                 <h3 className="text-lg font-medium text-gray-900">{testimonial.name}</h3>
-                                                <p className="text-sm text-gray-600">{testimonial.role}</p>
+                                                <p className="text-sm text-[#666666]">{testimonial.role}</p>
                                                 <div className="flex mt-1">
                                                     {renderStars(testimonial.rating)}
                                                 </div>
@@ -268,7 +268,7 @@ const Testimonials = () => {
                             className={`px-4 py-2 rounded-full font-medium ${
                                 selectedCourse === 'all' 
                                 ? 'bg-blue-600 text-white shadow-md' 
-                                : 'bg-white text-gray-700 hover:bg-blue-50'
+                                : 'bg-[#F9FAFB] text-gray-700 hover:bg-blue-50'
                             } transition-colors`}
                         >
                             All Courses
@@ -280,7 +280,7 @@ const Testimonials = () => {
                             className={`px-4 py-2 rounded-full font-medium ${
                                 selectedCourse === 'Phonics English Course' 
                                 ? 'bg-blue-600 text-white shadow-md' 
-                                : 'bg-white text-gray-700 hover:bg-blue-50'
+                                : 'bg-[#F9FAFB] text-gray-700 hover:bg-blue-50'
                             } transition-colors`}
                         >
                             Phonics English
@@ -292,7 +292,7 @@ const Testimonials = () => {
                             className={`px-4 py-2 rounded-full font-medium ${
                                 selectedCourse === 'Business English' 
                                 ? 'bg-blue-600 text-white shadow-md' 
-                                : 'bg-white text-gray-700 hover:bg-blue-50'
+                                : 'bg-[#F9FAFB] text-gray-700 hover:bg-blue-50'
                             } transition-colors`}
                         >
                             Business English
@@ -304,7 +304,7 @@ const Testimonials = () => {
                             className={`px-4 py-2 rounded-full font-medium ${
                                 selectedCourse === 'Advanced Grammar Masterclass' 
                                 ? 'bg-blue-600 text-white shadow-md' 
-                                : 'bg-white text-gray-700 hover:bg-blue-50'
+                                : 'bg-[#F9FAFB] text-gray-700 hover:bg-blue-50'
                             } transition-colors`}
                         >
                             Grammar Masterclass
@@ -321,13 +321,13 @@ const Testimonials = () => {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="bg-white rounded-xl shadow-lg p-10 text-center"
+                        className="bg-[#F9FAFB] rounded-xl shadow-lg p-10 text-center"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <h3 className="mt-4 text-xl font-medium text-gray-900">No testimonials found</h3>
-                        <p className="mt-2 text-gray-600">Try selecting a different course category.</p>
+                        <p className="mt-2 text-[#666666]">Try selecting a different course category.</p>
                     </motion.div>
                 ) : (
                     <motion.div
@@ -340,7 +340,7 @@ const Testimonials = () => {
                             <motion.div
                                 key={testimonial.id}
                                 variants={itemVariants}
-                                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                                className="bg-[#F9FAFB] rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
                             >
                                 <div className="p-6">
                                     <div className="flex items-center justify-between mb-4">
@@ -391,7 +391,7 @@ const Testimonials = () => {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1, duration: 0.7 }}
-                    className="mt-16 bg-white rounded-xl shadow-lg p-8"
+                    className="mt-16 bg-[#F9FAFB] rounded-xl shadow-lg p-8"
                 >
                     <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">Student Success Metrics</h2>
                     
@@ -435,13 +435,13 @@ const Testimonials = () => {
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
-                                    className="bg-white text-blue-700 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                                    className="bg-[#F9FAFB] text-blue-700 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
                                 >
                                     Submit Your Testimonial
                                 </motion.button>
                             </div>
                             
-                            <div className="bg-white/10 backdrop-blur-sm p-6 rounded-lg shadow-lg">
+                            <div className="bg-[#F9FAFB]/10 backdrop-blur-sm p-6 rounded-lg shadow-lg">
                                 <div className="flex space-x-2 mb-4">
                                     <div className="w-3 h-3 rounded-full bg-red-400"></div>
                                     <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
@@ -477,11 +477,11 @@ const Testimonials = () => {
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 1.4, duration: 0.7 }}
-                    className="mt-16 mb-8 bg-white rounded-xl shadow-lg p-8"
+                    className="mt-16 mb-8 bg-[#F9FAFB] rounded-xl shadow-lg p-8"
                 >
                     <div className="text-center">
                         <h2 className="text-2xl font-bold text-gray-800 mb-4">Ready to Start Your Success Story?</h2>
-                        <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+                        <p className="text-[#666666] mb-8 max-w-2xl mx-auto">
                             Join thousands of students who have transformed their lives through our English courses. It's your turn to succeed.
                         </p>
                         <motion.button

@@ -102,7 +102,7 @@ const PhonicsCourse = () => {
                             <div className="relative">
                                 <div className="absolute -top-6 -left-6 w-24 h-24 bg-yellow-100 rounded-full z-0"></div>
                                 <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full z-0"></div>
-                                <div className="relative z-10 bg-white p-6 rounded-2xl shadow-xl">
+                                <div className="relative z-10 bg-[#F9FAFB] p-6 rounded-2xl shadow-xl">
                                     <img
                                         src="https://teachertrainingindia.co.in/blog/wp-content/uploads/2024/04/27-phonics-training-online-1.webp"
                                         alt="Phonics Course"
@@ -129,7 +129,7 @@ const PhonicsCourse = () => {
                                                 <div key={i} className={`w-8 h-8 rounded-full border-2 border-white bg-blue-${i}00`}></div>
                                             ))}
                                         </div>
-                                        <div className="ml-3 text-sm text-gray-600">
+                                        <div className="ml-3 text-sm text-[#666666]">
                                             <span className="font-medium">127+ students</span> enrolled this month
                                         </div>
                                     </div>
@@ -141,7 +141,7 @@ const PhonicsCourse = () => {
             </motion.div>
 
             {/* Instructor Section */}
-            <section className="py-16 bg-white">
+            <section className="py-16 bg-[#F9FAFB]">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ y: 50, opacity: 0 }}
@@ -229,7 +229,7 @@ const PhonicsCourse = () => {
                             <motion.div
                                 key={index}
                                 variants={itemVariants}
-                                className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition-all duration-300"
+                                className="bg-[#F9FAFB]/10 backdrop-blur-sm rounded-xl p-6 hover:bg-[#F9FAFB]/20 transition-all duration-300"
                             >
                                 <div className="text-4xl mb-4">{feature.icon}</div>
                                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
@@ -287,19 +287,19 @@ const PhonicsCourse = () => {
                                     <h3 className="text-xl font-bold text-gray-900 mb-3">Course Details</h3>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <p className="text-gray-600 text-sm mb-1">Duration</p>
+                                            <p className="text-[#666666] text-sm mb-1">Duration</p>
                                             <p className="font-medium">3 Months</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 text-sm mb-1">Class Size</p>
+                                            <p className="text-[#666666] text-sm mb-1">Class Size</p>
                                             <p className="font-medium">Maximum 12 students</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 text-sm mb-1">Sessions</p>
+                                            <p className="text-[#666666] text-sm mb-1">Sessions</p>
                                             <p className="font-medium">Daily 1 session</p>
                                         </div>
                                         <div>
-                                            <p className="text-gray-600 text-sm mb-1">Mode</p>
+                                            <p className="text-[#666666] text-sm mb-1">Mode</p>
                                             <p className="font-medium">Online</p>
                                         </div>
                                     </div>
@@ -314,7 +314,7 @@ const PhonicsCourse = () => {
                             viewport={{ once: true }}
                             className="w-full lg:w-1/2"
                         >
-                            <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                            <div className="bg-[#F9FAFB] rounded-2xl shadow-lg overflow-hidden">
                                 <div className="p-8 bg-gradient-to-r from-indigo-50 to-blue-50">
                                     <h3 className="text-2xl font-bold text-gray-900 mb-2">Ready to Transform Your English Skills?</h3>
                                     <p className="text-gray-700 mb-6">Join our phonics course and build a strong foundation for English reading and pronunciation</p>
@@ -335,7 +335,7 @@ const PhonicsCourse = () => {
                                             <span className="text-gray-500 line-through ml-2">₹199</span>
                                             <span className="ml-2 bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-medium">50% OFF</span>
                                         </div>
-                                        <div className="text-gray-600">
+                                        <div className="text-[#666666]">
                                             <span className="font-medium">Offer ends in:</span> 2 days
                                         </div>
                                     </div>
@@ -375,7 +375,7 @@ const PhonicsCourse = () => {
             </section>
 
             {/* Testimonials */}
-            <section className="py-16 bg-white">
+            <section className="py-16 bg-[#F9FAFB]">
                 <div className="container mx-auto px-4">
                     <motion.div
                         initial={{ y: 30, opacity: 0 }}
@@ -431,7 +431,7 @@ const PhonicsCourse = () => {
                                     </div>
                                     <div>
                                         <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
-                                        <p className="text-gray-600 text-sm">{testimonial.relation}</p>
+                                        <p className="text-[#666666] text-sm">{testimonial.relation}</p>
                                     </div>
                                 </div>
                                 <p className="text-gray-700">{testimonial.content}</p>
@@ -513,7 +513,7 @@ const PhonicsCourse = () => {
                                 viewport={{ once: true }}
                                 className="mb-4 last:mb-0"
                             >
-                                <details className="group bg-white rounded-lg shadow-sm overflow-hidden">
+                                <details className="group bg-[#F9FAFB] rounded-lg shadow-sm overflow-hidden">
                                     <summary className="flex items-center justify-between cursor-pointer p-6 font-medium text-gray-900">
                                         {faq.question}
                                         <svg className="w-5 h-5 text-indigo-600 group-open:rotate-180 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -547,7 +547,7 @@ const PhonicsCourse = () => {
                         <motion.button
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-8 py-4 bg-white text-indigo-700 rounded-lg font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+                            className="px-8 py-4 bg-[#F9FAFB] text-indigo-700 rounded-lg font-medium text-lg shadow-lg hover:shadow-xl transition-all duration-300"
                             onClick={() => window.location.href = '/details'}
                         >
                             Enroll Now for ₹99
@@ -557,7 +557,7 @@ const PhonicsCourse = () => {
                         <motion.button
                             whileHover={{ scale: 1.03 }}
                             whileTap={{ scale: 0.98 }}
-                            className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-medium text-lg hover:bg-white/10 transition-all duration-300"
+                            className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-medium text-lg hover:bg-[#F9FAFB]/10 transition-all duration-300"
                             onClick={() => window.location.href = '/contact-us'}
                         >
                             Contact Instructor

@@ -120,7 +120,7 @@ const HomeFooter = () => {
                         <p className="text-blue-300 mb-4">Subscribe to get updates on our latest courses and special offers.</p>
 
                         {status?.type === 'success' ? (
-                            <div className="bg-green-500 bg-opacity-20 border border-green-500 text-green-100 px-4 py-3 rounded mb-4">
+                            <div className="bg-[#FFD700] bg-opacity-20 border border-green-500 text-green-100 px-4 py-3 rounded mb-4">
                                 {status.message}
                             </div>
                         ) : (
@@ -141,7 +141,7 @@ const HomeFooter = () => {
 
                                 <button
                                     type="submit"
-                                    className={`bg-blue-600 hover:bg-blue-500 text-white py-2 px-4 rounded font-medium transition-colors duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                                    className={`bg-blue-600 hover:bg-[#2A62FF] text-white py-2 px-4 rounded font-medium transition-colors duration-300 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
                                     disabled={loading}
                                 >
                                     {loading ? (

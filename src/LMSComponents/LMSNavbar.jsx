@@ -130,7 +130,7 @@ const LMSNavbar = ({ user }) => {
 
                 <button
                   onClick={openCloudinaryWidget}
-                  className="bg-green-500 hover:bg-green-600 text-white p-2 rounded-full transition-colors shadow-lg"
+                  className="bg-[#FFD700] hover:bg-[#FFC300] text-white p-2 rounded-full transition-colors shadow-lg"
                   title="Add Content"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -158,7 +158,7 @@ const LMSNavbar = ({ user }) => {
               {isOpen && (
                 <div 
                   ref={dropdownRef}
-                  className="origin-top-right absolute right-0 mt-3 w-56 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10 overflow-hidden transform transition-all duration-200 ease-in-out"
+                  className="origin-top-right absolute right-0 mt-3 w-56 rounded-lg shadow-xl bg-[#F9FAFB] ring-1 ring-black ring-opacity-5 focus:outline-none z-10 overflow-hidden transform transition-all duration-200 ease-in-out"
                 >
                   <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 text-white">
                     <p className="text-xs font-medium uppercase tracking-wider">Signed in as</p>
@@ -212,7 +212,7 @@ const LMSNavbar = ({ user }) => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t shadow-lg">
+        <div className="md:hidden bg-[#F9FAFB] border-t shadow-lg">
           <div className="container mx-auto px-4 py-2">
             <div className="px-4 py-2 text-sm text-gray-700 border-b">
               Signed in as: {user?.email}
@@ -264,7 +264,7 @@ const LMSNavbar = ({ user }) => {
                       setIsOpen(false);
                       openCloudinaryWidget();
                     }}
-                    className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition flex items-center shadow-md"
+                    className="bg-[#FFD700] text-white px-3 py-1 rounded-md hover:bg-[#FFC300] transition flex items-center shadow-md"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />

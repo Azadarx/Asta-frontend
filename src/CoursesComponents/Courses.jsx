@@ -198,7 +198,7 @@ const Courses = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.7 }}
-                        className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto"
+                        className="mt-3 text-xl text-[#666666] max-w-2xl mx-auto"
                     >
                         Find the perfect course to elevate your English skills and reach your goals
                     </motion.p>
@@ -209,7 +209,7 @@ const Courses = () => {
                     variants={fadeInVariants}
                     initial="hidden"
                     animate="visible"
-                    className="bg-white rounded-xl shadow-lg mb-10 p-6"
+                    className="bg-[#F9FAFB] rounded-xl shadow-lg mb-10 p-6"
                 >
                     <h2 className="text-xl font-bold text-gray-800 mb-4">Filter Courses</h2>
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -222,7 +222,7 @@ const Courses = () => {
                                 name="level"
                                 value={filters.level}
                                 onChange={handleFilterChange}
-                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition"
                             >
                                 <option value="all">All Levels</option>
                                 <option value="Beginner">Beginner</option>
@@ -240,7 +240,7 @@ const Courses = () => {
                                 name="priceRange"
                                 value={filters.priceRange}
                                 onChange={handleFilterChange}
-                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition"
                             >
                                 <option value="all">All Prices</option>
                                 <option value="under-50">Under $50</option>
@@ -258,7 +258,7 @@ const Courses = () => {
                                 name="duration"
                                 value={filters.duration}
                                 onChange={handleFilterChange}
-                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition"
                             >
                                 <option value="all">Any Duration</option>
                                 <option value="short">Short (≤ 1 month)</option>
@@ -278,7 +278,7 @@ const Courses = () => {
                                 value={filters.searchTerm}
                                 onChange={handleFilterChange}
                                 placeholder="Search courses..."
-                                className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+                                className="w-full px-3 py-2 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition"
                             />
                         </div>
                     </div>
@@ -293,13 +293,13 @@ const Courses = () => {
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
-                        className="bg-white rounded-xl shadow-lg p-10 text-center"
+                        className="bg-[#F9FAFB] rounded-xl shadow-lg p-10 text-center"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <h3 className="mt-4 text-xl font-medium text-gray-900">No courses found</h3>
-                        <p className="mt-2 text-gray-600">Try adjusting your filters to find more courses.</p>
+                        <p className="mt-2 text-[#666666]">Try adjusting your filters to find more courses.</p>
                     </motion.div>
                 ) : (
                     <motion.div
@@ -313,7 +313,7 @@ const Courses = () => {
                                 key={course.id}
                                 variants={courseVariants}
                                 whileHover={!course.comingSoon ? { y: -5 } : {}}
-                                className={`bg-white rounded-xl shadow-lg overflow-hidden transition-all duration-300 ${course.comingSoon ? 'relative' : ''}`}
+                                className={`bg-[#F9FAFB] rounded-xl shadow-lg overflow-hidden transition-all duration-300 ${course.comingSoon ? 'relative' : ''}`}
                             >
                                 <div className="relative">
                                     <img
@@ -340,7 +340,7 @@ const Courses = () => {
 
                                 <div className="p-6">
                                     <h3 className="text-xl font-bold text-gray-900 mb-2">{course.title}</h3>
-                                    <p className="text-gray-600 mb-4">{course.description}</p>
+                                    <p className="text-[#666666] mb-4">{course.description}</p>
 
                                     <div className="flex items-center mb-4">
                                         <span className="text-2xl font-bold text-indigo-700">${course.price}</span>
@@ -386,7 +386,7 @@ const Courses = () => {
                                                         <svg className="h-5 w-5 text-green-500 mr-2 mt-0.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                                         </svg>
-                                                        <span className="text-gray-600">{feature}</span>
+                                                        <span className="text-[#666666]">{feature}</span>
                                                     </li>
                                                 ))}
                                             </ul>
@@ -414,7 +414,7 @@ const Courses = () => {
                                             className="text-center p-4"
                                         >
                                             <div className="relative mb-4 inline-block">
-                                                <div className="h-20 w-20 rounded-full bg-white/20 animate-pulse flex items-center justify-center">
+                                                <div className="h-20 w-20 rounded-full bg-[#F9FAFB]/20 animate-pulse flex items-center justify-center">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                                     </svg>
@@ -428,9 +428,9 @@ const Courses = () => {
                                                 <input
                                                     type="email"
                                                     placeholder="Your email address"
-                                                    className="px-4 py-2 rounded-lg bg-white/10 border border-white/30 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-white"
+                                                    className="px-4 py-2 rounded-lg bg-[#F9FAFB]/10 border border-white/30 text-white placeholder-blue-100 focus:outline-none focus:ring-2 focus:ring-white"
                                                 />
-                                                <button className="px-4 py-2 bg-white text-indigo-700 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
+                                                <button className="px-4 py-2 bg-[#F9FAFB] text-indigo-700 rounded-lg font-semibold hover:bg-blue-50 transition-colors">
                                                     Notify Me
                                                 </button>
                                             </div>
@@ -447,7 +447,7 @@ const Courses = () => {
                     variants={fadeInVariants}
                     initial="hidden"
                     animate="visible"
-                    className="mt-16 bg-white rounded-xl shadow-lg p-8"
+                    className="mt-16 bg-[#F9FAFB] rounded-xl shadow-lg p-8"
                 >
                     <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">What Our Students Say</h2>
 
@@ -540,7 +540,7 @@ const Courses = () => {
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
-                            className="bg-white text-blue-700 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                            className="bg-[#F9FAFB] text-blue-700 font-bold py-3 px-8 rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
                         >
                             View All Courses
                         </motion.button>
@@ -552,42 +552,42 @@ const Courses = () => {
                     variants={fadeInVariants}
                     initial="hidden"
                     animate="visible"
-                    className="mt-16 bg-white rounded-xl shadow-lg p-8"
+                    className="mt-16 bg-[#F9FAFB] rounded-xl shadow-lg p-8"
                 >
                     <h2 className="text-2xl font-bold text-gray-800 mb-8 text-center">Frequently Asked Questions</h2>
 
                     <div className="space-y-6 max-w-3xl mx-auto">
-                        <div className="border-b border-gray-200 pb-6">
+                        <div className="border-b border-[#E5E7EB] pb-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-2">How are the courses structured?</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Our courses combine video lessons, interactive exercises, quizzes, and live sessions with instructors. You'll have access to a personalized dashboard to track your progress and participate in community discussions.
                             </p>
                         </div>
 
-                        <div className="border-b border-gray-200 pb-6">
+                        <div className="border-b border-[#E5E7EB] pb-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-2">Do I get a certificate after completing a course?</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Yes, all our courses come with a completion certificate that you can add to your resume or LinkedIn profile. For certain advanced courses, you may also receive internationally recognized certifications.
                             </p>
                         </div>
 
-                        <div className="border-b border-gray-200 pb-6">
+                        <div className="border-b border-[#E5E7EB] pb-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-2">What if I'm not satisfied with a course?</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 We offer a 30-day money-back guarantee for all our courses. If you're not completely satisfied, you can request a full refund within the first 30 days of enrollment.
                             </p>
                         </div>
 
-                        <div className="border-b border-gray-200 pb-6">
+                        <div className="border-b border-[#E5E7EB] pb-6">
                             <h3 className="text-lg font-medium text-gray-900 mb-2">How long do I have access to course materials?</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Once enrolled, you'll have lifetime access to all course materials, including any future updates. You can learn at your own pace and revisit the content whenever you need.
                             </p>
                         </div>
 
                         <div>
                             <h3 className="text-lg font-medium text-gray-900 mb-2">Can I access the courses on mobile devices?</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Yes, our platform is fully responsive and optimized for all devices. You can access your courses from desktop, laptop, tablet, or smartphone through our website or dedicated mobile app.
                             </p>
                         </div>

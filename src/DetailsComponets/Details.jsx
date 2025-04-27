@@ -259,7 +259,7 @@ const Details = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.7 }}
-                        className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto"
+                        className="mt-3 text-xl text-[#666666] max-w-2xl mx-auto"
                     >
                         {getCourseDescription()}
                     </motion.p>
@@ -280,7 +280,7 @@ const Details = () => {
 
                 <div className="flex flex-col lg:flex-row gap-8 items-start">
                     <motion.div
-                        className="w-full lg:w-1/2 bg-white rounded-xl shadow-2xl overflow-hidden"
+                        className="w-full lg:w-1/2 bg-[#F9FAFB] rounded-xl shadow-2xl overflow-hidden"
                         initial={{ x: -100, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.6 }}
@@ -319,7 +319,7 @@ const Details = () => {
                                             name="fullName"
                                             type="text"
                                             required
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                            className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition duration-200"
                                             placeholder="Enter your full name"
                                             value={formData.fullName}
                                             onChange={handleInputChange}
@@ -335,7 +335,7 @@ const Details = () => {
                                             name="email"
                                             type="email"
                                             required
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                            className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition duration-200"
                                             placeholder="you@example.com"
                                             value={formData.email}
                                             onChange={handleInputChange}
@@ -351,7 +351,7 @@ const Details = () => {
                                             name="phone"
                                             type="tel"
                                             required
-                                            className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                            className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition duration-200"
                                             placeholder="Enter your phone number"
                                             value={formData.phone}
                                             onChange={handleInputChange}
@@ -412,7 +412,7 @@ const Details = () => {
                                     </motion.div>
 
                                     {/* Coupon Code Section */}
-                                    <motion.div variants={itemVariants} className="pt-4 border-t border-gray-200">
+                                    <motion.div variants={itemVariants} className="pt-4 border-t border-[#E5E7EB]">
                                         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                                             <div className="flex-1">
                                                 <label htmlFor="couponCode" className="block text-sm font-medium text-gray-700 mb-1">
@@ -422,7 +422,7 @@ const Details = () => {
                                                     id="couponCode"
                                                     name="couponCode"
                                                     type="text"
-                                                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                                                    className="w-full px-4 py-3 rounded-lg border border-[#E5E7EB] focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] transition duration-200"
                                                     placeholder="Enter coupon code"
                                                     value={couponCode}
                                                     onChange={(e) => setCouponCode(e.target.value)}
@@ -434,7 +434,7 @@ const Details = () => {
                                                     type="button"
                                                     onClick={handleApplyCoupon}
                                                     disabled={discount.applied}
-                                                    className="px-4 py-3 bg-blue-600 text-white rounded-lg font-medium shadow hover:bg-blue-700 transition-colors disabled:bg-gray-400"
+                                                    className="px-4 py-3 bg-blue-600 text-white rounded-lg font-medium shadow hover:bg-[#1E4BCC] transition-colors disabled:bg-gray-400"
                                                 >
                                                     Apply
                                                 </button>
@@ -482,33 +482,33 @@ const Details = () => {
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
                         {/* Course Summary */}
-                        <div className="bg-white rounded-xl shadow-2xl overflow-hidden mb-8">
+                        <div className="bg-[#F9FAFB] rounded-xl shadow-2xl overflow-hidden mb-8">
                             <div className="p-6 sm:p-10">
                                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Course Summary</h2>
 
                                 <div className="space-y-4">
-                                    <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                         <span className="text-gray-700">Course</span>
                                         <span className="font-medium text-gray-900">{formData.course}</span>
                                     </div>
-                                    <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                         <span className="text-gray-700">Level</span>
                                         <span className="font-medium text-gray-900">{formData.level}</span>
                                     </div>
-                                    <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                         <span className="text-gray-700">Duration</span>
                                         <span className="font-medium text-gray-900">{formData.duration}</span>
                                     </div>
-                                    <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                         <span className="text-gray-700">Original Price</span>
                                         <span className="font-medium text-gray-500 line-through">${courseInfo.originalPrice}</span>
                                     </div>
-                                    <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                    <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                         <span className="text-gray-700">Discount</span>
                                         <span className="font-medium text-green-600">{courseInfo.discount}</span>
                                     </div>
                                     {discount.applied && (
-                                        <div className="flex justify-between items-center pb-4 border-b border-gray-200">
+                                        <div className="flex justify-between items-center pb-4 border-b border-[#E5E7EB]">
                                             <span className="text-gray-700">Coupon Discount</span>
                                             <span className="font-medium text-green-600">-${discount.amount}</span>
                                         </div>
@@ -522,7 +522,7 @@ const Details = () => {
                         </div>
 
                         {/* Course Benefits */}
-                        <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+                        <div className="bg-[#F9FAFB] rounded-xl shadow-2xl overflow-hidden">
                             <div className="p-6 sm:p-10">
                                 <h2 className="text-2xl font-bold text-gray-800 mb-6">Why Choose Our {formData.course}?</h2>
 
@@ -542,7 +542,7 @@ const Details = () => {
                                         </div>
                                         <div className="ml-4">
                                             <h3 className="text-lg font-medium text-gray-900">Expert Instructors</h3>
-                                            <p className="mt-1 text-gray-600">Learn from certified specialists with years of teaching experience.</p>
+                                            <p className="mt-1 text-[#666666]">Learn from certified specialists with years of teaching experience.</p>
                                         </div>
                                     </motion.div>
 
@@ -556,7 +556,7 @@ const Details = () => {
                                         </div>
                                         <div className="ml-4">
                                             <h3 className="text-lg font-medium text-gray-900">Interactive Learning</h3>
-                                            <p className="mt-1 text-gray-600">Engage with fun activities, games, and exercises designed to make learning enjoyable.</p>
+                                            <p className="mt-1 text-[#666666]">Engage with fun activities, games, and exercises designed to make learning enjoyable.</p>
                                         </div>
                                     </motion.div>
 
@@ -570,7 +570,7 @@ const Details = () => {
                                         </div>
                                         <div className="ml-4">
                                             <h3 className="text-lg font-medium text-gray-900">Rapid Progress</h3>
-                                            <p className="mt-1 text-gray-600">Our proven method helps students improve their skills fast.</p>
+                                            <p className="mt-1 text-[#666666]">Our proven method helps students improve their skills fast.</p>
                                         </div>
                                     </motion.div>
 
@@ -584,7 +584,7 @@ const Details = () => {
                                         </div>
                                         <div className="ml-4">
                                             <h3 className="text-lg font-medium text-gray-900">Certificate Included</h3>
-                                            <p className="mt-1 text-gray-600">Receive a verified certificate upon course completion.</p>
+                                            <p className="mt-1 text-[#666666]">Receive a verified certificate upon course completion.</p>
                                         </div>
                                     </motion.div>
                                 </motion.div>
@@ -593,7 +593,7 @@ const Details = () => {
 
                         {/* Testimonial */}
                         <motion.div
-                            className="mt-8 bg-white rounded-xl shadow-2xl overflow-hidden"
+                            className="mt-8 bg-[#F9FAFB] rounded-xl shadow-2xl overflow-hidden"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.8, duration: 0.6 }}
@@ -605,7 +605,7 @@ const Details = () => {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-medium text-gray-900">Sarah Johnson</h3>
-                                        <p className="text-gray-600 text-sm">Student</p>
+                                        <p className="text-[#666666] text-sm">Student</p>
                                     </div>
                                 </div>
                                 <p className="mt-4 text-gray-700 italic">

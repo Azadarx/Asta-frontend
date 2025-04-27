@@ -49,7 +49,7 @@ const EditContentPage = () => {
         { value: 'assignment', label: 'Assignment', color: 'bg-blue-100 text-blue-800 border-blue-200' },
         { value: 'reference', label: 'Reference Material', color: 'bg-green-100 text-green-800 border-green-200' },
         { value: 'quiz', label: 'Quiz', color: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
-        { value: 'other', label: 'Other', color: 'bg-gray-100 text-gray-800 border-gray-200' }
+        { value: 'other', label: 'Other', color: 'bg-gray-100 text-gray-800 border-[#E5E7EB]' }
     ];
 
     // Category options with badges
@@ -280,7 +280,7 @@ const EditContentPage = () => {
 
         return (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-                <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
+                <div className="bg-[#F9FAFB] rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-auto">
                     <div className="p-4 border-b flex justify-between items-center">
                         <h3 className="text-lg font-medium">{content.fileName}</h3>
                         <button
@@ -303,7 +303,7 @@ const EditContentPage = () => {
                             <iframe
                                 src={content.fileUrl}
                                 title={content.title}
-                                className="w-full h-[70vh] border border-gray-200 rounded"
+                                className="w-full h-[70vh] border border-[#E5E7EB] rounded"
                             />
                         ) : (
                             <div className="text-center p-6">
@@ -312,7 +312,7 @@ const EditContentPage = () => {
                                     href={content.fileUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                                    className="inline-block mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-[#1E4BCC]"
                                 >
                                     Open File
                                 </a>
@@ -328,17 +328,17 @@ const EditContentPage = () => {
     if (permissionError) {
         return (
             <div className="container mx-auto p-6">
-                <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
+                <div className="bg-[#F9FAFB] rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
                     <svg className="mx-auto h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                     </svg>
                     <h2 className="mt-4 text-xl font-bold text-gray-800">Permission Denied</h2>
-                    <p className="mt-2 text-gray-600">
+                    <p className="mt-2 text-[#666666]">
                         You do not have permission to access this page. This page is restricted to administrative users only.
                     </p>
                     <button
                         onClick={() => navigate('/lms/home')}
-                        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                         Return to Dashboard
                     </button>
@@ -359,7 +359,7 @@ const EditContentPage = () => {
 
     return (
         <div className="container mx-auto p-6">
-            <div className="bg-white rounded-lg shadow-lg p-6">
+            <div className="bg-[#F9FAFB] rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h1 className="text-2xl font-bold text-blue-600">Edit Content</h1>
                     <button
@@ -390,7 +390,7 @@ const EditContentPage = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                     {/* Content Title and Description */}
-                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                    <div className="bg-gray-50 p-6 rounded-lg border border-[#E5E7EB]">
                         <div>
                             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                             <input
@@ -399,7 +399,7 @@ const EditContentPage = () => {
                                 name="title"
                                 value={content.title}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter content title"
                                 required
                                 disabled={isUpdating}
@@ -413,7 +413,7 @@ const EditContentPage = () => {
                                 name="description"
                                 value={content.description}
                                 onChange={handleInputChange}
-                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 placeholder="Enter content description"
                                 rows="4"
                                 disabled={isUpdating}
@@ -423,7 +423,7 @@ const EditContentPage = () => {
 
                     {/* Content Badges and Categories */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 p-6 rounded-lg border border-[#E5E7EB]">
                             <label htmlFor="contentType" className="block text-sm font-medium text-gray-700 mb-3">Content Type</label>
 
                             {/* Content Type Badges */}
@@ -436,7 +436,7 @@ const EditContentPage = () => {
                                         })}
                                         className={`border rounded-md p-2 cursor-pointer transition-all ${content.contentType === option.value ?
                                             option.color + ' border-2' :
-                                            'bg-white border-gray-200 hover:bg-gray-50'
+                                            'bg-[#F9FAFB] border-[#E5E7EB] hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className="flex items-center">
@@ -457,7 +457,7 @@ const EditContentPage = () => {
                             </div>
                         </div>
 
-                        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                        <div className="bg-gray-50 p-6 rounded-lg border border-[#E5E7EB]">
                             <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-3">Category</label>
 
                             {/* Category Badges */}
@@ -470,7 +470,7 @@ const EditContentPage = () => {
                                         })}
                                         className={`border rounded-md p-2 cursor-pointer transition-all ${content.category === option.value ?
                                             option.color + ' border-2' :
-                                            'bg-white border-gray-200 hover:bg-gray-50'
+                                            'bg-[#F9FAFB] border-[#E5E7EB] hover:bg-gray-50'
                                             }`}
                                     >
                                         <div className="flex items-center">
@@ -493,7 +493,7 @@ const EditContentPage = () => {
                     </div>
 
                     {/* Current File */}
-                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                    <div className="bg-[#F9FAFB] p-6 rounded-lg border border-[#E5E7EB]">
                         <label className="block text-sm font-medium text-gray-700 mb-3">Current File</label>
 
                         <div className="flex items-start p-4 rounded-md bg-blue-50 border border-blue-100">
@@ -546,10 +546,10 @@ const EditContentPage = () => {
                     </div>
 
                     {/* File Upload Section */}
-                    <div className="bg-white p-6 rounded-lg border border-gray-200">
+                    <div className="bg-[#F9FAFB] p-6 rounded-lg border border-[#E5E7EB]">
                         <h3 className="text-lg font-medium text-gray-700 mb-4">Replace File</h3>
 
-                        <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                        <div className="border-2 border-dashed border-[#E5E7EB] rounded-lg p-6 text-center">
                             <input
                                 type="file"
                                 id="file"
@@ -559,7 +559,7 @@ const EditContentPage = () => {
                             />
                             <label
                                 htmlFor="file"
-                                className="cursor-pointer flex flex-col items-center justify-center text-gray-500 hover:text-gray-600"
+                                className="cursor-pointer flex flex-col items-center justify-center text-gray-500 hover:text-[#666666]"
                             >
                                 <svg className="w-12 h-12 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -618,7 +618,7 @@ const EditContentPage = () => {
                         </button>
                         <button
                             type="submit"
-                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
+                            className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center"
                             disabled={isUpdating}
                         >
                             {isUpdating ? (

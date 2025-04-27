@@ -115,7 +115,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   const createdDate = content?.createdAt || content?.created_at || content?.uploadedAt || content?.timestamp || null;
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg border border-gray-200 h-full flex flex-col">
+    <div className="bg-[#F9FAFB] rounded-xl overflow-hidden transition-all duration-300 hover:shadow-lg border border-[#E5E7EB] h-full flex flex-col">
       {/* Group Title Banner (if part of a group) */}
       {groupTitle && (
         <div className="bg-gradient-to-r from-indigo-100 to-blue-100 px-4 py-2 flex items-center">
@@ -157,7 +157,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
         {/* Description */}
         <div className="mb-4 flex-grow">
-          <p className="text-gray-600 text-sm line-clamp-3">{content.description}</p>
+          <p className="text-[#666666] text-sm line-clamp-3">{content.description}</p>
         </div>
 
         {/* Action buttons */}
@@ -185,15 +185,15 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
         {/* Delete confirmation modal */}
         {showDeleteModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
+            <div className="bg-[#F9FAFB] rounded-lg p-6 max-w-md w-full shadow-xl">
               <h3 className="text-xl font-bold mb-4 text-gray-800">Confirm Deletion</h3>
-              <p className="mb-6 text-gray-600">
+              <p className="mb-6 text-[#666666]">
                 Are you sure you want to delete "<span className="font-semibold">{content.title}</span>"? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={cancelDelete}
-                  className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
+                  className="px-4 py-2 border border-[#E5E7EB] rounded-lg hover:bg-gray-100 transition-colors text-gray-700"
                 >
                   Cancel
                 </button>

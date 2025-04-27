@@ -68,7 +68,7 @@ const UserProfile = () => {
         <div className="max-w-4xl mx-auto">
           
           {/* Card Container */}
-          <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+          <div className="bg-[#F9FAFB] rounded-2xl shadow-xl overflow-hidden">
             
             {/* Header Section */}
             <div className="relative">
@@ -86,7 +86,7 @@ const UserProfile = () => {
                   <div className="group">
                     {/* Profile Avatar */}
                     <div className="h-32 w-32 rounded-full bg-gradient-to-br from-indigo-600 to-violet-500 p-1 shadow-lg ring-4 ring-white">
-                      <div className="h-full w-full rounded-full bg-white flex items-center justify-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-violet-500">
+                      <div className="h-full w-full rounded-full bg-[#F9FAFB] flex items-center justify-center text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-br from-indigo-600 to-violet-500">
                         {userInitial}
                       </div>
                     </div>
@@ -106,7 +106,7 @@ const UserProfile = () => {
             </div>
             
             {/* Profile Details */}
-            <div className="px-6 sm:px-10 py-8 bg-white">
+            <div className="px-6 sm:px-10 py-8 bg-[#F9FAFB]">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Email */}
                 <div className="bg-slate-50 rounded-xl p-6 shadow-sm transition-all hover:shadow-md">
@@ -163,7 +163,7 @@ const UserProfile = () => {
                   View Full Profile
                 </button>
                 
-                <button className="inline-flex justify-center items-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg shadow-sm text-slate-700 bg-white hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
+                <button className="inline-flex justify-center items-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg shadow-sm text-slate-700 bg-[#F9FAFB] hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M5 4a1 1 0 00-2 0v7.268a2 2 0 000 3.464V16a1 1 0 102 0v-1.268a2 2 0 000-3.464V4zM11 4a1 1 0 10-2 0v1.268a2 2 0 000 3.464V16a1 1 0 102 0V8.732a2 2 0 000-3.464V4zM16 3a1 1 0 011 1v7.268a2 2 0 010 3.464V16a1 1 0 11-2 0v-1.268a2 2 0 010-3.464V4a1 1 0 011-1z" />
                   </svg>

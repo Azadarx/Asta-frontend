@@ -245,7 +245,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
       
       // Show success notification
       const notification = document.createElement('div');
-      notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50';
+      notification.className = 'fixed top-4 right-4 bg-[#FFD700] text-white p-4 rounded-lg shadow-lg z-50';
       notification.textContent = `Successfully uploaded ${files.length} file${files.length > 1 ? 's' : ''}!`;
       document.body.appendChild(notification);
       
@@ -285,7 +285,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-[#F9FAFB] rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-blue-600">Upload Learning Content</h2>
@@ -307,7 +307,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
           )}
 
           <form onSubmit={handleSubmit}>
-            <div className="bg-gray-50 p-6 rounded-lg mb-6 shadow-sm border border-gray-200">
+            <div className="bg-gray-50 p-6 rounded-lg mb-6 shadow-sm border border-[#E5E7EB]">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Content Information</h3>
               
               <div className="mb-4">
@@ -318,7 +318,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                     id="useGrouping"
                     checked={useGrouping}
                     onChange={(e) => setUseGrouping(e.target.checked)}
-                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-[#E5E7EB] rounded"
                     disabled={isUploading}
                   />
                   <label htmlFor="useGrouping" className="ml-2 block text-sm text-gray-700">
@@ -334,7 +334,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                       id="groupName"
                       value={groupName}
                       onChange={(e) => setGroupName(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Enter group name (e.g. 'Week 1 Materials')"
                       disabled={isUploading}
                     />
@@ -355,7 +355,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder={useGrouping ? "Enter group title" : "Enter content title"}
                     required
                     disabled={isUploading}
@@ -368,7 +368,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                     id="contentType"
                     value={contentType}
                     onChange={(e) => setContentType(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                     disabled={isUploading}
                   >
@@ -387,7 +387,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Enter content description"
                     rows="3"
                     disabled={isUploading}
@@ -400,7 +400,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                     id="category"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 border border-[#E5E7EB] rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                     disabled={isUploading}
                   >
@@ -413,7 +413,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
               </div>
             </div>
 
-            <div className="bg-gray-50 p-6 rounded-lg mb-6 shadow-sm border border-gray-200">
+            <div className="bg-gray-50 p-6 rounded-lg mb-6 shadow-sm border border-[#E5E7EB]">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Upload Files</h3>
               
               <div 
@@ -452,11 +452,11 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
               {files.length > 0 && (
                 <div className="mt-4">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">Selected Files</h4>
-                  <div className="max-h-40 overflow-y-auto border border-gray-200 rounded-md">
+                  <div className="max-h-40 overflow-y-auto border border-[#E5E7EB] rounded-md">
                     {files.map((file, index) => (
                       <div 
                         key={index} 
-                        className="flex items-center justify-between px-4 py-2 border-b border-gray-200 last:border-b-0"
+                        className="flex items-center justify-between px-4 py-2 border-b border-[#E5E7EB] last:border-b-0"
                       >
                         <div className="flex items-center">
                           {getFileIcon(file.type)}
@@ -495,7 +495,7 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
                   </div>
                   <span className="ml-2 text-sm text-gray-700">{uploadProgress}%</span>
                 </div>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-[#666666]">
                   Uploading file {currentUploadIndex + 1} of {files.length}...
                 </p>
               </div>
@@ -505,14 +505,14 @@ const ContentUploadModal = ({ isOpen, onClose, onContentAdded, user, API_URL }) 
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-[#F9FAFB] border border-[#E5E7EB] rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isUploading}
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md shadow-sm hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 disabled={isUploading}
               >
                 {isUploading ? 

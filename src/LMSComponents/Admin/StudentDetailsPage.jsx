@@ -102,17 +102,17 @@ const StudentDetailsPage = () => {
   if (permissionError) {
     return (
       <div className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
+        <div className="bg-[#F9FAFB] rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
           <svg className="mx-auto h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <h2 className="mt-4 text-xl font-bold text-gray-800">Permission Denied</h2>
-          <p className="mt-2 text-gray-600">
+          <p className="mt-2 text-[#666666]">
             You do not have permission to access this page. This page is restricted to administrative users only.
           </p>
           <button
             onClick={() => navigate('/lms/home')}
-            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Return to Dashboard
           </button>
@@ -134,15 +134,15 @@ const StudentDetailsPage = () => {
   if (error) {
     return (
       <div className="container mx-auto p-6">
-        <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
+        <div className="bg-[#F9FAFB] rounded-lg shadow-lg p-8 max-w-lg mx-auto text-center">
           <svg className="mx-auto h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
           <h2 className="mt-4 text-xl font-bold text-gray-800">Error</h2>
-          <p className="mt-2 text-gray-600">{error}</p>
+          <p className="mt-2 text-[#666666]">{error}</p>
           <button
             onClick={() => navigate('/lms/admin/content')}
-            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             Return to Admin Dashboard
           </button>
@@ -166,11 +166,11 @@ const StudentDetailsPage = () => {
       </div>
       
       {student && (
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-[#F9FAFB] rounded-lg shadow-lg overflow-hidden">
           {/* Header Section with Avatar */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-8 text-white">
             <div className="flex flex-col md:flex-row items-center md:items-start">
-              <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-blue-800 text-3xl font-bold mb-4 md:mb-0 md:mr-6">
+              <div className="w-24 h-24 bg-[#F9FAFB] rounded-full flex items-center justify-center text-blue-800 text-3xl font-bold mb-4 md:mb-0 md:mr-6">
                 {student.firstName?.charAt(0) || student.email?.charAt(0) || 'U'}
               </div>
               <div className="text-center md:text-left">
@@ -194,21 +194,21 @@ const StudentDetailsPage = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Basic Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Full Name</p>
+                  <p className="text-sm text-[#666666]">Full Name</p>
                   <p className="font-medium text-gray-900">
                     {student.firstName ? `${student.firstName} ${student.lastName || ''}` : student.displayName || 'Not provided'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Email Address</p>
+                  <p className="text-sm text-[#666666]">Email Address</p>
                   <p className="font-medium text-gray-900">{student.email || 'Not provided'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Phone Number</p>
+                  <p className="text-sm text-[#666666]">Phone Number</p>
                   <p className="font-medium text-gray-900">{student.phoneNumber || 'Not provided'}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">User ID</p>
+                  <p className="text-sm text-[#666666]">User ID</p>
                   <p className="font-medium text-gray-900 break-all">{student.uid}</p>
                 </div>
               </div>
@@ -219,15 +219,15 @@ const StudentDetailsPage = () => {
               <h2 className="text-xl font-semibold text-gray-800 mb-4 border-b pb-2">Account Information</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm text-gray-600">Account Created</p>
+                  <p className="text-sm text-[#666666]">Account Created</p>
                   <p className="font-medium text-gray-900">{formatDate(student.createdAt || student.created_at)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Last Login</p>
+                  <p className="text-sm text-[#666666]">Last Login</p>
                   <p className="font-medium text-gray-900">{formatDate(student.lastLoginAt || student.last_login_at)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Email Verified</p>
+                  <p className="text-sm text-[#666666]">Email Verified</p>
                   <p className="font-medium text-gray-900">
                     {student.emailVerified ? 
                       <span className="text-green-600">Yes</span> : 
@@ -236,7 +236,7 @@ const StudentDetailsPage = () => {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-600">Account Status</p>
+                  <p className="text-sm text-[#666666]">Account Status</p>
                   <p className="font-medium text-gray-900">
                     {student.disabled ? 
                       <span className="text-red-600">Disabled</span> : 
@@ -254,7 +254,7 @@ const StudentDetailsPage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {Object.entries(student.metadata).map(([key, value]) => (
                     <div key={key}>
-                      <p className="text-sm text-gray-600">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</p>
+                      <p className="text-sm text-[#666666]">{key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')}</p>
                       <p className="font-medium text-gray-900">{
                         typeof value === 'object' ? JSON.stringify(value) : String(value)
                       }</p>

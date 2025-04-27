@@ -98,7 +98,7 @@ const MyProfile = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-800 flex justify-center items-center">
-        <div className="flex flex-col items-center p-8 backdrop-blur-lg bg-white/5 rounded-2xl">
+        <div className="flex flex-col items-center p-8 backdrop-blur-lg bg-[#F9FAFB]/5 rounded-2xl">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-purple-200 border-opacity-20 rounded-full"></div>
             <div className="w-16 h-16 border-4 border-t-indigo-500 border-r-transparent border-b-transparent border-l-transparent rounded-full animate-spin absolute top-0 left-0"></div>
@@ -118,7 +118,7 @@ const MyProfile = () => {
         {/* Back button - fixed position */}
         <button
           onClick={() => navigate('/lms/home')}
-          className="fixed top-6 left-6 z-10 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 text-white shadow-lg group"
+          className="fixed top-6 left-6 z-10 flex items-center gap-2 px-4 py-2 rounded-full bg-[#F9FAFB]/10 backdrop-blur-md hover:bg-[#F9FAFB]/20 transition-all duration-300 text-white shadow-lg group"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 transform group-hover:-translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -154,7 +154,7 @@ const MyProfile = () => {
         )}
 
         {/* Glass-morphism Profile Card */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-3xl shadow-2xl overflow-hidden mb-8 transform transition-all duration-300 hover:shadow-purple-500/20">
+        <div className="backdrop-blur-xl bg-[#F9FAFB]/10 border border-white/20 rounded-3xl shadow-2xl overflow-hidden mb-8 transform transition-all duration-300 hover:shadow-purple-500/20">
           <div className="relative">
             {/* Decorative Background Elements */}
             <div className="absolute top-0 left-0 right-0 h-64 overflow-hidden">
@@ -169,7 +169,7 @@ const MyProfile = () => {
               <div className="relative mx-auto h-36 w-36 rounded-full">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-full animate-spin-slow opacity-70 blur-sm"></div>
                 <div className="absolute inset-1 bg-gradient-to-r from-indigo-900 via-purple-900 to-indigo-800 rounded-full"></div>
-                <div className="absolute inset-2 bg-white dark:bg-gray-900 rounded-full flex items-center justify-center">
+                <div className="absolute inset-2 bg-[#F9FAFB] dark:bg-gray-900 rounded-full flex items-center justify-center">
                   <span className="text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
                     {userData?.name ? userData.name.charAt(0).toUpperCase() : user?.email.charAt(0).toUpperCase()}
                   </span>
@@ -179,7 +179,7 @@ const MyProfile = () => {
               {/* Edit button */}
               <button
                 onClick={() => setEditMode(!editMode)}
-                className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md hover:bg-white/20 transition-all duration-300 text-white shadow-lg"
+                className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full bg-[#F9FAFB]/10 backdrop-blur-md hover:bg-[#F9FAFB]/20 transition-all duration-300 text-white shadow-lg"
               >
                 {!editMode ? (
                   <>
@@ -214,7 +214,7 @@ const MyProfile = () => {
           </div>
 
           {/* Profile Content */}
-          <div className="bg-white/5 backdrop-blur-lg border-t border-white/10 p-6 sm:p-8 md:p-10">
+          <div className="bg-[#F9FAFB]/5 backdrop-blur-lg border-t border-white/10 p-6 sm:p-8 md:p-10">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-white flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -249,11 +249,11 @@ const MyProfile = () => {
                       name="name"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
                       placeholder="Enter your full name"
                     />
                   ) : (
-                    <div className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
+                    <div className="px-4 py-3 bg-[#F9FAFB]/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
                       {userData?.name || 'Not set'}
                     </div>
                   )}
@@ -267,7 +267,7 @@ const MyProfile = () => {
                     </svg>
                     Email Address
                   </label>
-                  <div className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
+                  <div className="px-4 py-3 bg-[#F9FAFB]/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
                     {user?.email}
                   </div>
                 </div>
@@ -286,11 +286,11 @@ const MyProfile = () => {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300"
                       placeholder="Enter your phone number"
                     />
                   ) : (
-                    <div className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
+                    <div className="px-4 py-3 bg-[#F9FAFB]/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
                       {userData?.phone || 'Not set'}
                     </div>
                   )}
@@ -310,12 +310,12 @@ const MyProfile = () => {
                       name="address"
                       value={formData.address}
                       onChange={handleInputChange}
-                      className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 resize-none"
+                      className="w-full px-4 py-3 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-300 resize-none"
                       placeholder="Enter your address"
                       rows="3"
                     />
                   ) : (
-                    <div className="px-4 py-3 bg-white/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
+                    <div className="px-4 py-3 bg-[#F9FAFB]/5 backdrop-blur-md border border-white/10 rounded-xl text-white">
                       {userData?.address || 'Not set'}
                     </div>
                   )}
@@ -343,7 +343,7 @@ const MyProfile = () => {
         {/* Additional Information Cards */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Security Card */}
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl p-6 transform transition-all duration-300 hover:shadow-purple-500/20">
+          <div className="backdrop-blur-xl bg-[#F9FAFB]/10 border border-white/20 rounded-2xl shadow-xl p-6 transform transition-all duration-300 hover:shadow-purple-500/20">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 rounded-full bg-indigo-500/20 flex items-center justify-center mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -367,7 +367,7 @@ const MyProfile = () => {
                 <span>Two-factor authentication not enabled</span>
               </li>
             </ul>
-            <button className="w-full mt-6 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-white/20 transition-all duration-300">
+            <button className="w-full mt-6 px-4 py-2 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-[#F9FAFB]/20 transition-all duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -377,7 +377,7 @@ const MyProfile = () => {
           </div>
 
           {/* Progress Card */}
-          <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl p-6 transform transition-all duration-300 hover:shadow-purple-500/20">
+          <div className="backdrop-blur-xl bg-[#F9FAFB]/10 border border-white/20 rounded-2xl shadow-xl p-6 transform transition-all duration-300 hover:shadow-purple-500/20">
             <div className="flex items-center mb-4">
               <div className="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center mr-4">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -394,7 +394,7 @@ const MyProfile = () => {
                   <span className="text-indigo-200">Courses Completed</span>
                   <span className="text-white">2/5</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#F9FAFB]/10 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: '40%' }}></div>
                 </div>
               </div>
@@ -404,13 +404,13 @@ const MyProfile = () => {
                   <span className="text-indigo-200">Profile Completion</span>
                   <span className="text-white">80%</span>
                 </div>
-                <div className="h-2 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-2 bg-[#F9FAFB]/10 rounded-full overflow-hidden">
                   <div className="h-full bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full" style={{ width: '80%' }}></div>
                 </div>
               </div>
             </div>
 
-            <button className="w-full mt-6 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-white/20 transition-all duration-300">
+            <button className="w-full mt-6 px-4 py-2 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-[#F9FAFB]/20 transition-all duration-300">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
               </svg>
@@ -420,7 +420,7 @@ const MyProfile = () => {
         </div>
 
         {/* Membership Card */}
-        <div className="backdrop-blur-xl bg-white/10 border border-white/20 rounded-2xl shadow-xl p-6 mt-6 transform transition-all duration-300 hover:shadow-purple-500/20">
+        <div className="backdrop-blur-xl bg-[#F9FAFB]/10 border border-white/20 rounded-2xl shadow-xl p-6 mt-6 transform transition-all duration-300 hover:shadow-purple-500/20">
           <div className="flex items-center mb-6">
             <div className="w-12 h-12 rounded-full bg-pink-500/20 flex items-center justify-center mr-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-pink-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -446,7 +446,7 @@ const MyProfile = () => {
                 <p className="text-indigo-200 text-sm">Next billing date</p>
                 <p className="text-white">May 15, 2025</p>
               </div>
-              <div className="h-10 w-px bg-white/10 mx-4"></div>
+              <div className="h-10 w-px bg-[#F9FAFB]/10 mx-4"></div>
               <div className="flex-1">
                 <p className="text-indigo-200 text-sm">Payment method</p>
                 <p className="text-white flex items-center">
@@ -459,13 +459,13 @@ const MyProfile = () => {
             </div>
 
             <div className="flex space-x-4 mt-6">
-              <button className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-white/20 transition-all duration-300">
+              <button className="flex-1 px-4 py-2 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-[#F9FAFB]/20 transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 View Invoices
               </button>
-              <button className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-white/20 transition-all duration-300">
+              <button className="flex-1 px-4 py-2 bg-[#F9FAFB]/10 backdrop-blur-md border border-white/20 rounded-xl text-white font-medium flex items-center justify-center gap-2 hover:bg-[#F9FAFB]/20 transition-all duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

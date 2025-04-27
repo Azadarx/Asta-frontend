@@ -71,7 +71,7 @@ const Contact = () => {
         >
           <h2 className="text-4xl font-bold text-gray-800 mb-4">Contact Us</h2>
           <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-pink-500 mx-auto mb-4"></div>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-[#666666] max-w-2xl mx-auto">
             Have questions or need more information? Reach out to us and our team will get back to you as soon as possible.
           </p>
         </motion.div>
@@ -85,7 +85,7 @@ const Contact = () => {
             viewport={{ once: true }}
             className="w-full lg:w-1/3 px-4 mb-8 lg:mb-0"
           >
-            <div className="bg-white p-8 rounded-xl shadow-lg h-full">
+            <div className="bg-[#F9FAFB] p-8 rounded-xl shadow-lg h-full">
               <h3 className="text-2xl font-bold text-gray-800 mb-6">Get In Touch</h3>
 
               <div className="space-y-6">
@@ -98,7 +98,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800">Address</h4>
-                    <p className="text-gray-600 mt-1">Opposite Sanjary Function Palace,
+                    <p className="text-[#666666] mt-1">Opposite Sanjary Function Palace,
                       Ftihar Chowk, 9F6J+QXW,
                       Yakutpura Station Road, Kotla Alijah Road,
                       Yakhutpura, Hyderabad – 500023,
@@ -114,7 +114,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800">Phone</h4>
-                    <p className="text-gray-600 mt-1">+91 8897125110</p>
+                    <p className="text-[#666666] mt-1">+91 8897125110</p>
                   </div>
                 </div>
 
@@ -126,7 +126,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800">Email</h4>
-                    <p className="text-gray-600 mt-1">phonicswithshereen@gmail.com</p>
+                    <p className="text-[#666666] mt-1">phonicswithshereen@gmail.com</p>
                   </div>
                 </div>
 
@@ -138,7 +138,7 @@ const Contact = () => {
                   </div>
                   <div>
                     <h4 className="text-lg font-semibold text-gray-800">Hours</h4>
-                    <p className="text-gray-600 mt-1">Monday - Friday: 9AM - 6PM<br />Saturday: 10AM - 4PM</p>
+                    <p className="text-[#666666] mt-1">Monday - Friday: 9AM - 6PM<br />Saturday: 10AM - 4PM</p>
                   </div>
                 </div>
               </div>
@@ -153,7 +153,7 @@ const Contact = () => {
             viewport={{ once: true }}
             className="w-full lg:w-2/3 px-4"
           >
-            <div className="bg-white p-8 rounded-xl shadow-lg">
+            <div className="bg-[#F9FAFB] p-8 rounded-xl shadow-lg">
               <h3 className="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h3>
 
               {submitStatus && (
@@ -171,7 +171,7 @@ const Contact = () => {
                       id="name"
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                       placeholder="Enter your name"
                       required
                     />
@@ -183,7 +183,7 @@ const Contact = () => {
                       id="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                       placeholder="Enter your email"
                       required
                     />
@@ -198,7 +198,7 @@ const Contact = () => {
                       id="phone"
                       value={formData.phone}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                       placeholder="Enter your phone number"
                     />
                   </div>
@@ -209,7 +209,7 @@ const Contact = () => {
                       id="subject"
                       value={formData.subject}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                      className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                       placeholder="Enter subject"
                       required
                     />
@@ -223,7 +223,7 @@ const Contact = () => {
                     rows="5"
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                    className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:outline-none"
                     placeholder="Type your message here..."
                     required
                   ></textarea>

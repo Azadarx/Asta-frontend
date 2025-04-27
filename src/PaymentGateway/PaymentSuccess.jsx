@@ -262,14 +262,14 @@ const PaymentSuccess = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.4, duration: 0.7 }}
-                        className="mt-3 text-xl text-gray-600 max-w-2xl mx-auto"
+                        className="mt-3 text-xl text-[#666666] max-w-2xl mx-auto"
                     >
                         Thank you for enrolling in our {studentInfo.course}
                     </motion.p>
                 </div>
 
                 <motion.div
-                    className="bg-white rounded-xl shadow-2xl overflow-hidden mb-8"
+                    className="bg-[#F9FAFB] rounded-xl shadow-2xl overflow-hidden mb-8"
                     initial={{ y: 50, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
                     transition={{ duration: 0.6 }}
@@ -292,7 +292,7 @@ const PaymentSuccess = () => {
                             <motion.h2 variants={itemVariants} className="text-2xl font-bold text-gray-800 mb-2">
                                 Your Registration is Confirmed!
                             </motion.h2>
-                            <motion.p variants={itemVariants} className="text-gray-600">
+                            <motion.p variants={itemVariants} className="text-[#666666]">
                                 We've sent the course details to your email address.
                             </motion.p>
                         </motion.div>
@@ -345,7 +345,7 @@ const PaymentSuccess = () => {
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                                 onClick={handleDownloadReceipt}
-                                className="px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-medium shadow-sm hover:bg-blue-50 transition-all duration-200 flex items-center justify-center"
+                                className="px-6 py-3 bg-[#F9FAFB] border-2 border-blue-600 text-blue-600 rounded-lg font-medium shadow-sm hover:bg-blue-50 transition-all duration-200 flex items-center justify-center"
                             >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
@@ -367,7 +367,7 @@ const PaymentSuccess = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <motion.div
-                        className="bg-white rounded-xl shadow-lg overflow-hidden"
+                        className="bg-[#F9FAFB] rounded-xl shadow-lg overflow-hidden"
                         initial={{ x: -50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.4 }}
@@ -379,7 +379,7 @@ const PaymentSuccess = () => {
                                 </svg>
                                 Next Steps
                             </h3>
-                            <ul className="space-y-4 text-gray-600">
+                            <ul className="space-y-4 text-[#666666]">
                                 <li className="flex items-start">
                                     <div className="flex-shrink-0">
                                         <svg className="h-5 w-5 text-green-500 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -409,7 +409,7 @@ const PaymentSuccess = () => {
                     </motion.div>
 
                     <motion.div
-                        className="bg-white rounded-xl shadow-lg overflow-hidden"
+                        className="bg-[#F9FAFB] rounded-xl shadow-lg overflow-hidden"
                         initial={{ x: 50, opacity: 0 }}
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ duration: 0.6, delay: 0.5 }}
@@ -421,7 +421,7 @@ const PaymentSuccess = () => {
                                 </svg>
                                 Need Help?
                             </h3>
-                            <p className="text-gray-600 mb-4">
+                            <p className="text-[#666666] mb-4">
                                 If you have any questions or need assistance with your course, we're here to help.
                             </p>
                             <div className="space-y-3">

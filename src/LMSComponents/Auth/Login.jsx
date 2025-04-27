@@ -62,7 +62,7 @@ const Login = () => {
         {/* Left Panel - Only visible on md screens and up */}
         <div className="hidden md:flex md:w-1/2 p-8 items-center justify-center">
           <div className="text-center">
-            <div className="mb-6 p-3 inline-flex items-center justify-center rounded-full bg-white/10 backdrop-blur-lg">
+            <div className="mb-6 p-3 inline-flex items-center justify-center rounded-full bg-[#F9FAFB]/10 backdrop-blur-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
               </svg>
@@ -71,19 +71,19 @@ const Login = () => {
             <p className="text-xl text-blue-100 mb-8 max-w-md mx-auto">Your gateway to comprehensive online learning experiences</p>
             
             <div className="grid grid-cols-2 gap-4 mb-12 max-w-md mx-auto">
-              <div className="bg-white/10 backdrop-blur-lg p-4 rounded-xl">
+              <div className="bg-[#F9FAFB]/10 backdrop-blur-lg p-4 rounded-xl">
                 <div className="text-4xl text-white font-bold mb-1">100+</div>
                 <div className="text-blue-100">Expert Courses</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg p-4 rounded-xl">
+              <div className="bg-[#F9FAFB]/10 backdrop-blur-lg p-4 rounded-xl">
                 <div className="text-4xl text-white font-bold mb-1">24/7</div>
                 <div className="text-blue-100">Learning Access</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg p-4 rounded-xl">
+              <div className="bg-[#F9FAFB]/10 backdrop-blur-lg p-4 rounded-xl">
                 <div className="text-4xl text-white font-bold mb-1">10k+</div>
                 <div className="text-blue-100">Students</div>
               </div>
-              <div className="bg-white/10 backdrop-blur-lg p-4 rounded-xl">
+              <div className="bg-[#F9FAFB]/10 backdrop-blur-lg p-4 rounded-xl">
                 <div className="text-4xl text-white font-bold mb-1">90%</div>
                 <div className="text-blue-100">Success Rate</div>
               </div>
@@ -95,10 +95,10 @@ const Login = () => {
         <div className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8">
           <div className="w-full max-w-md">
             {/* Glass Card */}
-            <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-lg bg-opacity-90 dark:bg-opacity-80 border border-white/20 dark:border-gray-700">
+            <div className="bg-[#F9FAFB] dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden backdrop-blur-lg bg-opacity-90 dark:bg-opacity-80 border border-white/20 dark:border-gray-700">
               {/* Top Banner & Logo - Only visible on small screens */}
               <div className="md:hidden bg-gradient-to-r from-blue-600 to-purple-600 p-6 text-center">
-                <div className="inline-flex items-center justify-center bg-white/20 p-3 rounded-full mb-3">
+                <div className="inline-flex items-center justify-center bg-[#F9FAFB]/20 p-3 rounded-full mb-3">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
@@ -111,7 +111,7 @@ const Login = () => {
                 {/* Title */}
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-gray-800 dark:text-white">Welcome Back</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mt-2">Sign in to continue your learning journey</p>
+                  <p className="text-[#666666] dark:text-gray-400 mt-2">Sign in to continue your learning journey</p>
                 </div>
 
                 {/* Error Alert */}
@@ -143,7 +143,7 @@ const Login = () => {
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-12 block w-full px-4 py-4 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-white transition-all"
+                        className="pl-12 block w-full px-4 py-4 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB]/80 dark:bg-gray-800/80 text-gray-900 dark:text-white transition-all"
                         placeholder="your@email.com"
                       />
                     </div>
@@ -169,14 +169,14 @@ const Login = () => {
                         required
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-12 block w-full px-4 py-4 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/80 dark:bg-gray-800/80 text-gray-900 dark:text-white transition-all"
+                        className="pl-12 block w-full px-4 py-4 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB]/80 dark:bg-gray-800/80 text-gray-900 dark:text-white transition-all"
                         placeholder="••••••••"
                       />
                       <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
                         <button
                           type="button"
                           onClick={togglePasswordVisibility}
-                          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 focus:outline-none transition-colors"
+                          className="text-gray-400 hover:text-[#666666] dark:hover:text-gray-300 focus:outline-none transition-colors"
                         >
                           {showPassword ? (
                             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -222,7 +222,7 @@ const Login = () => {
 
                 {/* Create Account Link */}
                 <div className="mt-8 text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[#666666] dark:text-gray-400">
                     Don't have an account yet?{' '}
                     <a href="#" className="font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">
                       Create an account

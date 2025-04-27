@@ -97,16 +97,16 @@ const Payment = () => {
     if (error && paymentStatus === 'pending') {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+                <div className="bg-[#F9FAFB] rounded-xl shadow-xl p-8 max-w-md w-full">
                     <div className="text-center">
                         <svg className="h-16 w-16 text-red-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
                         <h2 className="text-2xl font-bold text-gray-800 mt-4">Payment Error</h2>
-                        <p className="mt-2 text-gray-600">{error}</p>
+                        <p className="mt-2 text-[#666666]">{error}</p>
                         <button
                             onClick={() => navigate('/')}
-                            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+                            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
                         >
                             Return to Registration
                         </button>
@@ -119,19 +119,19 @@ const Payment = () => {
     if (paymentStatus === 'success') {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+                <div className="bg-[#F9FAFB] rounded-xl shadow-xl p-8 max-w-md w-full">
                     <div className="text-center">
                         <svg className="h-16 w-16 text-green-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <h2 className="text-2xl font-bold text-gray-800 mt-4">Payment Successful!</h2>
-                        <p className="mt-2 text-gray-600">Thank you for enrolling in our course. We've sent a confirmation to your email.</p>
+                        <p className="mt-2 text-[#666666]">Thank you for enrolling in our course. We've sent a confirmation to your email.</p>
                         <div className="mt-6 bg-green-50 p-4 rounded-lg">
                             <p className="text-sm text-green-800">You will receive further instructions and course materials shortly.</p>
                         </div>
                         <button
                             onClick={() => navigate('/', { replace: true })}
-                            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
+                            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-[#1E4BCC] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors"
                         >
                             Return to Home
                         </button>
@@ -144,13 +144,13 @@ const Payment = () => {
     if (paymentStatus === 'failed') {
         return (
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-                <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+                <div className="bg-[#F9FAFB] rounded-xl shadow-xl p-8 max-w-md w-full">
                     <div className="text-center">
                         <svg className="h-16 w-16 text-red-500 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                         <h2 className="text-2xl font-bold text-gray-800 mt-4">Payment Failed</h2>
-                        <p className="mt-2 text-gray-600">{error || "We couldn't process your payment. Please try again."}</p>
+                        <p className="mt-2 text-[#666666]">{error || "We couldn't process your payment. Please try again."}</p>
                         <PaymentForm 
                             paymentData={paymentData}
                             onPaymentSuccess={handlePaymentSuccess}
@@ -170,7 +170,7 @@ const Payment = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-            <div className="bg-white rounded-xl shadow-xl p-8 max-w-md w-full">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-xl p-8 max-w-md w-full">
                 <div className="text-center">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Complete Your Payment</h2>
 
@@ -179,22 +179,22 @@ const Payment = () => {
                             <div className="bg-blue-50 p-4 rounded-lg">
                                 <h3 className="font-semibold text-lg text-gray-800">Order Summary</h3>
                                 <div className="mt-2 flex justify-between">
-                                    <span className="text-gray-600">Course:</span>
+                                    <span className="text-[#666666]">Course:</span>
                                     <span className="font-medium">{paymentData.description}</span>
                                 </div>
                                 <div className="mt-1 flex justify-between">
-                                    <span className="text-gray-600">Amount:</span>
+                                    <span className="text-[#666666]">Amount:</span>
                                     <span className="font-medium">{(paymentData.amount / 100).toFixed(2)} {paymentData.currency || 'INR'}</span>
                                 </div>
                                 {paymentData.prefill?.name && (
                                     <div className="mt-1 flex justify-between">
-                                        <span className="text-gray-600">Name:</span>
+                                        <span className="text-[#666666]">Name:</span>
                                         <span className="font-medium">{paymentData.prefill.name}</span>
                                     </div>
                                 )}
                                 {paymentData.prefill?.email && (
                                     <div className="mt-1 flex justify-between">
-                                        <span className="text-gray-600">Email:</span>
+                                        <span className="text-[#666666]">Email:</span>
                                         <span className="font-medium">{paymentData.prefill.email}</span>
                                     </div>
                                 )}
@@ -202,7 +202,7 @@ const Payment = () => {
                         </div>
                     )}
 
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-[#666666] mb-6">
                         You're almost there! Click the button below to proceed with the secure payment process.
                     </p>
 

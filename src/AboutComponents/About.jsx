@@ -154,7 +154,7 @@ const About = () => {
                             <button className="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-medium shadow-lg hover:shadow-purple-500/30 transition-all duration-300 transform hover:-translate-y-1">
                                 Explore Programs
                             </button>
-                            <button className="px-8 py-3 bg-white hover:bg-gray-50 text-purple-700 border border-purple-200 rounded-full font-medium shadow-lg hover:shadow-purple-500/20 transition-all duration-300 transform hover:-translate-y-1">
+                            <button className="px-8 py-3 bg-[#F9FAFB] hover:bg-gray-50 text-purple-700 border border-purple-200 rounded-full font-medium shadow-lg hover:shadow-purple-500/20 transition-all duration-300 transform hover:-translate-y-1">
                                 Book a Tour
                             </button>
                         </motion.div>
@@ -224,7 +224,7 @@ const About = () => {
                                 <h2 className="text-3xl md:text-5xl font-bold text-gray-800 mb-8">Our Story</h2>
                             </div>
 
-                            <div className="space-y-6 text-gray-600">
+                            <div className="space-y-6 text-[#666666]">
                                 <p className="text-lg leading-relaxed">
                                     ASTA Education Academy was founded with a vision to revolutionize language education in a rapidly globalizing world. What began as a small initiative has blossomed into one of the region's most respected educational institutions specializing in English language proficiency.
                                 </p>
@@ -264,7 +264,7 @@ const About = () => {
                                 <div className="absolute -top-6 -left-6 w-32 h-32 bg-amber-400 rounded-full opacity-20 animate-pulse"></div>
                                 <div className="absolute -bottom-6 -right-6 w-40 h-40 bg-purple-400 rounded-full opacity-20 animate-pulse"></div>
 
-                                <div className="relative z-10 bg-white p-2 rounded-2xl shadow-2xl">
+                                <div className="relative z-10 bg-[#F9FAFB] p-2 rounded-2xl shadow-2xl">
                                     <img
                                         src="https://www.shutterstock.com/image-photo/happy-mid-aged-business-woman-600nw-2353012835.jpg"
                                         alt="ASTA Education Academy Class"
@@ -280,7 +280,7 @@ const About = () => {
                                                     </svg>
                                                 ))}
                                             </div>
-                                            <span className="ml-2 text-gray-600 font-medium">4.9/5</span>
+                                            <span className="ml-2 text-[#666666] font-medium">4.9/5</span>
                                         </div>
 
                                         <h3 className="text-xl font-semibold text-gray-800">Where learning feels like discovery</h3>
@@ -325,7 +325,7 @@ const About = () => {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB]/10 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="flex flex-col items-center text-center">
                                 <div className="relative mb-6">
@@ -368,7 +368,7 @@ const About = () => {
                             initial="hidden"
                             whileInView="visible"
                             viewport={{ once: true }}
-                            className="bg-white/10 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB]/10 backdrop-blur-sm rounded-xl p-6 shadow-xl hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="flex flex-col items-center text-center">
                                 <div className="relative mb-6">
@@ -419,7 +419,7 @@ const About = () => {
                         className="text-center mb-16"
                     >
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Why Choose ASTA</h2>
-                        <p className="max-w-2xl mx-auto text-gray-600">
+                        <p className="max-w-2xl mx-auto text-[#666666]">
                             Discover what sets our academy apart and why we're the preferred choice for language education
                         </p>
                     </motion.div>
@@ -434,7 +434,7 @@ const About = () => {
                         {/* Card 1 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -442,7 +442,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Innovative Teaching Methods</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Our pioneering phonics approach makes English pronunciation and reading accessible to learners of all ages. We combine traditional techniques with modern technology for maximum effectiveness.
                             </p>
                         </motion.div>
@@ -450,7 +450,7 @@ const About = () => {
                         {/* Card 2 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-pink-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -458,7 +458,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Expert Instructors</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Learn from the best in the industry. Our teachers are not only qualified educators but also passionate about nurturing student growth with patience and personalized attention.
                             </p>
                         </motion.div>
@@ -466,7 +466,7 @@ const About = () => {
                         {/* Card 3 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -474,7 +474,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Proven Results</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Our track record speaks for itself. With a 95% success rate and glowing testimonials from students and parents alike, we take pride in consistently delivering excellence.
                             </p>
                         </motion.div>
@@ -482,7 +482,7 @@ const About = () => {
                         {/* Card 4 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-indigo-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -490,7 +490,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Modern Facilities</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Our state-of-the-art classrooms are equipped with the latest educational technology to enhance the learning experience and prepare students for the digital age.
                             </p>
                         </motion.div>
@@ -498,7 +498,7 @@ const About = () => {
                         {/* Card 5 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -506,7 +506,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Comprehensive Curriculum</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Our programs go beyond basic language skills to include critical thinking, public speaking, and cultural awareness—preparing students for global opportunities.
                             </p>
                         </motion.div>
@@ -514,7 +514,7 @@ const About = () => {
                         {/* Card 6 */}
                         <motion.div
                             variants={fadeIn}
-                            className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
+                            className="bg-[#F9FAFB] rounded-xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300"
                         >
                             <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-6">
                                 <svg className="w-8 h-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -522,7 +522,7 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-xl font-bold text-gray-800 mb-3">Flexible Learning Options</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 We understand busy schedules. Choose from morning, evening, weekend, or online classes designed to fit seamlessly into your lifestyle without compromising quality.
                             </p>
                         </motion.div>
@@ -542,29 +542,29 @@ const About = () => {
                     >
                         <div className="text-center mb-12">
                             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Our Impact</h2>
-                            <p className="text-gray-600">The numbers that reflect our commitment to excellence</p>
+                            <p className="text-[#666666]">The numbers that reflect our commitment to excellence</p>
                         </div>
 
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                            <div className="bg-white p-6 rounded-xl shadow-lg">
+                            <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg">
                                 <div className="text-4xl font-bold text-purple-600 mb-2">5000+</div>
-                                <div className="text-gray-600">Students Trained</div>
+                                <div className="text-[#666666]">Students Trained</div>
                             </div>
-                            <div className="bg-white p-6 rounded-xl shadow-lg">
+                            <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg">
                                 <div className="text-4xl font-bold text-pink-600 mb-2">98%</div>
-                                <div className="text-gray-600">Success Rate</div>
+                                <div className="text-[#666666]">Success Rate</div>
                             </div>
-                            <div className="bg-white p-6 rounded-xl shadow-lg">
+                            <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg">
                                 <div className="text-4xl font-bold text-amber-600 mb-2">15+</div>
-                                <div className="text-gray-600">Years of Excellence</div>
+                                <div className="text-[#666666]">Years of Excellence</div>
                             </div>
-                            <div className="bg-white p-6 rounded-xl shadow-lg">
+                            <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg">
                                 <div className="text-4xl font-bold text-indigo-600 mb-2">20+</div>
-                                <div className="text-gray-600">Expert Instructors</div>
+                                <div className="text-[#666666]">Expert Instructors</div>
                             </div>
                         </div>
 
-                        <div className="mt-16 bg-white p-8 rounded-xl shadow-xl">
+                        <div className="mt-16 bg-[#F9FAFB] p-8 rounded-xl shadow-xl">
                             <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Student Success Story</h3>
                             <div className="flex flex-col md:flex-row items-center gap-8">
                                 <div className="flex-shrink-0">
@@ -577,7 +577,7 @@ const About = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <blockquote className="text-gray-600 italic">
+                                    <blockquote className="text-[#666666] italic">
                                         "Before joining ASTA Education Academy, I struggled with English pronunciation and lacked confidence in my communication skills. The phonics program completely transformed my approach to learning English. Shereen Ma'am's teaching methods made complex phonics rules easy to understand, and with Ali Abbas Sir's guidance, I gained practical experience through various speaking opportunities. Today, I work confidently in an international company where strong English skills are essential for daily operations."
                                     </blockquote>
                                     <div className="mt-4">
@@ -612,7 +612,7 @@ const About = () => {
                                 <motion.button
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.98 }}
-                                    className="px-8 py-4 bg-white text-purple-600 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300"
+                                    className="px-8 py-4 bg-[#F9FAFB] text-purple-600 rounded-lg font-bold shadow-lg hover:shadow-xl transition-all duration-300"
                                 >
                                     Book a Free Assessment
                                 </motion.button>
@@ -627,13 +627,13 @@ const About = () => {
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Get in Touch</h2>
-                        <p className="text-gray-600 max-w-2xl mx-auto">
+                        <p className="text-[#666666] max-w-2xl mx-auto">
                             Have questions about our programs? Want to schedule a visit? Our team is here to help!
                         </p>
                     </div>
 
                     <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg text-center">
                             <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
@@ -641,34 +641,34 @@ const About = () => {
                                 </svg>
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Our Location</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 123 Education Avenue<br />
                                 Learning District<br />
                                 Knowledge City, 400001
                             </p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg text-center">
                             <div className="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-6 h-6 text-pink-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                 </svg>
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Contact Us</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Phone: +91 1234567890<br />
                                 Email: info@astaeducation.com
                             </p>
                         </div>
 
-                        <div className="bg-white p-6 rounded-xl shadow-lg text-center">
+                        <div className="bg-[#F9FAFB] p-6 rounded-xl shadow-lg text-center">
                             <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg className="w-6 h-6 text-amber-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <h3 className="text-lg font-bold text-gray-800 mb-2">Office Hours</h3>
-                            <p className="text-gray-600">
+                            <p className="text-[#666666]">
                                 Monday - Friday: 9:00 AM - 6:00 PM<br />
                                 Saturday: 9:00 AM - 1:00 PM<br />
                                 Sunday: Closed
@@ -681,7 +681,7 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                         viewport={{ once: true }}
-                        className="mt-16 max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-xl"
+                        className="mt-16 max-w-3xl mx-auto bg-[#F9FAFB] p-8 rounded-xl shadow-xl"
                     >
                         <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Send Us a Message</h3>
                         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -694,7 +694,7 @@ const About = () => {
                                         name="name"
                                         value={formData.name}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                         placeholder="Enter your name"
                                         required
                                     />
@@ -707,7 +707,7 @@ const About = () => {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                         placeholder="Enter your email"
                                         required
                                     />
@@ -721,7 +721,7 @@ const About = () => {
                                     name="subject"
                                     value={formData.subject}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     placeholder="Enter subject"
                                     required
                                 />
@@ -734,7 +734,7 @@ const About = () => {
                                     rows="4"
                                     value={formData.message}
                                     onChange={handleChange}
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                    className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                                     placeholder="Type your message here..."
                                     required
                                 ></textarea>

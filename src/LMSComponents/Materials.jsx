@@ -375,7 +375,7 @@ const Materials = () => {
   const SkeletonLoader = () => (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto py-4 px-4 sm:py-8">
-        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6 mb-6 sm:mb-8 animate-pulse">
+        <div className="bg-[#F9FAFB] rounded-xl shadow-md p-4 sm:p-6 mb-6 sm:mb-8 animate-pulse">
           <div className="h-6 sm:h-8 bg-gray-200 rounded w-1/3 mb-3 sm:mb-4"></div>
           <div className="h-3 sm:h-4 bg-gray-200 rounded w-full sm:w-3/4 mb-4 sm:mb-6"></div>
 
@@ -392,7 +392,7 @@ const Materials = () => {
         </div>
 
         {[1, 2].map(i => (
-          <div key={i} className="bg-white rounded-xl shadow-md overflow-hidden mb-4 sm:mb-6 animate-pulse">
+          <div key={i} className="bg-[#F9FAFB] rounded-xl shadow-md overflow-hidden mb-4 sm:mb-6 animate-pulse">
             <div className="p-3 sm:p-4 bg-gray-50 border-b">
               <div className="h-5 sm:h-6 bg-gray-200 rounded w-1/2"></div>
             </div>
@@ -416,7 +416,7 @@ const Materials = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Modern navbar with user profile */}
-      <div className="bg-white shadow-sm sticky top-0 z-30">
+      <div className="bg-[#F9FAFB] shadow-sm sticky top-0 z-30">
         <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
           <div className="flex justify-between items-center">
             <div className="flex items-center">
@@ -425,7 +425,7 @@ const Materials = () => {
                 className="mr-2 sm:mr-3 p-2 rounded-lg hover:bg-gray-100 transition-colors lg:hidden"
                 aria-label="Toggle filters"
               >
-                <FaBars className="text-gray-600" />
+                <FaBars className="text-[#666666]" />
               </button>
               <h1 className="text-lg sm:text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text truncate">
                 Learning Hub
@@ -439,7 +439,7 @@ const Materials = () => {
               </div>
               <input
                 type="text"
-                className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-[#F9FAFB] focus:border-[#2A62FF] transition-all duration-200"
                 placeholder="Search materials..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -447,7 +447,7 @@ const Materials = () => {
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#666666]"
                 >
                   <FaTimes className="w-4 h-4" />
                 </button>
@@ -461,7 +461,7 @@ const Materials = () => {
                 className="md:hidden mr-2 sm:mr-4 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                 aria-label="Mobile search and filters"
               >
-                <FaSearch className="text-gray-600" />
+                <FaSearch className="text-[#666666]" />
               </button>
 
               <button
@@ -476,7 +476,7 @@ const Materials = () => {
               </button>
 
               {userDropdownOpen && (
-                <div className="absolute right-0 top-full mt-2 w-52 sm:w-56 bg-white rounded-xl shadow-lg py-1 z-10 border border-gray-100">
+                <div className="absolute right-0 top-full mt-2 w-52 sm:w-56 bg-[#F9FAFB] rounded-xl shadow-lg py-1 z-10 border border-gray-100">
                   <div className="px-4 py-3 border-b border-gray-100">
                     <p className="text-sm font-semibold truncate">{userData?.name || 'User'}</p>
                     <p className="text-xs text-gray-500 truncate">{user?.email}</p>
@@ -513,7 +513,7 @@ const Materials = () => {
       {/* Mobile search and filters overlay */}
       {mobileFiltersOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden">
-          <div className="bg-white p-4 max-w-sm w-4/5 ml-auto h-full overflow-y-auto mobile-filters">
+          <div className="bg-[#F9FAFB] p-4 max-w-sm w-4/5 ml-auto h-full overflow-y-auto mobile-filters">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold">Filters & Search</h2>
               <button
@@ -532,7 +532,7 @@ const Materials = () => {
                 </div>
                 <input
                   type="text"
-                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-[#F9FAFB] focus:border-[#2A62FF]"
                   placeholder="Search materials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -540,7 +540,7 @@ const Materials = () => {
                 {searchTerm && (
                   <button
                     onClick={() => setSearchTerm('')}
-                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#666666]"
                   >
                     <FaTimes className="w-4 h-4" />
                   </button>
@@ -681,7 +681,7 @@ const Materials = () => {
         <div className="flex">
           {/* Sidebar filters - desktop */}
           <div className={`hidden lg:block w-64 mr-8 transition-all duration-300 ${sidebarOpen ? 'opacity-100' : 'opacity-0 w-0 mr-0'}`}>
-            <div className="bg-white rounded-xl shadow-sm p-4 sticky top-20">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-sm p-4 sticky top-20">
               <h2 className="text-lg font-semibold mb-4 text-gray-800">Filters</h2>
 
               {/* Content Type Filter */}
@@ -791,7 +791,7 @@ const Materials = () => {
           <div className="flex-1">
             {/* Mobile top filters - visible on small screens */}
             <div className="block lg:hidden mb-4">
-              <div className="bg-white rounded-xl shadow-sm p-4">
+              <div className="bg-[#F9FAFB] rounded-xl shadow-sm p-4">
                 <div className="flex flex-col sm:flex-row gap-3">
                   <div className="relative flex-grow">
                     <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -799,7 +799,7 @@ const Materials = () => {
                     </div>
                     <input
                       type="text"
-                      className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500 transition-all duration-200"
+                      className="w-full pl-10 pr-4 py-2 bg-gray-100 border border-[#E5E7EB] rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-[#F9FAFB] focus:border-[#2A62FF] transition-all duration-200"
                       placeholder="Search materials..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
@@ -807,7 +807,7 @@ const Materials = () => {
                     {searchTerm && (
                       <button
                         onClick={() => setSearchTerm('')}
-                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-[#666666]"
                       >
                         <FaTimes className="w-4 h-4" />
                       </button>
@@ -825,7 +825,7 @@ const Materials = () => {
             </div>
 
             {/* Content area */}
-            <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-sm p-4 mb-6">
               <div className="flex justify-between items-center flex-wrap gap-3 mb-4">
                 <h2 className="text-xl font-semibold text-gray-800">Materials</h2>
                 <div className="flex items-center space-x-2">
@@ -858,7 +858,7 @@ const Materials = () => {
                     key={option.value}
                     onClick={() => setFilter(option.value)}
                     className={`flex items-center space-x-1 px-3 py-1.5 text-sm rounded-full transition-colors whitespace-nowrap ${filter === option.value
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-[#2A62FF] text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                       }`}
                   >
@@ -947,14 +947,14 @@ const Materials = () => {
                       setDateFilter('all');
                       setSearchTerm('');
                     }}
-                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                    className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-[#1E4BCC] transition-colors"
                   >
                     Reset Filters
                   </button>
                 </div>
               ) : (
                 Object.entries(filteredGroups).map(([groupId, groupData]) => (
-                  <div key={groupId} className="mb-6 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                  <div key={groupId} className="mb-6 rounded-xl overflow-hidden border border-[#E5E7EB] shadow-sm">
                     {/* Group header - clickable */}
                     <div
                       onClick={() => toggleGroup(groupId)}
@@ -1013,7 +1013,7 @@ const Materials = () => {
                                       {item.category}
                                     </span>
                                   )}
-                                  <button className="text-gray-400 hover:text-gray-600 p-1">
+                                  <button className="text-gray-400 hover:text-[#666666] p-1">
                                     <FaChevronRight className="w-4 h-4" />
                                   </button>
                                 </div>

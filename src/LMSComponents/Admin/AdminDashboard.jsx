@@ -299,7 +299,7 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Use a non-blocking notification instead of alert
             const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50';
+            notification.className = 'fixed top-4 right-4 bg-[#FFD700] text-white p-4 rounded-lg shadow-lg z-50';
             notification.textContent = 'Content deleted successfully!';
             document.body.appendChild(notification);
 
@@ -467,7 +467,7 @@ const AdminDashboard = ({ user, userData }) => {
                     <h1 className="text-2xl md:text-3xl font-bold text-blue-600 text-center sm:text-left">Admin's Dashboard</h1>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center justify-center w-full sm:w-auto transition-colors duration-200 shadow-md"
+                        className="bg-blue-600 hover:bg-[#1E4BCC] text-white px-4 py-2 rounded-lg flex items-center justify-center w-full sm:w-auto transition-colors duration-200 shadow-md"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -478,19 +478,19 @@ const AdminDashboard = ({ user, userData }) => {
 
                 {/* Dashboard Sections */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6 md:mb-8">
-                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                    <div className="bg-[#F9FAFB] p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
                         <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Total Content</h2>
                         <p className="text-2xl md:text-3xl font-bold text-blue-600">{content.length}</p>
                     </div>
 
-                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+                    <div className="bg-[#F9FAFB] p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
                         <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Total Students</h2>
                         <p className="text-2xl md:text-3xl font-bold text-blue-600">{students.length}</p>
                     </div>
 
-                    <div className="bg-white p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 sm:col-span-2 lg:col-span-1">
+                    <div className="bg-[#F9FAFB] p-4 md:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 sm:col-span-2 lg:col-span-1">
                         <h2 className="text-lg md:text-xl font-semibold text-gray-800 mb-2">Last Upload</h2>
-                        <p className="text-md text-gray-600">
+                        <p className="text-md text-[#666666]">
                             {content.length > 0
                                 ? getDisplayDate(content[0])
                                 : 'No content yet'}
@@ -499,7 +499,7 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Content Management */}
-                <div className="bg-white rounded-lg shadow-md overflow-hidden mb-6 md:mb-8">
+                <div className="bg-[#F9FAFB] rounded-lg shadow-md overflow-hidden mb-6 md:mb-8">
                     <div className="p-4 md:p-6 bg-gray-50 border-b">
                         <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Content Management</h2>
                     </div>
@@ -519,7 +519,7 @@ const AdminDashboard = ({ user, userData }) => {
                                         <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-[#F9FAFB] divide-y divide-gray-200">
                                     {Object.keys(groupedContent).map(groupId => (
                                         <ContentGroupCard
                                             key={groupId}
@@ -535,7 +535,7 @@ const AdminDashboard = ({ user, userData }) => {
                 </div>
 
                 {/* Student Management Section */}
-                <div className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="bg-[#F9FAFB] rounded-lg shadow-md overflow-hidden">
                     <div className="p-4 md:p-6 bg-gray-50 border-b">
                         <h2 className="text-xl md:text-2xl font-semibold text-gray-800">Student Management</h2>
                     </div>
@@ -555,7 +555,7 @@ const AdminDashboard = ({ user, userData }) => {
                                         <th className="px-2 sm:px-4 md:px-6 py-2 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
+                                <tbody className="bg-[#F9FAFB] divide-y divide-gray-200">
                                     {students.map((student) => (
                                         <tr key={student.id || student.uid}>
                                             <td className="px-2 sm:px-4 md:px-6 py-2 md:py-4">

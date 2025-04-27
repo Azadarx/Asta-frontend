@@ -48,7 +48,7 @@ const HomeNavbar = () => {
               </Link>
 
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-[#F9FAFB] rounded-md shadow-lg py-1 z-10">
                   <Link
                     to="/courses/phonics"
                     className="block px-4 py-2 text-gray-800 hover:bg-blue-50"
@@ -102,7 +102,7 @@ const HomeNavbar = () => {
 
       {/* Mobile menu */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t">
+        <div className="md:hidden bg-[#F9FAFB] border-t">
           <div className="container mx-auto px-4 py-2">
             <Link
               to="/"

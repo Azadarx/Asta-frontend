@@ -110,7 +110,7 @@ const LMSHome = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
       {/* Top Navigation */}
-      <nav className="bg-white shadow-md">
+      <nav className="bg-[#F9FAFB] shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <div className="flex">
@@ -131,7 +131,7 @@ const LMSHome = () => {
                   placeholder="Search materials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="pl-10 pr-4 py-2 border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -159,7 +159,7 @@ const LMSHome = () => {
         
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden bg-white p-4 shadow-lg">
+          <div className="md:hidden bg-[#F9FAFB] p-4 shadow-lg">
             <div className="mb-4">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -170,7 +170,7 @@ const LMSHome = () => {
                   placeholder="Search materials..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-[#E5E7EB] rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -198,10 +198,10 @@ const LMSHome = () => {
                 Continue your phonics journey with interactive lessons and resources tailored just for you.
               </p>
               <div className="flex flex-wrap gap-3">
-                <button className="bg-white text-indigo-700 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
+                <button className="bg-[#F9FAFB] text-indigo-700 px-4 py-2 rounded-lg font-medium hover:bg-blue-50 transition-colors">
                   Resume Learning
                 </button>
-                <button className="bg-blue-700 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-800 transition-colors">
+                <button className="bg-[#1E4BCC] text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-800 transition-colors">
                   View Progress
                 </button>
               </div>
@@ -220,7 +220,7 @@ const LMSHome = () => {
         <div className="flex flex-col md:flex-row gap-6">
           {/* Sidebar */}
           <div className="md:w-1/4">
-            <div className="bg-white rounded-xl shadow-md p-5">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-md p-5">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Categories</h3>
               <ul>
                 {categories.map((category, index) => (
@@ -236,7 +236,7 @@ const LMSHome = () => {
               </ul>
             </div>
 
-            <div className="bg-white rounded-xl shadow-md p-5 mt-6">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-md p-5 mt-6">
               <h3 className="text-lg font-semibold text-gray-800 mb-4">My Progress</h3>
               <div className="mb-4">
                 <div className="flex justify-between mb-1">
@@ -261,7 +261,7 @@ const LMSHome = () => {
 
           {/* Content Area */}
           <div className="md:w-3/4">
-            <div className="bg-white rounded-xl shadow-md p-6">
+            <div className="bg-[#F9FAFB] rounded-xl shadow-md p-6">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Learning Materials</h2>
                 <div className="flex space-x-2">
@@ -277,7 +277,7 @@ const LMSHome = () => {
               {filteredContent.length === 0 ? (
                 <div className="bg-gray-50 rounded-lg p-10 text-center">
                   <BookOpen size={48} className="mx-auto text-gray-400 mb-4" />
-                  <p className="text-gray-600 mb-2">No content available yet.</p>
+                  <p className="text-[#666666] mb-2">No content available yet.</p>
                   <p className="text-gray-500 text-sm">Check back soon or try a different search term.</p>
                 </div>
               ) : (
@@ -290,7 +290,7 @@ const LMSHome = () => {
             </div>
 
             {/* Recent Activity Section */}
-            <div className="mt-6 bg-white rounded-xl shadow-md p-6">
+            <div className="mt-6 bg-[#F9FAFB] rounded-xl shadow-md p-6">
               <h2 className="text-xl font-bold text-gray-800 mb-4">Recent Activity</h2>
               <div className="space-y-4">
                 <div className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg transition-colors">

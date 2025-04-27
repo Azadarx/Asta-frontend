@@ -157,7 +157,7 @@ const AdminSignup = () => {
   if (showSuccess) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md text-center backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-[#E5E7EB] dark:border-gray-700">
           <div className="mb-6">
             <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900">
               <svg className="h-12 w-12 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -167,18 +167,18 @@ const AdminSignup = () => {
           </div>
           <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-4">Success!</h2>
           <div className="mb-8">
-            <p className="text-gray-600 dark:text-gray-300 text-lg mb-2">
+            <p className="text-[#666666] dark:text-gray-300 text-lg mb-2">
               Student account for
             </p>
             <p className="font-medium text-blue-600 dark:text-blue-400 text-xl mb-4">
               {createdUserEmail}
             </p>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-[#666666] dark:text-gray-300">
               has been created successfully.
             </p>
             <div className="mt-6 inline-flex items-center justify-center px-4 py-2 rounded-full bg-blue-100 dark:bg-blue-900">
               <span className="text-blue-800 dark:text-blue-300">Redirecting in </span>
-              <span className="ml-1 bg-blue-600 text-white dark:bg-blue-500 w-8 h-8 rounded-full flex items-center justify-center font-bold">{countdown}</span>
+              <span className="ml-1 bg-blue-600 text-white dark:bg-[#2A62FF] w-8 h-8 rounded-full flex items-center justify-center font-bold">{countdown}</span>
             </div>
           </div>
           <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
@@ -206,7 +206,7 @@ const AdminSignup = () => {
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl">
+        <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl">
           <div className="flex items-center space-x-3">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
             <p className="text-lg font-medium text-gray-700 dark:text-gray-300">Checking permissions...</p>
@@ -218,7 +218,7 @@ const AdminSignup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-purple-900 px-4 py-12">
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-gray-200 dark:border-gray-700">
+      <div className="bg-[#F9FAFB] dark:bg-gray-900 p-8 rounded-2xl shadow-2xl w-full max-w-md backdrop-blur-lg bg-opacity-95 dark:bg-opacity-90 border border-[#E5E7EB] dark:border-gray-700">
         <div className="text-center mb-8">
           <div className="mb-4 inline-block p-3 rounded-full bg-blue-100 dark:bg-blue-900">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-blue-600 dark:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -226,7 +226,7 @@ const AdminSignup = () => {
             </svg>
           </div>
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">Create User Account</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Add a new student to ASTA Education LMS</p>
+          <p className="text-[#666666] dark:text-gray-400 mt-2">Add a new student to ASTA Education LMS</p>
         </div>
 
         {error && (
@@ -250,7 +250,7 @@ const AdminSignup = () => {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="block w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="block w-full px-4 py-3 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB] dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="Enter student's full name"
             />
           </div>
@@ -264,7 +264,7 @@ const AdminSignup = () => {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="block w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="block w-full px-4 py-3 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB] dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="student@example.com"
             />
           </div>
@@ -278,7 +278,7 @@ const AdminSignup = () => {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="block w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="block w-full px-4 py-3 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB] dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="Create a strong password"
             />
             <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">Minimum 6 characters</p>
@@ -293,7 +293,7 @@ const AdminSignup = () => {
               required
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="block w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+              className="block w-full px-4 py-3 rounded-xl border border-[#E5E7EB] dark:border-gray-600 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-[#2A62FF] bg-[#F9FAFB] dark:bg-gray-800 text-gray-900 dark:text-white"
               placeholder="Confirm password"
             />
           </div>
