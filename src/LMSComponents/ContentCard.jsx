@@ -12,14 +12,17 @@ import {
   FaEye
 } from 'react-icons/fa';
 
-const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) => {
+const ContentCard = ({ content = {}, isAdmin = false, groupTitle = null, onDelete }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const getFileIcon = () => {
+    // Safely check if content exists before accessing properties
+    if (!content) return <FaExternalLinkAlt className="text-gray-500 text-4xl" />;
+    
     // Check various possible properties where file type might be stored
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType || '';
 
-    switch (fileType) {
+    switch (fileType.toLowerCase()) {
       case 'application/pdf':
       case 'pdf':
         return <FaFilePdf className="text-red-500 text-4xl" />;
@@ -54,8 +57,15 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Unknown Date'; // ✅ Return fallback safely
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    try {
+      const date = new Date(dateString);
+      // Check if date is valid before formatting
+      return isNaN(date.getTime()) 
+        ? 'Unknown Date' 
+        : date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (error) {
+      return 'Unknown Date';
+    }
   };  
 
   const handleDeleteClick = () => {
@@ -64,7 +74,9 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
   const confirmDelete = () => {
     if (onDelete && typeof onDelete === 'function') {
-      onDelete(content.id || content.firebaseId);
+      // Safely access ID with fallback to prevent undefined being passed to onDelete
+      const contentId = content?.id || content?.firebaseId || null;
+      onDelete(contentId);
     }
     setShowDeleteModal(false);
   };
@@ -74,7 +86,9 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   const getActionButtonText = () => {
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    if (!content) return 'View';
+    
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType || '';
     const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
       'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -82,7 +96,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
     // Check if fileType is one of the download types
     for (const type of downloadTypes) {
-      if (fileType && fileType.includes(type)) {
+      if (fileType && fileType.toLowerCase().includes(type.toLowerCase())) {
         return 'Download';
       }
     }
@@ -91,7 +105,9 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
   };
 
   const getActionIcon = () => {
-    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType;
+    if (!content) return <FaEye className="w-4 h-4 ml-2" />;
+    
+    const fileType = content.fileCategory || content.fileType || content.file_type || content.contentType || '';
     const downloadTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
       'application/pdf', 'application/msword',
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -99,7 +115,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
 
     // Check if fileType is one of the download types
     for (const type of downloadTypes) {
-      if (fileType && fileType.includes(type)) {
+      if (fileType && fileType.toLowerCase().includes(type.toLowerCase())) {
         return <FaDownload className="w-4 h-4 ml-2" />;
       }
     }
@@ -107,7 +123,12 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
     return <FaEye className="w-4 h-4 ml-2" />;
   };
 
-  // Use timestamp from various possible properties
+  // Safely check if content exists before rendering
+  if (!content) {
+    return <div className="bg-white rounded-xl p-5 border border-gray-200">No content available</div>;
+  }
+
+  // Use timestamp from various possible properties with safe checks
   const createdDate = content.createdAt || content.created_at || content.uploadedAt || content.timestamp || null;
 
   return (
@@ -127,9 +148,9 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
             {getFileIcon()}
           </div>
           <div className="flex-grow">
-            <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{content.title}</h3>
+            <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">{content.title || 'Untitled Content'}</h3>
             <p className="text-xs text-gray-500 mt-1">
-              Added on {createdDate ? formatDate(createdDate) : 'Unknown Date'}
+              Added on {formatDate(createdDate)}
             </p>
           </div>
           {isAdmin && (
@@ -147,22 +168,28 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
         {/* File type badge */}
         <div className="mb-3">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-            {(content.contentType || content.fileCategory || content.fileType || content.file_type || '').toUpperCase()}
+            {((content.contentType || content.fileCategory || content.fileType || content.file_type || 'File').toUpperCase())}
           </span>
         </div>
 
         {/* Description */}
         <div className="mb-4 flex-grow">
-          <p className="text-gray-600 text-sm line-clamp-3">{content.description}</p>
+          <p className="text-gray-600 text-sm line-clamp-3">{content.description || 'No description available'}</p>
         </div>
 
         {/* Action buttons */}
         <div className="flex justify-between items-center pt-2 mt-auto">
           <a
-            href={content.fileUrl || content.file_url}
+            href={content.fileUrl || content.file_url || '#'}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 shadow-sm transition-all duration-200"
+            onClick={(e) => {
+              if (!(content.fileUrl || content.file_url)) {
+                e.preventDefault();
+                alert('File URL not available');
+              }
+            }}
           >
             {getActionButtonText()}
             {getActionIcon()}
@@ -184,7 +211,7 @@ const ContentCard = ({ content, isAdmin = false, groupTitle = null, onDelete }) 
             <div className="bg-white rounded-lg p-6 max-w-md w-full shadow-xl">
               <h3 className="text-xl font-bold mb-4 text-gray-800">Confirm Deletion</h3>
               <p className="mb-6 text-gray-600">
-                Are you sure you want to delete "<span className="font-semibold">{content.title}</span>"? This action cannot be undone.
+                Are you sure you want to delete "<span className="font-semibold">{content.title || 'Untitled Content'}</span>"? This action cannot be undone.
               </p>
               <div className="flex justify-end space-x-3">
                 <button
