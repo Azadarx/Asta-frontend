@@ -274,7 +274,7 @@ const AdminDashboard = ({ user, userData }) => {
 
             // Step 2: Also delete from Firebase RTDB (always do this as a fallback)
             console.log(contentItem.firebaseId, contentItem.id, 'contentItem.id==');
-            const firebaseId = contentItem.firebaseId || contentItem.id;
+            const firebaseId = contentItem.firebase_id || contentItem.id;
             console.log(database, firebaseId, 'firebaseId==');
             const contentRef = ref(database, `content/${firebaseId}`);
             console.log(contentRef, 'contentRef==');
