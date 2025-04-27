@@ -11,12 +11,13 @@ const LMSNavbar = ({ user }) => {
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch user data from RTDB instead of Firestore
   useEffect(() => {
     if (user && user.uid) {
       const userRef = ref(database, `users/${user.uid}`);
-      
+
       const unsubscribe = onValue(userRef, (snapshot) => {
         const data = snapshot.val();
         if (data) {
@@ -129,7 +130,7 @@ const LMSNavbar = ({ user }) => {
                 </Link>
 
                 <button
-                  onClick={openCloudinaryWidget}
+                  onClick={() => setIsModalOpen(true)}
                   className="bg-[#FFD700] hover:bg-[#FFC300] text-white p-2 rounded-full transition-colors shadow-lg"
                   title="Add Content"
                 >
@@ -156,7 +157,7 @@ const LMSNavbar = ({ user }) => {
               </div>
 
               {isOpen && (
-                <div 
+                <div
                   ref={dropdownRef}
                   className="origin-top-right absolute right-0 mt-3 w-56 rounded-lg shadow-xl bg-[#F9FAFB] ring-1 ring-black ring-opacity-5 focus:outline-none z-10 overflow-hidden transform transition-all duration-200 ease-in-out"
                 >
@@ -217,23 +218,23 @@ const LMSNavbar = ({ user }) => {
             <div className="px-4 py-2 text-sm text-gray-700 border-b">
               Signed in as: {user?.email}
             </div>
-            
+
             {/* Fixed mobile navigation links */}
-            <button 
+            <button
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={(e) => handleMobileNavigation(e, '/lms/home')}
             >
               Home
             </button>
-            
-            <button 
+
+            <button
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               onClick={(e) => handleMobileNavigation(e, '/lms/materials')}
             >
               Materials
             </button>
-            
-            <Link 
+
+            <Link
               className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
               to={"/lms/profile"}
               onClick={() => setIsOpen(false)}
@@ -243,7 +244,7 @@ const LMSNavbar = ({ user }) => {
 
             {isAdmin && (
               <>
-                <Link 
+                <Link
                   className="block w-full text-left py-2 text-blue-900 font-medium cursor-pointer hover:bg-blue-50"
                   to={"/lms/admin"}
                   onClick={() => setIsOpen(false)}
@@ -260,10 +261,7 @@ const LMSNavbar = ({ user }) => {
                     Add User
                   </Link>
                   <button
-                    onClick={() => {
-                      setIsOpen(false);
-                      openCloudinaryWidget();
-                    }}
+                    onClick={() => setIsModalOpen(true)}
                     className="bg-[#FFD700] text-white px-3 py-1 rounded-md hover:bg-[#FFC300] transition flex items-center shadow-md"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -275,7 +273,7 @@ const LMSNavbar = ({ user }) => {
               </>
             )}
 
-            <button 
+            <button
               className="block w-full text-left py-2 text-red-600 font-medium cursor-pointer hover:bg-red-50"
               onClick={handleLogout}
             >
@@ -292,6 +290,15 @@ const LMSNavbar = ({ user }) => {
           type="text/javascript"
         />
       )} */}
+      {isModalOpen && (
+        <ContentUploadModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onContentAdded={fetchContent}
+          user={user}
+          API_URL={API_URL}
+        />
+      )}
     </nav>
   );
 };
